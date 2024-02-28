@@ -1,0 +1,53 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+
+@{
+
+    var ior_Daparato = Model.HasValue ? Model : -1;
+    var ior_centro = ViewData["HOME.IOR_CENTRO"] != null ? (int)ViewData["HOME.IOR_CENTRO"] : -1;
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+    var aparatos = DaparatoRepositorio.Lista();
+    if (ior_centro > 0 )
+    {
+        aparatos= DaparatoRepositorio.ListaPorCentro(ior_centro);
+    }
+    //Si el aparato seleccionado no está en la lista significa que puede ser un aparato obsoleto y que estamos en la ventana de alguna ficha de exploración
+    if (aparatos.Where(u => u.OID == ior_Daparato).Count() == 0)
+    {
+        DAPARATOS oAparatoObsoleto = DaparatoRepositorio.Obtener(ior_Daparato.Value);
+        aparatos.Add(oAparatoObsoleto);
+    }
+
+
+    var aparatosDef = aparatos.Select(u => new SelectListItem
+    {
+        Text = u.COD_FIL + " - " + u.DES_FIL,
+        Value = u.OID.ToString(),
+        Selected = u.OID == ior_Daparato
+    }).ToArray();
+}
+
+
+@if (ViewData["disabled"] != null  && (bool)ViewData["disabled"] || ViewData["readonly"] != null && (bool)ViewData["readonly"])
+{
+    <input type="hidden" id="IOR_APARATO"
+           name="IOR_APARATO" value="@ior_Daparato" />
+    @Html.Label("", aparatosDef.Single(t => t.Value == @ViewData.TemplateInfo.FormattedModelValue.ToString()).Text, new { @class = "form-control form-control-static",@readonly="readonly" })
+}
+else
+{ 
+   
+    @Html.DropDownList("", aparatosDef, htmlAttributes)
+}
+
+
+
+
+
+
+
+
+

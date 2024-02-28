@@ -1,0 +1,282 @@
+﻿@model  RadioWeb.ViewModels.Estadistica.VWEstadistica
+
+@{
+    ViewBag.Title = "Facturacion2";
+}
+
+<h2>Facturacion</h2>
+
+@section estilos{
+    <link href="~/css/plugins/textSpinners/spinners.css" rel="stylesheet" />
+    <link href="/css/c3.css" rel="stylesheet" />
+}
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-filtros"><i class="fa fa-desktop"></i></a></li>
+                    <li class=""><a data-toggle="tab" href="#tab-estadisticas"><i class="fa fa-bar-chart-o"></i></a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div id="tab-filtros" class="tab-pane active">
+                        <div class="panel-body">
+
+
+                            @using (Ajax.BeginForm("Facturacion2",
+"Estadisticas",
+new AjaxOptions
+{
+HttpMethod = "POST",
+UpdateTargetId = "tablaResultado",
+OnSuccess = "OnSuccess",
+OnBegin = "BeginClient",
+OnFailure = "OnFailure"
+}, new { @class = "form-horizontal" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.FECHAINICIAL)
+                                        @Html.TextBoxFor(m => Model.FECHAINICIAL, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker" })
+
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.FECHAINICIAL)</p>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.FECHAFINAL)
+                                        @Html.TextBoxFor(m => Model.FECHAFINAL, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.FECHAFINAL)</p>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.IOR_GAPARATO)
+                                        @Html.DropDownListFor(m => Model.IOR_GAPARATO, new SelectList(Model.GRUPOS, "OID", "DES_GRUP"), new { @class = "form-control select2" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_GAPARATO)</p>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.IOR_DAPARATO)
+                                        @Html.DropDownListFor(m => Model.IOR_DAPARATO, new SelectList(Model.DAPARATOS, "OID", "COD_FIL"), new { @class = "form-control select2" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_DAPARATO)</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        @Html.LabelFor(m => m.IOR_APARATO)
+                                        @Html.DropDownListFor(m => Model.IOR_APARATO, new SelectList(Model.APARATOS, "OID", "DES_FIL"), new { @class = "form-control select2" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_APARATO)</p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        @Html.LabelFor(m => m.ESTADOSSELECTED)
+                                        <select class="select2" name="ESTADOSSELECTED[]" multiple="multiple" data-width="100%">
+                                            @foreach (EXPLORACION.ESTADOS val in Enum.GetValues(typeof(EXPLORACION.ESTADOS)))
+                                            {
+                                                <option value="@val">@val</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        @Html.LabelFor(m => m.IOR_ENTIDADPAGADORA)
+                                        @Html.DropDownListFor(m => Model.IOR_ENTIDADPAGADORA, new SelectList(Model.MUTUAS, "OID", "NOMBRE"), new { @class = "form-control select2" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_ENTIDADPAGADORA)</p>
+                                    </div>
+
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">TIPO</label>
+
+                                        <select id="IOR_TIPO" name="IOR_TIPO" class="selectpicker form-control select2" style="padding: 4px;">
+                                            <option value="-1">&nbsp;</option>
+                                            <option value="1">PRI</option>
+                                            <option value="2">MUT</option>
+                                            <option value="3">ICS</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.CENTROS)
+                                        @Html.DropDownListFor(m => Model.IOR_CENTRO, new SelectList(Model.CENTROS, "OID", "NOMBRE"), new { @class = "form-control select2" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_CENTRO)</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">PAGADO</label>
+
+                                        <select id="PAGADO" name="PAGADO" class="selectpicker form-control select2">
+                                            <option value="I">&nbsp;</option>
+                                            <option value="T">Si</option>
+                                            <option value="F">No</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">FACTURADO</label>
+
+                                        <select id="FACTURADO" name="FACTURADO" class="selectpicker form-control select2">
+                                            <option value="I">&nbsp;</option>
+                                            <option value="T">Si</option>
+                                            <option value="F">No</option>
+
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        @Html.LabelFor(m => m.ANYOSSELECTED)
+                                        <select class="select2" name="ANYOSSELECTED[]" multiple="multiple" data-width="100%">
+                                            @foreach (int val in Model.ANYOSLIST)
+                                            {
+                                                <option value="@val">@val</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">TIPO GRAFICO</label>
+
+                                        <select id="TIPOGRAFICO" name="TIPOGRAFICO" class="selectpicker form-control select2">
+                                            <option value="LINEAS" selected>Lineas</option>
+                                            <option value="BARRAS">Barras</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Cantidad/Número</label>
+
+                                        <select id="SUMCOUNT" name="SUMCOUNT" class="selectpicker form-control select2">
+                                            <option value="SUM" selected>Cantidad</option>
+                                            <option value="COUNT">Número</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <br />
+                                <div class="user-button">
+                                    <div class="row">
+
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn btn-primary btn-sm btn-block pull-right" id="btnBuscar">
+                                                <i class="fa fa-search"></i> Buscar
+                                                <span class="loading dots3 hide "></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+
+
+                        </div>
+                    </div>
+                    <div id="tab-estadisticas" class="tab-pane">
+                        <div class="panel-body">
+                            <div id="chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/js/custom/c3/d3.v3.min.js"></script>
+    <script src="~/js/custom/c3/c3.js"></script>
+    <script src="~/js/jquery.unobtrusive-ajax.js"></script>
+    <script type="text/javascript">
+        function OnSuccess(data) {
+            $(".loading").addClass('hide');
+
+            //El servidor devuelve en formato Json varios objetos.
+            //el objeto con la propiedad id=axis será para definir las etiquetas del eje de las X
+            //elementos del eje de las x
+            var axis = data.axis;
+            var datos = [];
+            //en el objeto json devuelto, en la propiedad data tenemos un array de lista de objetos.
+            // en el que la primera posicion es el grupo
+            for (var i = 0; i < data.data.length; i++) {
+                // grupos.push(data.data[i][0]);
+                for (var j = 0; j < data.data.length; j++) {
+                    var dato = data.data[j];
+                    datos.push(dato);
+                }
+                // array.push(lineaArray);
+            }
+
+            switch (data.tipografico) {
+
+                case 'LINEAS':
+                    var chart = c3.generate({
+
+                        data: {
+                            columns: datos,
+                            labels: {
+                                //            format: function (v, id, i, j) { return "Default Format"; },
+                                format: {
+                                    data1: d3.format('$'),
+                                    //                data1: function (v, id, i, j) { return "Format for data1"; },
+                                }
+                            }
+                        },
+                        axis: {
+                            x: {
+                                type: 'category',
+                                categories: axis
+                            },
+                            y: {
+                                tick: {
+                                    format: d3.format("€")
+                                    //                format: function (d) { return "$" + d; }
+                                }
+                            }
+                        }
+
+                    });
+                    break;
+                case 'BARRAS':
+
+                    var chart = c3.generate({
+
+                        data: {
+                            columns: datos,
+                            type: 'bar'
+                        },
+                        axis: {
+                            x: {
+                                type: 'category',
+                                categories: axis
+                            }
+                        },
+
+
+                    });
+                    break;
+                default:
+
+            }
+
+            $('.nav-tabs a[href="#tab-estadisticas"]').tab('show');
+        }
+
+        function BeginClient(xhr) {
+           
+            $(".loading").removeClass('hide');
+        }
+        function OnFailure(xhr, status) {
+            $(".loading").addClass('hide');
+
+        }
+        $(document).ready(function () {
+
+        });
+
+    </script>
+}

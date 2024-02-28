@@ -1,0 +1,83 @@
+﻿@model List<RadioWeb.Models.WEBCONFIG>
+
+<div class="tabs-container">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#tab-general">GENERAL</a>
+        </li>
+        @foreach (var item in ViewBag.Secciones)
+        {
+            <li>
+                    <a data-toggle="tab" href="#@item">@item</a>
+            </li>
+        }
+
+    </ul>
+    <div class="tab-content">
+        <div id="tab-general" class="tab-pane active">
+            @Html.Partial("~/Views/Configuracion/_List.cshtml", Model)
+        </div>
+        @foreach (var itemContent in ViewBag.Secciones)
+        {
+            <div id="@itemContent" class="tab-pane">
+                
+            </div>
+        }
+    </div>
+
+</div>
+<hr />
+<div class="col-md-12 col-lg-12">
+    <div class="ibox float-e-margins" style="margin-bottom: 5px;">
+        <div class="ibox-content">
+         
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+
+
+    <script>
+        $(document).on("shown.bs.tab", "a[data-toggle='tab']", function (e) {
+
+            var target = $(e.target).attr("href") // activated tab
+            var seccionSelected = $(e.target).html();
+            var contenedorConfig = $(target);
+            $.ajax({
+                type: 'POST',
+                url: '/Configuracion/Global',
+                data: { seccion: seccionSelected  },
+                beforeSend: function () {
+                    contenedorConfig.html('');
+                },
+                success: function (data) {
+                    contenedorConfig.html(data);
+                }, complete: function () {
+                    makeBootstrapTable('ConfiguracionesTable' + seccionSelected);
+                    $('.textoXeditable').editable({
+                        container: 'body',
+                        inputclass: 'anchoTexto'
+                    });
+                    
+                }
+            });
+         
+        });
+        $(document).ready(function () {
+
+            $("li[data-view]").removeClass('active');
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewParamGlobal]").addClass("active");
+            $("[data-view=ViewParamGlobal]").parents("ul").removeClass("collapse");
+            $('.textoXeditable').editable({
+                container: 'body',
+                inputclass: 'anchoTexto'
+            });
+            makeBootstrapTable('ConfiguracionesTable');
+           
+        });
+    </script>
+
+}

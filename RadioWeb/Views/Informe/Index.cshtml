@@ -1,0 +1,1021 @@
+﻿@using RadioWeb.Models;
+@{
+    string diaSemana = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(DateTime.Now.DayOfWeek);
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    RadioWeb.Models.Logica.FiltrosBusquedaExploracion oFiltros = ((RadioWeb.Models.Logica.FiltrosBusquedaExploracion)Session["FiltrosBusqueda"]);
+    ViewBag.Title = "Supervisión Informes";
+
+}
+
+@section estilos{
+    <style>
+        .popover, .popover-content {
+            min-width: 530px;
+        }
+
+        .anchoTexto {
+            width: 400px;
+        }
+    </style>
+    <link href="~/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="~/css/plugins/calendario/FullCalendar.css" rel="stylesheet" />
+    <link href="~/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="~/css/plugins/dualListbox/bootstrap-duallistbox.min.css" rel="stylesheet">
+}
+
+
+@section barraTop{
+    <form id="filtrosBusqueda" method="get">
+
+        <div class="border-bottom white-bg dashboard-header">
+            <div class="row">
+                <div class="col-sm-4 ">
+                    <div class="form-group">
+                        <label class="control-label ">Fecha</label>
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            @{
+                                string FechaActual = "";
+                                if (Session["FiltrosBusqueda"] != null)
+                                {
+                                    FechaActual = oFiltros.Fecha;
+                                }
+                                else
+                                {
+                                    FechaActual = DateTime.Now.ToString("dd-MM-yyyy");
+
+                                }
+
+                            }
+                            <input id="fechaSelect" type="text" class="form-control" value="@FechaActual">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">Aparato</label>
+                        @{
+                            IEnumerable<RadioWeb.Models.DAPARATOS> oListTemp = ((List<RadioWeb.Models.DAPARATOS>)ViewBag.Daparatos);
+
+                            if (Session["FiltrosBusqueda"] != null && oFiltros.oidCentro > 0)
+                            {
+                                oListTemp = oListTemp.Where(s => s.CID == oFiltros.oidCentro);
+                            }
+
+                            <select id="ddlAparatos" name="ddlAparatos" class="form-control select2" data-filter-calendar="true">
+                                @if (Session["FiltrosBusqueda"] != null && oFiltros.oidCentro > 0)
+                                {
+                                    <option value="-1">&nbsp;</option>
+                                }
+
+                                @foreach (RadioWeb.Models.DAPARATOS item in oListTemp)
+                                {
+                                    if (!item.COD_FIL.Contains("OBSOLETO"))
+                                    {
+                                        if (Session["FiltrosBusqueda"] != null && item.OID == oFiltros.oidAparato)
+                                        {
+                                            <option selected="selected" value="@item.OID">@item.COD_FIL</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.OID">@item.COD_FIL</option>
+                                        }
+
+                                    }
+
+                                }
+                            </select>
+                        }
+
+
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">Grupo</label>
+
+                        @Html.DropDownList("ddlGrupo", (IEnumerable<SelectListItem>)ViewBag.GrupoAparatos, new { data_filter_calendar = "true", @class = "form-control select2 ", style = "padding:4px;" })
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">Mutua</label>
+                        @{
+                            List<RadioWeb.Models.MUTUAS> oListTempMutuas = (List<RadioWeb.Models.MUTUAS>)System.Web.HttpContext.Current.Application["Mutuas"];
+
+                            <select id="ddlMutuas" class="select2  form-control " data-filter-calendar="true" data-live-search="true" style="padding: 4px;">
+                                @foreach (RadioWeb.Models.MUTUAS item in oListTempMutuas)
+                                {
+                                    if (Session["FiltrosBusqueda"] != null && item.OID == oFiltros.oidMutua)
+                                    {
+                                        <option data-subtext="@item.NOMBRE" selected="selected" data-text-value="@item.CODMUT" value="@item.OID">
+                                            @if (System.Configuration.ConfigurationManager.AppSettings["ComboMutuas"].ToUpper() == "NOMBRE")
+                                            {
+                                                /**/
+                                                @item.NOMBRE
+                                            }
+                                            else
+                                            {
+                                                @item.CODMUT
+                                            }
+
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option data-subtext="@item.NOMBRE" data-text-value="@item.CODMUT" value="@item.OID">
+                                            @if (System.Configuration.ConfigurationManager.AppSettings["ComboMutuas"].ToUpper() == "NOMBRE")
+                                            {
+                                                /**/
+                                                @item.NOMBRE
+                                            }
+                                            else
+                                            {
+                                                @item.CODMUT
+                                            }
+                                        </option>
+                                    }
+
+                                }
+                            </select>
+                        }
+
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">Centro</label>
+
+                        @{
+                            List<RadioWeb.Models.CENTROS> oListCentros = (List<RadioWeb.Models.CENTROS>)ViewBag.Centros;
+                            <select id="ddlCentros" class="select2 form-control " data-filter-calendar="true" data-live-search="true" style="padding: 4px;">
+                                @foreach (RadioWeb.Models.CENTROS item in oListCentros)
+                                {
+                                    if (Session["FiltrosBusqueda"] != null && item.OID == oFiltros.oidCentro)
+                                    {
+                                        <option selected="selected" value="@item.OID">@item.NOMBRE </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.OID">@item.NOMBRE </option>
+                                    }
+
+                                }
+                            </select>
+                        }
+
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">Tipo</label>
+
+                        <select id="ddlTipoExploracion" class="selectpicker form-control select2" data-filter-calendar="true" data-live-search="true" style="padding: 4px;">
+                            <option value="-1">&nbsp;</option>
+                            <option value="1">PRI</option>
+                            <option value="2">MUT</option>
+                            <option value="3">ICS</option>
+                        </select>
+
+                    </div>
+                </div>
+                <div class="col-sm-1 ">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Huecos</label>
+                        <div class="col-sm-10">
+                            @if (Session["FiltrosBusqueda"] != null && oFiltros.SoloHuecos == "true")
+                            {
+                                <input type="checkbox" id="chkHuecos" name="chkHuecos" class="js-switch" checked />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkHuecos" name="chkHuecos" class="js-switch" />
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-sm-1 ">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Borrados</label>
+                        <div class="col-sm-10">
+                            @if (Session["FiltrosBusqueda"] != null && oFiltros.Borrados == "true")
+                            {
+                                <input type="checkbox" id="chkBorrados" name="chkBorrados" class="js-switch" checked />
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="js-switch" id="chkBorrados" name="chkBorrados" />
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+}
+
+
+<div class="row animated fadeInDown">
+    <div id="ViewCalendario">
+        @{
+            var columnasCalendario = "";
+            //Si es una recepción de Tibidabo o Can mora
+            if ((oUsuarioLogeado != null) && (oUsuarioLogeado.PERFIL == 6 || oUsuarioLogeado.PERFIL == 163))
+            {
+                columnasCalendario = "12";
+            }
+            else
+            {
+                columnasCalendario = "7";
+
+            }
+        }
+        <div class="col-lg-@columnasCalendario">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Calendario</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <input type="hidden" name="privilegiado" id="privilegiado" value="@oUsuarioLogeado.PRIVILEGIADO" />
+                <div class="ibox-content" id="calendario">
+                </div>
+            </div>
+        </div>
+        @if (columnasCalendario == "7")
+        {
+            <div class="col-lg-5">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Resumen </h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                    <div class="ibox-content " id="resumen" style="height: 300px;">
+                    </div>
+                </div>
+
+            </div>
+        }
+
+
+    </div>
+    <form id="ListaDia" method="get">
+        <div id="ViewListaDia" class="hide">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+
+                    <div class="m-b-lg" style="margin-bottom: 14px;">
+                        @{
+                            string FiltroPaciente = "";
+                            if (Session["FiltrosBusqueda"] != null)
+                            {
+                                FiltroPaciente = oFiltros.Paciente;
+                            }
+                            else
+                            {
+                                FiltroPaciente = "";
+                            }
+
+                        }
+                        <div class="col-lg-8">
+                            <div class="input-group">
+                                <input type="text" id="txtPaciente" placeholder="Buscar paciente" class="form-control" style="text-transform:uppercase;" value="@FiltroPaciente">
+                                <span class="input-group-btn">
+                                    <button type="button" id="BuscarPaciente" class="btn btn-white">Buscar</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            @{
+                                List<PERSONAL> oListTempMedicos = (List<PERSONAL>)ViewBag.Medicos;
+
+                                <select id="IOR_MEDICOINFORMANTE" style="width:100%;" name="IOR_MEDICOINFORMANTE" class="selectpicker form-control select2" data-filter-calendar="true">
+
+                                    @foreach (PERSONAL item in oListTempMedicos)
+                                    {
+                                        if (oFiltros != null && item.OID == oFiltros.oidMedicoInformante)
+                                        {
+
+                                            <option selected="selected" data-subtext="@item.NOMBRE" data-text-value="@item.COD" value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                        }
+                                        else
+                                        {
+                                            <option data-subtext="@item.NOMBRE" data-text-value="@item.COD" value="@item.OID">@item.COD - @item.NOMBRE </option>
+
+                                        }
+                                    }
+                                </select>
+                            }
+                        </div>
+                        <div id="selectedFiles" class="row" style="padding: 3px"></div>
+                        <div class="m-t-md" style="margin-top: 2px;">
+                            <input type="hidden" id="sid" name="sid" value="@Session.SessionID" />
+
+                            <div class="pull-right">
+
+
+                                @*<button id="CarritoCitas" data-toggle="popover" data-placement="bottom" data-html="true" type="button" class="btn btn-sm btn-white ui-popover " data-container="body" data-content="">
+                                        <i title="Carro Exploraciones" style="color: green;" class="fa fa-shopping-cart "></i>
+                                        <span class="badge" id="ExploracionesPersonalesCuenta" style="color: red; background-color: white;">@NumeroExploraciones</span>
+                                    </button>*@
+                                <button type="button" id="btnDiaAnterior" data-toggle="tooltip" data-placement="top" title="Día Anterior" class="btn btn-sm btn-white"><i class="fa fa-hand-o-left" title="Día Anterior"></i></button>
+                                <button type="button" id="btnHoy" class="btn btn-sm btn-white" data-toggle="tooltip" data-placement="top" title="Hoy"><i class="fa fa-hand-o-up" title="Hoy"></i></button>
+                                <button type="button" id="btnDiaSiguiente" class="btn btn-sm btn-white" data-toggle="tooltip" data-placement="top" title="Día siguiente"><i class="fa fa-hand-o-right" title="Día Siguiente"></i></button>
+                                <button type="button" id="btnActualizarPresencia" class="btn btn-sm btn-white disabled" data-toggle="tooltip" data-placement="top" title="Presencia"><i class="fa fa-dot-circle-o" title="Actualizar Presencia"></i></button>
+                                <button type="button" id="btnPresenciaImprimir" class="btn btn-sm btn-white disabled" data-toggle="tooltip" data-placement="top" title="Presencia e Imprimir"><i class="fa fa-bolt" title="Presencia e Imprimir"></i></button>
+                                <button type="button" id="btnEntrada" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-form-Entrada" title="Dar Entrada"><i class="fa fa-map-marker" title="Entrada"></i></button>
+                                @*EL USUARIO DE MANREA NO PUEDE DAR ALTAS DE EXPLORACIONES, LAS DEBE DAR POR EL SERVICIO REST CREADO PARA ELLO*@
+                                @if (oUsuarioLogeado.PERFIL != 202)
+                                {
+                                    <button type="button" id="btnAgregarExploracion" data-href="/Exploracion/AddPaso1" class="btn btn-sm btn-white disabled" title="Agregar Exploración"><i class="fa fa-plus" title="Agregar Exploración"></i></button>
+                                }
+                                @*<button type="button" onclick="scanImage();" class="btn  btn-sm btn-primary btn-lg"><i class="fa fa-send" title="Ficha Paciente"></i></button>*@
+
+                                <button type="button" id="btnFichaPaciente" class="btn btn-sm btn-white disabled" title="Ficha Paciente"><i class="fa fa-user" title="Ficha Paciente"></i></button>
+                                <button type="button" id="btnImprimir" class="btn btn-sm btn-white disabled" data-toggle="tooltip" data-placement="top" title="Imprimir"><i class="fa fa-print" title="Imprimir"></i></button>
+                                <button type="button" id="btnTablet" class="btn btn-sm btn-white" data-toggle="modal" data-target="#modal-form-VidSigner" title="Enviar a Firmar">
+                                    <i class="fa fa-tablet" title="Tablet"></i>
+                                </button>
+                                <div class="btn-group">
+                                    <button type="button" id="btnEtiquetas" class="btn btn-white btn-sm disabled" data-etiquetas="1">
+                                        <i class="fa fa-barcode" title="Etiquetas"></i>
+                                    </button>
+                                    <button type="button" id="btnEtiquetasMasOpciones" class="btn btn-white btn-sm dropdown-toggle disabled" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu " role="menu">
+
+                                        <li><a href="#" data-etiquetas="2">2</a></li>
+                                        <li><a href="#" data-etiquetas="3">3</a></li>
+                                        <li><a href="#" data-etiquetas="4">4</a></li>
+                                    </ul>
+                                </div>
+                                <button type="button" id="btnPagoRapido" class="btn btn-sm btn-white disabled" title="Pago Rápido"><i class="fa fa-calculator" title="Pago Rápido"></i></button>
+                                <button type="button" id="btnConfirmar" class="btn btn-sm btn-white disabled" data-toggle="tooltip" data-placement="top" title="Confirmar Exploración"><i class="fa fa-check" title="Confirmar"></i></button>
+
+
+                                <button type="button" id="btnWebCam" class="btn btn-sm btn-white disabled" data-toggle="modal" data-target="#modal-form-WebCam" title="Capturar Imágen"><i class="fa fa-camera" title="WebCam"></i></button>
+                                @*<button type="button" id="btnVerFoto" class="btn btn-sm btn-white disabled" data-toggle="modal" data-target="#modal-form-VerFoto" title="Ver Foto"><i class="fa fa-picture-o" title="Ver Foto"></i></button>*@
+                                @*<button type="button" id="btnConsumible" class="btn btn-sm btn-white disabled" data-toggle="modal" data-target="#modal-form-Consumible" title="Agregar Consumible"><i class="fa fa-eyedropper" title="Consumible"></i></button>*@
+                                <button type="button" id="btnModalJustificante" class="btn btn-sm btn-white disabled" data-target="#modalImprimirJustificante" data-toggle="modal" title="Justificante"><i class="fa fa-certificate" title="Justificante"></i></button>
+                                <button type="button" id="btnCapturarDesdeTablet" class="btn btn-sm btn-white hidden-lg disabled" title="Captura Imagen"><i class="fa fa-send" title="Adjuntar Imágen"></i></button>
+                                @*EL USUARIO DE MANREA NO PUEDE DAR ALTAS DE EXPLORACIONES, LAS DEBE DAR POR EL SERVICIO REST CREADO PARA ELLO*@
+                                @if (oUsuarioLogeado.PERFIL != 202)
+                                {
+
+                                    <div class="btn-group">
+                                        <button type="button" id="btnBorrar" class="btn btn-danger btn-xs disabled">Borrar</button>
+                                        <button type="button" id="btnBorrarMasOpciones" class="btn btn-danger btn-xs dropdown-toggle disabled" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#" id="btnNoPresentado">No presentado</a></li>
+                                            <li><a href="#" id="btnLlamaAnulando">Llama Anulando</a></li>
+                                        </ul>
+                                    </div>
+                                }
+                                <div class="btn-group" id="ColorPickerParent">
+                                    <button type="button" class="btn btn-info dropdown-toggle  btn-xs disabled" data-toggle="dropdown">
+                                        Color <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu " id="ColorPicker" role="menu">
+
+                                        <li><a href="#" data-cid="0" style="background-color: white;"></a></li>
+                                        <li><a href="#" data-cid="1" style="background-color: teal;"></a></li>
+                                        <li><a href="#" data-cid="2" style="background-color: red;"></a></li>
+                                        <li><a href="#" data-cid="3" style="background-color: lime;"></a></li>
+                                        <li><a href="#" data-cid="4" style="background-color: yellow;"></a></li>
+                                        <li><a href="#" data-cid="5" style="background-color: blue;"></a></li>
+                                        <li><a href="#" data-cid="6" style="background-color: fuchsia;"></a></li>
+                                        <li><a href="#" data-cid="7" style="background-color: aqua;"></a></li>
+                                        <li><a href="#" data-cid="8" style="background-color: maroon;"></a></li>
+                                        <li><a href="#" data-cid="9" style="background-color: green;"></a></li>
+                                        <li><a href="#" data-cid="10" style="background-color: olive;"></a></li>
+                                        <li><a href="#" data-cid="11" style="background-color: navy;"></a></li>
+                                        <li><a href="#" data-cid="12" style="background-color: purple;"></a></li>
+                                        <li><a href="#" data-cid="13" style="background-color: gray;"></a></li>
+                                        <li><a href="#" data-cid="14" style="background-color: black;"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <strong>
+                                <label id="fechaActualValue"></label>
+                                <label id="cuentaExploraciones"></label>
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div id="spiner-cargando-listadia" class="row hide" style="height: 600px;">
+
+                        <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+
+                    <div id="listaDia" style="height: 600px;" class="table-responsive hide">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<div class="modal inmodal fade" id="modalTiempoEspera" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Tiempo Espera</h4>
+            </div>
+            <div class="modal-body">
+
+                <label class="col-lg-4 control-label">Hora programada</label>
+
+                <div class="col-lg-2">
+                    <span class="form-control-static" id="HoraProgramada">14:00</span>
+                </div>
+                <label class="col-lg-4 control-label">Hora llegada</label>
+
+                <div class="col-lg-2">
+                    <span class="form-control-static" id="HoraLLegada"></span>
+                </div>
+
+                <label class="col-sm-4 control-label">Realizada a las </label>
+
+                <div class="col-sm-2">
+                    <span class="form-control-static" id="HoraRealizada"></span>
+                </div>
+
+                <label class="col-sm-4 control-label">Tiempo Espera </label>
+
+                <div class="col-sm-2">
+                    <span class="form-control-static" id="tiempoEspera"></span>
+                </div>
+
+                <br />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal inmodal fade" id="modalSMS" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Enviar SMS</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="control-label">Plantilla SMS</label>
+
+
+                    @{
+                        List<RadioWeb.Models.EMAIL> oListEmail = (List<RadioWeb.Models.EMAIL>)System.Web.HttpContext.Current.Application["PlantillasCorreoSMS"];
+
+                        <select id="ddlEmail" name="ddlEmail" class="selectpicker form-control ">
+                            @foreach (RadioWeb.Models.EMAIL item in oListEmail)
+                            {
+                                if (item.DIRECCION != null && item.TEXTO != null)
+                                {
+                                    <option data-contenido="@item.TEXTO" data-oid="@item.OID" value="@item.OID">@item.DIRECCION </option>
+                                }
+                            }
+                        </select>
+                    }
+
+                </div>
+                <p>
+                    <input type="hidden" value="GRUP MANCHON:  Se le ha enviado un informe de su estudio por mail. El código de acceso es CDPI . Si tiene alguna duda llame al 934450600. Gracias" id="textoSMSPlantilla" />
+                    <textarea class="form-control" id="textoSMS" name="textoSMS" rows="3"> </textarea>
+                </p>
+                <p>
+                    <input type="text" name="movilEnvioSMS" id="movilEnvioSMS" class="form-control" value=" " />
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="EnviarSMS">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal inmodal fade" id="modalImprimirJustificante" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Justificante Visita</h4>
+            </div>
+            <div class="modal-body" style="height:150px;">
+
+                <label class="col-lg-3 control-label">Hora llegada</label>
+
+                <div class="col-lg-3">
+                    <input type="text" class="form-control" name="HoraLLegadaJustificante" id="HoraLLegadaJustificante" value="" />
+
+                </div>
+                <label class="col-lg-3 control-label">Hora Realizada</label>
+                <div class="col-lg-3">
+                    <input type="text" class="form-control" name="HoraRealizadaJustificante" id="HoraRealizadaJustificante" value="" />
+                </div>
+                <label class="col-lg-3 control-label">Texto </label>
+                <div class="col-lg-9">
+                    <p>
+                        <textarea class="form-control" id="textoLibreJustificante" name="textoLibreJustificante" rows="3"> </textarea>
+                    </p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnImprimirJustificante">Generar Justificante</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*Ventana Modal para anular huecos*@
+<div id="modal-form-MotivoAnular" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-exclamation modal-icon"></i>
+                <h4 class="modal-title">Motivo anulación</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+
+                                <label class="sr-only" for="MotivoAnulacion">Motivo anulación</label>
+                                <select id="MotivoAnulacion" class="form-control motivos">
+                                    <option value="No doctor">No doctor</option>
+                                    <option value="No técnico/auxiliar">No técnico/auxiliar</option>
+                                    <option value="Averia">Averia</option>
+                                    <option value="Mantenimiento">Mantenimiento</option>
+                                    <option value="Demora">Demora</option>
+                                    <option value="Cambio máquina RM1">Cambio máquina RM1</option>
+                                    <option value="Cambio máquina RM2">Cambio máquina RM2</option>
+                                    <option value="Cambio máquina RM3">Cambio máquina RM3</option>
+                                    <option value="Reserva ORT">Reserva ORT</option>
+                                    <option value="Reserva DEN">Reserva DEN</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                                <label class="sr-only" for="MotivoAnulacion">Otros</label>
+                                <input type="text" name="OtrosAnulacion" class="form-control hide" id="OtrosAnulacion" />
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-sm-12 hide">
+
+                        <div class="form-group">
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                <button type="button" id="anularHuecoLibre" data-dismiss="modal" class="btn btn-primary pull-right">Anular</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal" id="modalConsumible" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                <i class="fa fa-user-md modal-icon"></i>
+                <h4 class="modal-title">Añadir consumible a exploración</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Buscar</label>
+                    <input id="BuscarConsumible" type="text" placeholder="Buscar Consumible" class="form-control">
+                </div>
+                <table id="ConsumiblesList" class="footable table seleccionable toggle-arrow-tiny" data-page-size="15">
+
+                    <tbody class="ConsumiblesList">
+
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="6">
+                                <ul class="pagination pull-right"></ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-form-entrada" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+            <div class="modal-header" style="padding-top:10px;padding-bottom:10px;">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="tituloEntrada">
+                    Entrada paciente
+                </h4>
+            </div>
+            <div class="modal-body" style="min-height:350px;">
+                <div class="spiner-cargando hide">
+                    <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                </div>
+                <div id="contenedorEntrada" class="tabs-container">
+
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contenedorModalImagenes">
+    <div id="modal-form-imagenes" class="modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Imágenes</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="contenedorCarrousel">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" id="ImprimirImagen" class="btn btn-white" type="button">Imprimir</button>
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="contenedorModalRespuestas">
+    <div id="modal-form-Respuestas" class="modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Respuestas</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+
+                    @*<div class="col-sm-12 ">
+                            <div class="form-group">
+                                <label class="col-sm-10 control-label  pull-right">Solo afirmativos</label>
+                                <div class="col-sm-2    ">
+                                    <input type="checkbox" class="js-switch" checked />
+                                </div>
+                            </div>
+
+                        </div>*@
+                    <hr class="hr-line-solid">
+                    <div id="contenedorRespuestas">
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="contenedorModalVidSigner">
+    <div id="modal-form-VidSigner" class="modal " aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Enviar a VidSigner</h4>
+                </div>
+
+                <div class="modal-body" id="modalVidContent">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@*Ventana Modal para usar la webcam*@
+<div id="modal-form-WebCam" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-lg-12" id="captura">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Web Cam
+                                </div>
+                                <div class="panel-body">
+                                    <div id="my_camera"></div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 hide" id="vistaprevia">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    Vista Previa
+                                </div>
+                                <div class="panel-body">
+                                    <div id="results" class="well">Vista Previa</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <input type="button" class="btn btn-success pull-right" value="Capturar" onclick="take_snapshot()">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade scandetail" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div style="max-height:1200px;overflow:scroll;">
+                <canvas id="myCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade dalert" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                Connection Failed
+            </div>
+            <div class="modal-body">
+                No Scan app application found in your machine please download,install and open first then refresh the browser.
+                <a href="~/SrcFile/Scan_App_SetUp.msi" download>Download Files</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/js/plugins/webcam/webcam.min.js"></script>
+
+    <script src="~/js/jquery.touchSwipe.min.js"></script>
+
+    <!-- Dual Listbox -->
+    <script src="~/js/plugins/dualListbox/jquery.bootstrap-duallistbox.js"></script>
+
+    <!-- Sparkline -->
+    <script src="~/js/plugins/sparkline/jquery.sparkline.min.js"></script>
+
+
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/calendario/Calendario2.js")"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/ListaDia/ListaDia.js")"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/ListaDia/Entrada.js")"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Informe/enviarInformeShared.js")"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Zebra/zebra.js")"></script>
+    @Html.Raw(Neodynamic.SDK.Web.WebClientPrint.CreateScript(Url.Action("PrintCommands", "Zebra", null, Request.Url.Scheme)))
+
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+
+
+
+
+
+    <script type="text/javascript">
+        var selDiv = "";
+        var storedFiles = [];
+
+        $(document).ready(function () {
+            //selDiv = $("#selectedFiles");
+            //$("body").on("click", ".selFile", editFiles);
+        });
+
+        var start = function () {
+            var i = 0;
+
+            var wsImpl = window.WebSocket || window.MozWebSocket;
+
+            window.ws = new wsImpl('ws://localhost:8181/');
+            ws.onmessage = function (e) {
+                if (typeof e.data === "string") {
+                    //IF Received Data is String
+
+                }
+                else if (e.data instanceof ArrayBuffer) {
+                    //IF Received Data is ArrayBuffer
+                }
+                else if (e.data instanceof Blob) {
+
+                    i++;
+
+                    var f = e.data;
+
+                    f.name = "File" + i;
+
+                    storedFiles.push(f);
+
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        var html = "<div class=\"col-sm-2 text-center\" style=\"border: 1px solid black; margin-left: 2px;\"><img height=\"200px\" width=\"200px\" src=\"" + e.target.result + "\" data-file='" + f.name + "' class='selFile' title='Click to remove'><br/>" + i + "</div>";
+                        selDiv.append(html);
+
+                    }
+                    reader.readAsDataURL(f);
+                }
+            };
+            ws.onopen = function () {
+                //Do whatever u want when connected succesfully
+            };
+            ws.onclose = function () {
+                // $('.dalert').modal('show');
+            };
+        }
+        window.onload = start;
+
+        function scanImage() {
+            ws.send("1100");
+        };
+
+        function editFiles(e) {
+            var file = $(this).data("file");
+            for (var i = 0; i < storedFiles.length; i++) {
+                if (storedFiles[i].name === file) {
+                    $('.scandetail').modal('show');
+                    var c = document.getElementById("myCanvas");
+                    var ctx = c.getContext("2d");
+                    var img = new Image();
+                    img.src = window.URL.createObjectURL(storedFiles[i]);
+                    img.onload = function () {
+                        c.width = img.width;
+                        c.height = img.height;
+                        ctx.drawImage(img, 0, 0, img.width, img.height);
+                    }
+                    break;
+
+                }
+            }
+        };
+
+    </script>
+
+}
+

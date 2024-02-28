@@ -1,0 +1,55 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+
+@{
+
+    var IOR_TIPOEXPLORACION = Model.HasValue ? Model : -1;
+    var IOR_APARATO =(int) ViewData["IOR_APARATO"];
+    var IOR_MUTUA =(int) ViewData["IOR_MUTUA"];
+    var NOMENCLATOR = false;
+    if (ViewData["IOR_MUTUA"]!=null && IOR_MUTUA<0)
+    {
+        NOMENCLATOR =(bool) ViewData["NOMENCLATOR"];
+    }
+    var tipodeExploracion = TarifasRepositorio.ObtenerPorAparatoYMutua(IOR_APARATO, IOR_MUTUA,NOMENCLATOR);
+
+    if (IOR_TIPOEXPLORACION > 0 && tipodeExploracion.Where(u => u.OID == IOR_TIPOEXPLORACION.Value).Count() == 0)
+    {
+        APARATOS oAparatoObsoleta = AparatoRepositorio.Obtener(IOR_TIPOEXPLORACION.Value);
+        tipodeExploracion.Add(oAparatoObsoleta);
+    }
+
+    var EXPLORACIONESCONTARIFA = tipodeExploracion.Select(u => new SelectListItem
+    {
+        Text = u.FIL + " - " + u.DES_FIL,
+        Value = u.OID.ToString(),
+        Selected = u.OID == IOR_TIPOEXPLORACION
+        
+    }).ToArray();
+
+
+}
+
+
+@if (ViewData["disabled"] != null && (bool)ViewData["disabled"] || ViewData["readonly"] != null && (bool)ViewData["readonly"])
+{
+    
+    <input type="hidden" id="IOR_TIPOEXPLORACION"
+           name="IOR_TIPOEXPLORACION" value="@IOR_TIPOEXPLORACION" />
+    @Html.Label("", EXPLORACIONESCONTARIFA.Single(t => t.Value == @ViewData.TemplateInfo.FormattedModelValue.ToString()).Text, 
+    new { @class = "form-control form-control-static", @readonly = "readonly" })
+}
+else
+{
+
+    @Html.DropDownList("", EXPLORACIONESCONTARIFA, new { @class = "form-control select2" })
+}
+
+
+
+
+
+
+
+
+

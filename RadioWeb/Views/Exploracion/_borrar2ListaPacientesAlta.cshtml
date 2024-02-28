@@ -1,0 +1,56 @@
+﻿@model List<RadioWeb.Models.PACIENTE>
+
+<table  class="table table-hover">
+    <tbody>
+        @foreach (var paciente in Model)
+        {
+            <tr data-oid="@paciente.OID">
+
+                <td class="project-title">
+                    <b>@paciente.PACIENTE1</b>
+                    <br>
+                    <small>
+                        @( paciente.FECHAN.HasValue ? "Nacido: " + paciente.FECHAN.Value.ToShortDateString() : "")
+                        <span style="margin-left:10px;"> Nº de exploraciones: @paciente.CUENTAVISITAS</span>
+                    </small>
+
+                </td>
+                <td class="project-people">
+                    @if (ViewBag.CampoMutua == "NOMBRE")
+                    {
+                        @paciente.DESCMUTUA
+                    }
+                    else
+                    {
+                        @paciente.CODMUTUA
+                    }
+                    <br>
+                    <span style="font-weight:bold;font-size:10px;">
+
+                        @( paciente.ULTIMAVISITAREALIZADA.HasValue ? "Última: " + paciente.ULTIMAVISITAREALIZADA.Value.ToShortDateString() : "")
+                    </span>
+                    <span style="font-weight:bold;font-size:10px;color:blue;">
+                        @( paciente.PROXIMACITA.HasValue ? "Próxima: " + paciente.PROXIMACITA.Value.ToShortDateString() : "")
+
+                    </span>
+
+
+
+                </td>
+
+                <td class="project-completion">
+                    <small>@paciente.EDAD</small>
+
+                </td>
+                <td class="project-people"></td>
+                <td class="project-people">
+                    @paciente.DNI
+                </td>
+                <td class="project-actions">
+                    <button class="btn btn-success btn-sm"  onclick="javascript:$('#IOR_PACIENTE').val(@paciente.OID);$('#frmSiguiente').submit();" type="button">Seleccionar</button>                
+
+                </td>
+            </tr>
+        }
+</tbody>
+</table>

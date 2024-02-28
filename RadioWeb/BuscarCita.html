@@ -1,0 +1,403 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <title>Grupo Manchon</title>
+    <link href="../../Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="css/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link href="css/plugins/select2/select2.min.css" rel="stylesheet">
+    <link href="css/plugins/select2/select2-bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <style>
+        input[type="text"]:focus, input[type="password"]:focus,
+        textarea:focus, select:focus {
+            font-size: 16px;
+        }
+
+        .centro {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: lightgrey;
+            border: 1px solid black;
+        }
+
+            .centro:hover {
+                cursor: pointer;
+                /*background-color: HighlightText;*/
+                background-color: red;
+            }
+
+        .table.clicable tr td:hover {
+            cursor: pointer;
+            color: black;
+            background-color: #6bc3c4;
+        }
+
+        .spinnerBuscando {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <form id="DatosPacienteClinicum">
+        <input type="hidden" name="nombrePaciente" id="nombrePaciente" value=" " />
+        <input type="hidden" name="apellidosPaciente" id="apellidosPaciente" value=" " />
+        <input type="hidden" name="mobil" id="mobil" value=" " />
+    </form>
+
+
+
+    <div class="container" style="margin-top: 20px;">
+        <div id="cabecera" class="row hide" style="margin-bottom: 5px;">
+            <img height="80" src="img/Logo%20Grup%20Manchon.jpg">
+        </div>
+
+        <div class="row centros hide">
+            <div class="col-md-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">1.- Seleccione uno de nuestros centros</div>
+                    <div id="Centros" class="panel-body">
+                        <div class="col-md-offset-1 col-md-2">
+                            <button class="btn btn-primary btn-lg btn-block" id="TIBIDABO" type="submit">TIBIDABO</button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary btn-lg btn-block" id="BALMES" type="submit">BALMES</button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary btn-lg btn-block" id="MERIDIANA" type="submit">MERIDIANA</button>
+                        </div>
+
+                        <div class=" col-md-2">
+                            <button class="btn btn-primary btn-lg btn-block" id="CUGAT" type="submit">SANT CUGAT</button>
+                        </div>
+
+                        <div class=" col-md-2">
+                            <button class="btn btn-primary btn-lg btn-block" id="HOSPITALET" type="submit">HOSPITALET</button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!--Modal: Login with Avatar Form-->
+        <div class="modal fade" id="modalLoginIsdin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog cascading-modal modal-avatar modal-sm" role="document">
+                <!--Content-->
+                <div class="modal-content">
+
+                    <!--Header-->
+                    <div class="modal-header text-center">
+                        <img src="/img/isdin.png" alt="isdin" class="rounded-circle">
+                    </div>
+                    <!--Body-->
+                    <div class="modal-body text-center">
+
+                        <h2 class="mt-1 mb-2">Campaña Isdin</h2>
+                        <div class="form-group">
+                            <div class="col-md-12 text-center">
+                                <input type="text" id="claveIsDIN" class="form-control col-md-4" style="text-transform:none;" placeholder="Introduzca la clave">
+                                <br />
+                                <h2 data-error="wrong" data-success="right" id="claveIncorrecta" style="color:red;" class="ml-0 red-bg hide">La clave no es correcta</h2>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-group">
+
+                            <input id="MasDe40" name="MasDe40" type="checkbox" />
+                            <label for="MasDe40">
+                                Tengo más de 40 años
+                            </label>
+
+
+
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <div class="col-md-12">  <button class="btn btn-primary mt-1" id="validarClave">Entrar <i class="fa fa-sign-in ml-1"></i></button></div>
+
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+        <!--Modal: Login with Avatar Form-->
+
+
+        <div class="row">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" id="panel-title">Búsqueda</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-horizontal">
+
+
+
+
+                        <div class="form-group ">
+                            <div class="col-md-2">
+                                <label for="exampleInputEmail1"> 1.- Fecha</label>
+                                <input type="text" class="form-control" id="fechaInicial" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="hora">2.- Hora</label>
+                                <select class="form-control" id="hora">
+                                    <option value="07:00">07:00</option>
+                                    <option value="08:00">08:00</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="20:00">20:00</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-xs-12">
+                                <label for="exampleInputEmail1">3.- Prueba</label>
+                                <select id="GrupoDeAparato" name="GrupoDeAparato" class="form-control select2"></select>
+                            </div>
+                            <div class="col-md-4  col-xs-12">
+                                <label for="exampleInputEmail1">4.- Tipo de Prueba</label>
+                                <select id="ddlAparato" name="ddlAparato" class="form-control select2"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="col-md-2">
+                                <label for="PRIMUT" class="control-label">Mutua / Privado</label>
+                                <select class="form-control" id="PRIMUT">
+                                    <option value="PRI">PRIVADO</option>
+                                    <option value="MUT">MUTUA</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 ">
+                                <label for="MutuaList" class="control-label">Mutua</label>
+                                <select id="MutuaList" class="form-control"></select>
+                            </div>
+
+                            <div class="col-md-4 col-xs-12">
+                                <br />
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" id="chkClaustrofobia" name="chkClaustrofobia"> Claustrofobia?
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" id="chkMarcapasos" name="chkMarcapasos"> Marcapasos?
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" id="chkEscayola" name="chkEscayola"> Escayola?
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div id="textoInfo" class="row text-center hide" style="margin-top: 5px;">
+                        <div class="alert alert-warning col-md-offset-2 col-md-7" role="alert">
+                            <span id="textPreparatorio"></span>
+                        </div>
+                    </div>
+
+                    <div class="row ">
+                        <div class="col-md-6">
+                            <button id="CarritoCitas" title="Exploraciones" data-toggle="popover" data-placement="bottom" data-html="true" type="button" class="btn ui-popover btn-danger " data-container="body" data-content="hola">
+                                <i style="color: white;font-size:14px;" title="Carro Exploraciones" class="fa fa-shopping-cart "></i>
+                                <span class="badge" style="color: red; background-color: white; ">0</span>
+                            </button>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="button" id="btnBuscarHora" class="btn btn-primary">Buscar Hora</button>
+                            <button type="button" id="ReservarCita" class="btn btn-success disabled">Reservar Citas</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+        <div class="row">
+
+            <div class="jumbotron hide" style="padding-top: 10px;">
+                <div id="okLlamadaEspecial" class="alert alert-success hide" role="alert">Su teléfono ha sido enviado a nuestro servicio de citación y le llamaremos lo antes posible</div>
+                <div id="koPruebaEspecial" class="alert alert-danger" role="alert">Debido a la complejidad de la prueba solicitada y para mejorar la calidad del servicio contactaremos directamente con usted para la reserva de cita.</div>
+                <div class="form-group hide" id="LlamadaEspecialTelefono">
+                    <div class="input-group col-md-6 col-xs-6 ">
+                        <label for="NombreEspecial" class="control-label">Nombre</label>
+                        <input id="NombreEspecial" type="text" class="form-control" />
+                    </div>
+                    <div class="input-group col-md-6 col-xs-6">
+                        <label for="TelefonoEspecial" class="control-label">Teléfono</label>
+                        <input id="TelefonoEspecial" type="text" class="form-control" />
+                    </div>
+                    <div class="input-group  col-md-12">
+                        <button id="EnviarTelefonoPruebaEspecial" class="btn btn-primary" type="button">Enviar!</button>
+                    </div>
+
+                </div>
+
+            </div>
+            <div id="centrosLink">
+                <div role="alert" class="alert alert-success"> <strong>5.-</strong> Seleccione uno de nuestros Centros </div>
+
+
+                <ul class="nav nav-pills nav-justified" style="margin-bottom: 5px;">
+                    <li class="active" data-toggle="" role="presentation">
+                        <a data-toggle="pill" href="#tab-Tibidabo">Tibidabo </a>
+                    </li>
+                    <li role="presentation" class=""><a data-toggle="pill" href="#tab-Balmes">Balmes</a></li>
+                    <li role="presentation" class=""><a data-toggle="pill" href="#tab-CanMora">Sant Cugat</a></li>
+                    <li role="presentation" class=""><a data-toggle="pill" href="#tab-Meridiana">Meridiana</a></li>
+                    <li role="presentation" class=""><a data-toggle="pill" href="#tab-Hospitalet">Hospitalet</a></li>
+                </ul>
+                <div id="Resultados" class="tab-content">
+                    <div id="tab-Tibidabo" class="tab-pane active">
+                        <div class="" id="CDPIResult">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">
+                                    CDPI TIBIDABO
+                                    <br />
+                                    <span style="font-size: 11px">Av. Tibidabo, 9 08022 - BARCELONA </span>
+                                </div>
+                                <div class="panel-body" style="padding: 0px;">
+                                    <!-- Table -->
+                                    <img class="spinnerBuscando hide" src="Images/buscando.gif" alt="" />
+                                    <table class="table  clicable huecosResult"></table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="tab-Balmes" class="tab-pane ">
+                        <div class="" id="BALMESResult">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">
+                                    CDPI BALMES<br />
+                                    <span style="font-size: 11px">C/ Balmes, 125 08008 Barcelona  </span>
+                                </div>
+                                <div class="panel-body" style="padding: 0px;">
+                                    <!-- Table -->
+                                    <img class="spinnerBuscando hide" src="Images/buscando.gif" alt="Alternate Text" />
+                                    <table class="table  clicable huecosResult"></table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="tab-CanMora" class="tab-pane">
+                        <div class="" id="CUGATResult">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">
+                                    CDPI SANT CUGAT
+                                    <br />
+                                    <span style="font-size: 11px">c/ Sant Jordi 37 08172 Sant Cugat </span>
+                                </div>
+                                <div class="panel-body" style="padding: 0px;">
+                                    <img class="spinnerBuscando hide" src="Images/buscando.gif" alt="Alternate Text" />
+                                    <table class="table  clicable huecosResult"></table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="tab-Meridiana" class="tab-pane">
+                        <div class="" id="MERIDIANAResult">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">
+                                    CDPI MERIDIANA<br />
+                                    <span style="font-size: 11px">Av. Meridiana, 327 08027  </span>
+                                </div>
+                                <div class="panel-body" style="padding: 0px;">
+                                    <!-- Table -->
+                                    <img class="spinnerBuscando hide" src="Images/buscando.gif" alt="Alternate Text" />
+                                    <table class="table  clicable huecosResult"></table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="tab-Hospitalet" class="tab-pane">
+                        <div class="" id="HOSPITALETResult">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">
+                                    CDPI HOSPITALET<br />
+                                    <span style="font-size: 11px">Avda. Ventura Gassol, 12 </span>
+                                </div>
+                                <div class="panel-body" style="padding: 0px;">
+                                    <!-- Table -->
+                                    <img class="spinnerBuscando hide" src="Images/buscando.gif" alt="Alternate Text" />
+                                    <table class="table  clicable huecosResult"></table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADPM10 -->
+        <div class="modal fade" id="adesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Advertencia</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Grupo Manchón no tiene concierto con MUFACE ni ISFAS. Si es usted de alguna de esas Mutuas, por favor llame a nuestras oficinas.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="okButton" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/Scripts/jquery-2.0.3.min.js"></script>
+    <script src="/Scripts/bootstrap.min.js"></script>
+    <script src="/Scripts/moment.min.js"></script>
+    <script src="/Scripts/moment-with-locales.min.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="/Scripts/jQuery.tmpl.min.js"></script>
+    <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/js/plugins/select2/select2.min.js"></script>
+    <script src="/citaonline28112023.js"></script>
+    <script src="/BuscarCita28112023.js"></script>
+
+
+
+</body>
+</html>

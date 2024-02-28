@@ -1,0 +1,27 @@
+﻿@model  RadioWeb.ViewModels.Paciente.VMHistoriaClinica
+
+<div id="modal-form-historia" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Cerrar</span>
+                </button>
+                <h4 class="modal-title">Historia clínica</h4>
+             
+            </div>
+        
+
+                <div class="modal-body">
+                  
+                    @Html.Raw(@Model.TEXTOHTML)
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+                </div>
+            
+        </div>
+    </div>
+</div>

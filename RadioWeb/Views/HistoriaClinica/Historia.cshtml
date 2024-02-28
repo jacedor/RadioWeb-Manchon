@@ -1,0 +1,40 @@
+﻿@model  RadioWeb.ViewModels.Paciente.VMHistoriaClinica
+
+<div id="modal-form-historia" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Cerrar</span>
+                </button>
+                <h4 class="modal-title">Historia clínica</h4>
+             
+            </div>
+            @using (Ajax.BeginForm("GuardarHc",
+              "HistoriaClinica",
+              new AjaxOptions
+              {
+                  HttpMethod = "POST",
+                  UpdateTargetId = "divResultado"
+              }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body">
+                    <div id="divResultado">
+
+                    </div>
+                    @Html.Hidden("IOR_PACIENTE", Model.IOR_PACIENTE)
+                    <textarea name="TEXTOHTML" id="TEXTOHTML" data-oid="@Model.IOR_PACIENTE">
+                        @Model.TEXTOHTML
+                    </textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                    <button class="btn btn-primary" type="submit">Guardar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

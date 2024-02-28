@@ -1,0 +1,72 @@
+﻿@model RadioWeb.ViewModels.Paciente.VMLOPDPaciente
+@using RadioWeb.Models.Repos;
+@{
+
+    WebConfigRepositorio oConfig = new WebConfigRepositorio();
+    var MODULO_LOPD = oConfig.ObtenerValor("LOPD_PACIENTE").Equals("T");
+}
+
+@if (MODULO_LOPD)
+{
+
+    <div class="row text-center m-b-md">
+        <span class="font-bold">Configuración LOPD definida para el usuario. (A tener en cuenta a la hora de notificaciones o envíos de Informes, etc.)</span>
+    </div>
+
+    <div class="row text-center">
+        <div class="col-sm-2 col-sm-offset-1">
+            <div class="editor-label">
+                @Html.BootstrapLabelFor(m => m.ENVIO_PROPAGANDA)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="editor-label">
+                @Html.BootstrapLabelFor(m => m.LLAMADA_NOMBRE)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="editor-label">
+                @Html.BootstrapLabelFor(m => m.ACCESO_WEB)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="editor-label">
+                @Html.BootstrapLabelFor(m => m.CONSULTA_PREVIA)
+            </div>
+        </div>
+        <div class="col-sm-2">
+
+        </div>
+        <div class="col-sm-1"></div>
+    </div>
+
+    <div class="row text-center m-b-md">
+        <div class="col-sm-2 col-sm-offset-1">
+            <div class="editor-field">
+                @Html.DisplayFor(model => model.ENVIO_PROPAGANDA)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="editor-field">
+                @Html.DisplayFor(model => model.LLAMADA_NOMBRE)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="editor-field">
+
+                @Html.DisplayFor(model => model.ACCESO_WEB)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="editor-field">
+                @Html.DisplayFor(model => model.CONSULTA_PREVIA)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="editor-field">
+            </div>
+        </div>
+        <div class="col-sm-1"></div>
+    </div>
+
+}

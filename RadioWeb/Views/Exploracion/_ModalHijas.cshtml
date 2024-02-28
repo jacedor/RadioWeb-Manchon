@@ -1,0 +1,62 @@
+﻿@model  IEnumerable<RadioWeb.Models.EXPLORACION>
+
+<div id="modal-form-hijas" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Cerrar</span>
+                </button>
+                <h4 class="modal-title">Exploraciones Relacionadas </h4>
+            </div>
+
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Aparato</th>
+                            <th>Exploración</th>
+                            <th>Imprimir en informe</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                         
+                            <tr class="@(item.IOR_MASTER>0? "":"success") ">
+                                <td>@item.FECHA.Value.ToShortDateString() @item.HORA</td>
+                                <td>@item.DAPARATO.DES_FIL</td>
+                                <td>@item.APARATO.DES_FIL</td>
+                                <td>
+                                    <a data-type="checklist" class="xEditableCabInfExplo" data-value ="@(item.CABINF_EXPLO=="T" ? "T" : "No")"
+                                       data-url="/Exploracion/EditarCampo" id="CABINF_EXPLO" data-pk="@item.OID"
+                                       data-title="Imprimir Exploración">
+                                        @(item.CABINF_EXPLO=="T" ? "Sí" : "No")
+                                    </a>
+                                </td>
+                            </tr>
+                            if (item.CONSUMIBLES != null && item.CONSUMIBLES.Count > 0)
+                            {
+                                <tr>
+                                    <td colspan="4">
+                                        @Html.Partial("~/Views/Consumible/ListaInyectables.cshtml", item.CONSUMIBLES)
+                                    </td>
+                                </tr>
+                             
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+            </div>
+
+        </div>
+    </div>
+</div>

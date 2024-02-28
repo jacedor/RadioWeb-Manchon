@@ -1,0 +1,114 @@
+﻿@model IEnumerable<RadioWeb.Models.EXP_CONSUM>
+@*esta vista se usa en la ficha de la exploración para añadir la dosis y la hora en que se
+    pone la dosis del consumible*@
+
+
+
+<table class="table table-hover ConsumiblesList">
+    <thead>
+        <tr>
+
+            <th>Consumible</th>
+            <th>Técnico</th>
+            <th>Dosis en mCi</th>
+            <th>DLP en mGy/cm</th>
+            <th>Hora</th>
+            <th>Observaciones</th>
+            <th>Imprimir en informe</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var consumible in Model)
+        {
+            <tr data-oid="@consumible.OID">
+                <td>@consumible.CONSUMIBLE.DES_CONSUM</td>
+                <td>
+                    <div id="OWNER" class="profile-info-value OWNER ">
+
+                        <a href="#" id="OWNER" data-type="select" data-url="/Consumible/EditarCampo" data-pk="@consumible.OID" data-value="@consumible.OWNER" data-source="/Consumible/GetTecnicos" data-title="Técnico Inyectable"
+                           class="editable editable-click tecnicoconsumible" style="color: gray; display: inline;">
+
+                            @consumible.TECNICO
+                        </a>
+                    </div>
+                </td>
+                <td align="center">
+
+
+
+                    <div id="mci" class="profile-info-value mci ">
+                        @if (consumible.MCI < 0)
+                        {
+                            <span data-pk="@consumible.OID" data-url="/Consumible/EditarCampo" data-value="" class="@(consumible.EXPLORACIONINFORMADA == "F" ? "editable" : "")" id="dosis">...</span>
+                        }
+                        else
+                        {
+                            <span data-pk="@consumible.OID" data-url="/Consumible/EditarCampo" data-value="@consumible.MCI" class="@(consumible.EXPLORACIONINFORMADA == "F" ? "editable" : "")" id="dosis">@consumible.MCI</span>
+                        }
+
+                    </div>
+
+
+                </td>
+                <td align="center">
+
+
+                    <div id="DLP" class="profile-info-value DLP ">
+                        @if (consumible.DLP < 0)
+                        {
+                            <span data-pk="@consumible.OID" data-url="/Consumible/EditarCampo" data-value="" class="@(consumible.EXPLORACIONINFORMADA == "F" ? "editable" : "")" id="dosisDLP">...</span>
+                        }
+                        else
+                        {
+                            <span data-pk="@consumible.OID" data-url="/Consumible/EditarCampo" data-value="@consumible.DLP" class="@(consumible.EXPLORACIONINFORMADA == "F" ? "editable" : "")" id="dosisDLP">@consumible.DLP</span>
+                        }
+
+                    </div>
+
+
+                </td>
+
+                <td>
+                    <div id="HORA" class="profile-info-value DLP ">
+                        @if (String.IsNullOrEmpty(consumible.HORA))
+                        {
+                            <span data-pk="@consumible.OID" data-url="/Consumible/EditarCampo" data-value="@consumible.HORA" class="@(consumible.EXPLORACIONINFORMADA == "F" ? "editable" : "")">...</span>
+                        }
+                        else
+                        {
+                            <span data-pk="@consumible.OID" data-url="/Consumible/EditarCampo" data-value="@consumible.HORA" class="@(consumible.EXPLORACIONINFORMADA == "F" ? "editable" : "")">@consumible.HORA</span>
+
+
+                        }
+
+                    </div>
+
+
+                </td>
+                <td>
+                    <a data-title="Observaciones consumible" data-pk="@consumible.OID" data-type="text"
+                       id="DOSIS"
+                       href="#" class="editable editable-click textoXeditable"
+                       data-url="/Consumible/EditarCampo" data-value="@consumible.DOSIS">
+                        @if (String.IsNullOrEmpty(consumible.DOSIS))
+                        {
+                            @:...
+                        }
+                        else
+                        {
+                            @consumible.DOSIS
+                        }
+                    </a>
+                </td>
+                <td>
+                    <a data-type="checklist" class="xEditableCabInfConsumimble" data-value="@(consumible.CABINF_DOSIS=="T" ? "T" : "No")"
+                       data-url="/Consumible/EditarCampo" id="CABINF_DOSIS" data-pk="@consumible.OID"
+                       data-title="Imprimir Inyectable">
+                        @(consumible.CABINF_DOSIS == "T" ? "Sí" : "No")
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

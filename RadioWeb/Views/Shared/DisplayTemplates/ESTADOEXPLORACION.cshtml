@@ -1,0 +1,43 @@
+﻿@model string
+
+
+@try
+{
+    switch (Model.ToString())
+    {
+        case "CONFIRMADO":
+            @:<span class="label label-warning" style="background-color:black;">REALIZADO</span>
+            break;
+        case "PENDIENTE":
+            @:<span class="label label-warning" style="background-color:lightblue;">PENDIENTE</span>
+            break;
+        case "PRESENCIA":
+            @:<span class="label label-primary" style="background-color:greenyellow;">PRESENTE</span>
+            break;
+        case "BORRADO":
+            @:<span class="label label-primary" style="background-color:red;">BORRADO</span>
+            break;
+        case "LLAMA ANULANDO":
+            @:<span class="label label-primary" style="background-color:red;">LLAMA ANULANDO</span>
+            break;
+        case "NO PRESENTADO":
+            @:<span class="label label-primary" style="background-color:red;">NO PRESENTADO</span>
+            break;
+
+        default:
+            @:<span class="label label-primary" style="background-color:red;">ERROR</span>
+
+
+          
+            break;
+
+    }
+
+
+}
+catch (Exception)
+{
+
+    @:<button id="@ViewData["id"]" class="btn btn-danger status-label firmable" data-style="expand-right" data-size="xs"><span class="ladda-label">No Firmado</span><span class="ladda-spinner"></span></button>
+}
+

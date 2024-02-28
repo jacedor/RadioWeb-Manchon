@@ -1,0 +1,33 @@
+﻿@model List<RadioWeb.Models.PRECIOS_CONSUM>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-content">
+                <form id="form" action="#" class="wizard-big">
+                    <select class="form-control dual_select" multiple>
+                        @{
+                            List<int> oListaCons = (List<int>)ViewBag.ConsumibleDefecto;
+                            foreach (var item in Model)
+                            {
+                                if (oListaCons!=null && oListaCons.Contains(item.IOR_CONSUM.Value))
+                                {
+                                    <option selected value="@item.IOR_CONSUM">@item.CONSUMIBLE.DES_CONSUM.ToUpper()</option>
+
+                                }
+                                else
+                                {
+                                    <option value="@item.IOR_CONSUM">@item.CONSUMIBLE.DES_CONSUM.ToUpper()</option>
+                                }
+
+                            }
+
+                        }
+
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>

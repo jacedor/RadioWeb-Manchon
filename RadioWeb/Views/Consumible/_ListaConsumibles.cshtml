@@ -1,0 +1,46 @@
+﻿@model IEnumerable<RadioWeb.Models.CONSUMIBLES>
+
+<div class="ibox-tools" style="margin-bottom:10px;">
+    <a href="/Consumible/CreateConsumible?groupOid=@ViewBag.groupOid" class="btn btn-primary btn-xs">Crear Nuevo</a>
+</div>
+
+<table class="table table-bordered" id="tblConsumibles" data-pagination="true" data-search="true" data-page-size="8" data-page-list="[8,16,32,64]">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.COD_CONSUM)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DES_CONSUM)
+            </th>
+            <th>....</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Count() == 0)
+        {
+            <tr class="no-data">
+                <td colspan="3" class="text-center"><span>No hay consumibles definidos</span></td>
+            </tr>
+        }
+
+        @foreach (var item in Model)
+        {
+            <tr data-oidGrupo="" data-oidAparato="@item.OID">
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.COD_CONSUM)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DES_CONSUM)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "EditConsumible", new { id = item.OID }) |
+                    @Html.ActionLink("Borrar", "DeleteConsumible", new { id = item.OID })
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

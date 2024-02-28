@@ -1,0 +1,96 @@
+﻿@model IEnumerable<RadioWeb.Models.INFORMES>
+@{
+    //radioweb2.0
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)ViewData["oUsuario"];
+}
+
+
+<table id="InformesList" class="table clicable table-bordered table-stripped" data-pagination="true"  data-search="true" data-page-size="10" data-page-list="[10,15,20]">
+    <thead>
+        <tr>
+            <th data-type="date" data-format-string="dd/MM/YYYY" class="clicable">Fecha</th>
+            <th><span title="Médico">Med</span></th>
+            <th><span title="Revisado">Rev</span></th>
+            <th><span title="Titulo">Título</span></th>
+            <th><span title="Fecha Exploracion">Fecha Visita</span></th>
+            <th><span title="Validado">Val</span></th>
+            <th><span>PDF</span></th>
+            <th><span>Email</span></th>
+            <th><span>SMS</span></th>
+            <th><span>Clave PDF</span></th>
+            @*<th><span title="Editor">Ver</span></th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var color = "";
+            if (item.BORRADO == "T")
+            {
+                color = "red";
+            }
+
+            <tr data-oid="@item.OID" data-exploracion="@item.OWNER" style="color:@color;">
+                <td><span>@item.FECHA.ToString("dd/MM/yyyy")</span></td>
+                <td><span>@item.IOR_MEDINFORME</span></td>
+                <td><span>@item.IOR_MEDREVISION</span></td>
+                <td><span>@item.TITULO</span></td>
+                <td>
+                    <span>
+                        @if (@item.FECHAEXPLORACION != null)
+                        {
+                            @item.FECHAEXPLORACION.Value.ToString("dd/MM/yyyy")
+                        }
+                    </span>
+                </td>
+                <td>
+                    @if (item.VALIDACION == "T")
+                    {
+                        <i class="fa fa-check" style="color: green;" title="Validado"></i>
+                    }
+                    else
+                    {
+                        <i class="fa fa-times" style="color: red;" title="No Validado"></i>
+                    }
+                </td>
+
+                <td>
+                    @if (item.VALIDACION == "T")
+                    {
+                        <a href="#" data-oid="@item.OID" class="generarPDFSinClave"><i class="fa fa-file-pdf-o" style="color: red;" title="Generar PDF"></i></a>
+                    }
+                </td>
+                <td>
+                    @if (item.VALIDACION == "T")
+                    {
+
+                        <a href="#" data-target="#myModalEnvioInforme" data-toggle="modal" data-oid="@item.OID" data-iorpaciente="@item.IOR_PAC" class="enviarPorMail">
+                            <i class="fa fa-envelope" style="color: green;" data-oid="@item.OID" title="Enviar informe por Email">
+                            </i>
+                        </a>
+                    }
+
+                </td>
+                <td>
+                    @if (item.VALIDACION == "T")
+                    {
+                        <a href="#" class="enviarSMS" data-toggle="modal" data-oid="@item.OID" data-iorpaciente="@item.IOR_PAC" data-target="#modalSMS">
+                            <i class="fa fa-phone" style="color: black;" title="Enviar SMS clave"></i>
+                        </a>
+                    }
+                </td>
+                <td>
+                    @item.OID
+                </td>
+            </tr>
+        }
+
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="11">
+                <ul class="pagination pull-right"></ul>
+            </td>
+        </tr>
+    </tfoot>
+</table>

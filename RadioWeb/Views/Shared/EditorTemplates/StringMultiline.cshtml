@@ -1,0 +1,10 @@
+﻿@{
+    var htmlAttributes = ViewData;
+    htmlAttributes["class"] = "form-control";
+
+}
+@Html.TextArea(
+    "",
+    ViewData.TemplateInfo.FormattedModelValue.ToString(),
+    htmlAttributes
+)

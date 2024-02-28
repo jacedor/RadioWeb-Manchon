@@ -1,0 +1,19 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+@{
+
+    var iorTipo = Model.HasValue ? Model.Value : -1;
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+    var tipoDoc = TipoDocRepositorio.Lista().Select(u => new SelectListItem
+    {
+        Text = u.DESCRIPCION.ToUpper(),
+        Value = u.OID.ToString(),
+        Selected = u.OID == iorTipo
+    }).ToArray();
+}
+
+@Html.DropDownList("", tipoDoc, htmlAttributes)
+

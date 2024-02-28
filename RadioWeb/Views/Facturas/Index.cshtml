@@ -1,0 +1,113 @@
+﻿@model IEnumerable<RadioWeb.Models.FACTURAS>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="row">
+    <div class="form-group">
+        <div class="col-sm-1">
+            @Html.ActionLink("Crear Nueva", "CreateOrEdit", new { ior_factura = 0 }, new { @class = "btn btn-primary btn-large" })
+
+        </div>
+        <div class="col-sm-3 col-md-3">
+          
+            <select id="ddlAnyo" class="select2 form-control " data-filter-calendar="true" data-live-search="true">
+                <option selected value="@DateTime.Now.Year">@(DateTime.Now.Year )</option>
+                <option value="@(DateTime.Now.Year - 1)">@(DateTime.Now.Year - 1)</option>
+                <option value="@(DateTime.Now.Year - 2)">@(DateTime.Now.Year - 2)</option>
+                <option value="@(DateTime.Now.Year - 3)">@(DateTime.Now.Year - 3)</option>
+                <option value="@(DateTime.Now.Year - 4)">@(DateTime.Now.Year - 4)</option>
+                <option value="@(DateTime.Now.Year - 5)">@(DateTime.Now.Year - 5)</option>
+                <option value="@(DateTime.Now.Year - 6)">@(DateTime.Now.Year - 6)</option>
+                <option value="@(DateTime.Now.Year - 7)">@(DateTime.Now.Year - 7)</option>
+
+           
+
+            </select>
+        </div>
+    </div>
+   
+    </div>
+<hr class="hr-line-solid" />
+    <div class="row">
+
+        <div class="col-lg-12 animated fadeInRight">
+            <table id="tblFacturas" class="table table-hover table-bordered table-striped"
+                   data-search="true"  data-height="700" data-url="/Facturas/Buscar?year=@DateTime.Now.Year" data-filter-control="true"
+                   data-show-footer="true" data-footer-style="footerStyle">
+                <thead>
+                    <tr>
+                        <th data-sortable="true" data-filter-control="input" data-formatter="numeroFacturaFormat">Nº Factura</th>
+                        <th data-field="NUM_FAC" data-sortable="true" data-filter-control="input">Número</th>
+                        <th data-field="IOR_GPR" data-sortable="true" data-formatter="tipoFacturaFormat" data-filter-control="input">Tipo</th>
+                        <th data-field="COD1" data-sortable="true" data-filter-control="select">Serie</th>
+                        <th data-field="FECHA_FAC" data-sortable="true" data-formatter="dateFormat" data-filter-control="input">Fecha</th>
+                        <th data-field="FECHA_INICIAL" data-sortable="true" data-formatter="dateFormat" data-filter-control="input">F.Inicial</th>
+                        <th data-field="FECHA_FINAL" data-sortable="true" data-formatter="dateFormat" data-filter-control="input">F.Final</th>
+                        <th data-field="COD2" data-sortable="true">Tipo</th>
+                        <th data-field="NOMBRE" data-sortable="true" data-filter-control="input" data-footer-formatter="totalTextFormatter">Nombre</th>
+                        <th data-field="SUMA" data-sorter="priceSorter" data-footer-Formatter="sumFormatter" data-sortable="true" data-filter-control="input" data-formatter="cantidadFormat">Cantidad</th>
+                        <th data-field="COD3" data-sortable="true" data-filter-control="select" data-formatter="bloqueadaFormat">Bloqueada</th>
+
+                        <th data-field="OID" data-formatter="ActionFormatter">Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*@foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.NUM_FAC/@item.FECHA_FAC.Year-@item.COD1</td>
+                <td>@item.NUM_FAC</td>
+                <td>@item.COD1</td>
+                <td>@item.FECHA_FAC</td>
+                <td>
+                    @item.NOMBRE
+                </td>
+                <td>
+                    @item.SUMA
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.OID })
+
+                </td>
+            </tr>
+        }*@
+                   
+                </tbody>
+            </table>
+
+        </div>
+
+
+    </div>
+
+
+
+
+    @section scripts
+    {
+        <script src="~/js/plugins/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.js"></script>
+        <script src="~/js/custom/facturas/lista.js"></script>
+
+
+        <script type="text/javascript">
+
+            function ActionFormatter(value, row) {
+                return '<a href="/Facturas/CreateOrEdit?ior_factura=' + value + '&ReturnUrl=/Facturas/Index"><span class="label label-primary">Ver Factura</span></a>';
+            }
+            $(document).on('change', '#ddlAnyo', function () {
+
+                $("#tblFacturas").bootstrapTable("refresh", {
+                    url: "/Facturas/Buscar?year="+$(this).val()
+                });
+            });
+            $(document).ready(function () {
+
+
+            });
+        </script>
+
+
+    }

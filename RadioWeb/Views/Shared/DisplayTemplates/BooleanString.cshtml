@@ -1,0 +1,21 @@
+﻿@model string
+
+@if (!String.IsNullOrEmpty(Model))
+{
+    if (Model == "T")
+    {
+        <button type="button" class="btn btn-primary disabled">Sí</button>
+       
+    }
+    else
+    {
+        <button type="button" class="btn btn-danger disabled">No</button>
+
+    }
+}
+else
+{
+    <button type="button" class="btn btn-danger disabled">No</button>
+}
+
+@Html.HiddenFor(model => model)

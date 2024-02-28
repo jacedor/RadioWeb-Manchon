@@ -1,0 +1,20 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+
+@{
+    var modelValue = Model.HasValue ? Model : 6;
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+
+    var tipoDocumentos = ImagenesRepositorio.ObtenerTipos().Select(u => new SelectListItem
+    {
+        Text = u.NOMBRE,
+        Value = u.OID.ToString(),
+        Selected = u.OID == modelValue
+    }).ToArray();
+}
+
+@Html.DropDownList("", tipoDocumentos, htmlAttributes)

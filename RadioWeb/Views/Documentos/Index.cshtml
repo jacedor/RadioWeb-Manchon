@@ -1,0 +1,67 @@
+﻿@model List<RadioWeb.Models.IMAGENES>
+
+
+
+
+                
+                    <table  class="table table-bordered "
+                            data-filtering="true" data-filter-placeholder="Buscar" 
+                           data-paging="true" data-sorting="true" data-paging-count-format="{CP} de {TP}"
+                           data-paging-size="5">
+                        <thead>
+                            <tr>
+                                <th>
+                                   Fichero
+                                </th>
+                                <th>
+                                   Fecha
+                                </th>
+                                <th>
+                                    Tipo Documento
+                                </th>
+                               <th>
+                                   ...
+                               </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr >
+                                    <td>
+                                        @{
+                                            var uri = new System.Uri(item.PATH + item.NOMBRE + "." + item.EXT);
+                                            var converted = uri.AbsoluteUri;
+
+                                        }
+                                        <a href="@converted" target="_blank">
+                                          
+                                            @item.NOMBRE
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @item.FECHA 
+                                    </td>
+
+                                    <td>
+                                      @Html.DropDownList("TipoDocumento",(SelectList) ViewBag.TiposDocumento, new { @class="form-control tipoDocumento"})
+                                    </td>
+                                    <td class="project-actions">
+                                        <a href="#" class="btn btn-outline btn-primary btn-sm asociarDocumento" data-fullName="@item.PATH" data-nombre="@item.NOMBRE" data-action="Asociar"><i class="fa fa-folder"></i> Asociar </a>
+                                        <a href="#" class="btn btn-outline btn-danger btn-sm eliminarDocumentoCarpetaEscan" data-fullName="@item.PATH" data-nombre="@item.NOMBRE" data-action="Eliminiar"><i class="fa fa-eraser"></i> Eliminar </a>
+                                    </td>
+                                    
+                                   
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">
+                                    <ul class="pagination pull-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+

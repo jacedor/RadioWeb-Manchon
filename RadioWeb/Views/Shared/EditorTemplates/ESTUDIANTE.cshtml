@@ -1,0 +1,15 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+@{
+
+    var modelValue = Model.HasValue ? Model : -1;
+    var estudiantes = PersonalRepositorio.ObtenerEstudiantes().Select(u => new SelectListItem
+    {
+        Text = u.NOMBRE,
+        Value = u.OID.ToString(),
+        Selected = u.OID == modelValue
+    }).ToArray();
+}
+
+@Html.DropDownList("", estudiantes, new { @class = "form-control select2" })
+

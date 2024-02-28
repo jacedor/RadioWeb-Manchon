@@ -1,0 +1,56 @@
+﻿@model RadioWeb.Models.FORMULARIO_PREGUNTA
+
+
+@using (Html.BeginForm("EditPregunta", 
+    "Formulario",
+    FormMethod.Post, 
+    new { @class = "form-horizontal" }))
+{
+    <div class="col-lg-12">
+
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.OID)
+        @Html.HiddenFor(m => m.IOR_FORMULARIO)
+        <div class="row" style="margin-top:10px;">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.DESCRIPCION)
+                @Html.TextBoxFor(m => Model.DESCRIPCION, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "Pregunta" })
+                @Html.ValidationMessageFor(m => Model.DESCRIPCION)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.TIPO)
+                @Html.DropDownListFor(m => Model.IOR_TIPO, new SelectList(ViewBag.TIPOS, "OID", "TIPO"), new { @class = "form-control select2" })
+                @Html.ValidationMessageFor(m => Model.IOR_TIPO)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.ORDEN)
+                @Html.TextBoxFor(m => Model.ORDEN, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "Orden" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.RESPUESTAS)
+                <select id="RESPUESTASFORM" name="RESPUESTASFORM" data-placeholder="Posibles Respuestas" class="chosen-select" multiple style="width:350px;" tabindex="4">
+                    @foreach (var respuesta in ViewBag.RESPUESTAS)
+                    {
+                        if (Model.RESPUESTAS.Where(p => p.OID == respuesta.OID).ToList().Count() > 0)
+                        {
+                            <option selected="selected" value="@respuesta.OID">@respuesta.VALOR</option>
+                        }
+                        else
+                        {
+                            <option value="@respuesta.OID">@respuesta.VALOR</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-3 col-sm-offset-9  pull-right">
+                    <button class="btn btn-white" type="button" data-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">Guardar</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+}

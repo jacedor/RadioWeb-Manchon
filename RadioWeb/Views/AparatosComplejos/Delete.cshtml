@@ -1,0 +1,120 @@
+﻿@model RadioWeb.Models.AparatosComplejos
+
+@{
+    ViewBag.Title = "Eliminar";
+}
+
+<h2>Eliminar</h2>
+
+<h3>¿Está seguro que desea eliminar este aparato complejo?</h3>
+<div>
+    <h4>APARATOS COMPLEJOS</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.OID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO4)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO4)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO5)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO5)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO6)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO6)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO7)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO7)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO8)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO8)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.APARATO9)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.APARATO9)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+            @Html.ActionLink("Volver a la lista", "Index")
+        </div>
+    }
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            makeBootstrapTable("tblAparatosComplejos");
+            $("li[data-view]").removeClass('active');
+            $("[data-view=viewAparCompl]").addClass("active");
+            $("[data-view=viewAparCompl]").parents("ul").removeClass("collapse");
+        });
+
+    </script>
+
+}

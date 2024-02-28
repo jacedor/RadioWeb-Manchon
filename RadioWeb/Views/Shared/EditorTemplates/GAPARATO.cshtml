@@ -1,0 +1,43 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+
+@{
+
+    var ior_Gaparato = Model.HasValue ? Model : -1;
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+    var GAparatos = GAparatoRepositorio.Lista();
+    //Si el aparato seleccionado no está en la lista significa que puede ser un aparato obsoleto y que estamos en la ventana de alguna ficha de exploración
+
+
+
+    var aparatosDef = GAparatos.Select(u => new SelectListItem
+    {
+        Text = u.COD_GRUP + " - " + u.DES_GRUP,
+        Value = u.OID.ToString(),
+        Selected = u.OID == ior_Gaparato
+    }).ToArray();
+}
+
+
+@if (ViewData["disabled"] != null  && (bool)ViewData["disabled"] || ViewData["readonly"] != null && (bool)ViewData["readonly"])
+{
+    <input type="hidden" id="IOR_GRUPO"
+           name="IOR_GRUPO" value="@ior_Gaparato" />
+    @Html.Label("", aparatosDef.Single(t => t.Value == @ViewData.TemplateInfo.FormattedModelValue.ToString()).Text, new { @class = "form-control form-control-static",@readonly="readonly" })
+}
+else
+{
+    @Html.DropDownList("", aparatosDef, htmlAttributes)
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,171 @@
+﻿@model List<RadioWeb.Models.EXPLORACION>
+@using RadioWeb.Models;
+@{
+
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    ViewBag.Title = "Alta Exploración";
+
+}
+<div class="row">
+
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>@Model.First().PACIENTE.PACIENTE1</h5>
+                <div class="ibox-tools">
+                    @{
+                        List<MUTUAS> oListTemp = (List<MUTUAS>)ViewBag.Mutuas;
+                        <select id="CID" name="CID" class="select2 form-control" style="margin-top:-18px;">
+                            @foreach (MUTUAS item in oListTemp)
+                            {
+
+                                if (item.CODMUT == Model.First().PACIENTE.CODMUTUA)
+                                {
+                            <option selected="selected" data-subtext="@item.NOMBRE" data-text-value="@item.CODMUT" value="@item.OID">@item.CODMUT - @item.NOMBRE  </option>
+
+                                }
+                                else
+                                {
+                            <option data-subtext="@item.NOMBRE" data-text-value="@item.CODMUT" value="@item.OID">@item.CODMUT - @item.NOMBRE  </option>
+                                }
+
+                            }
+                        </select>
+
+                    }
+                </div>
+            </div>
+            @using (Html.BeginForm("GuardarPaso3", "AgendaMulti", FormMethod.Post))
+            {
+                <div id="GuardarPaso3" class="ibox-content float-e-margins">
+
+                    @{
+                        int j = 0;
+                        foreach (EXPLORACION item in Model)
+                        {
+                            <input type="hidden" class="entidadPagadora" data-indice="@j"
+                                    name="@String.Concat(new string[] { "EXPLORACION[", @j.ToString(), "].IOR_ENTIDADPAGADORA" })" 
+                                   id="@String.Concat(new string[] { "EXPLORACION[", @j.ToString(), "].IOR_ENTIDADPAGADORA" })" value="@item.IOR_ENTIDADPAGADORA" />
+
+                            <input type="hidden" class="aparatoExploracion" data-indice="@j" name="@String.Concat(new string[] { "EXPLORACION[", @j.ToString(), "].IOR_APARATO" })" 
+                                   id="@String.Concat(new string[] { "EXPLORACION[", @j.ToString(), "].IOR_APARATO" })" value="@item.IOR_APARATO" />
+                            <div class="hr-line-dashed"></div>
+                            <div class="search-result">
+                                <h3><a href="#">@System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(item.FECHA.Value.DayOfWeek) @item.FECHA.Value.ToString("dd MMMM yyyy") @item.HORA - @item.DAPARATO.COD_FIL</a></h3>
+                                <div class="form-horizontal">
+                                    <div class="form-group ">
+                                        @if (item.DAPARATOS != null && item.DAPARATOS.Count > 0)
+                                        {
+                                            <div class="col-sm-3">
+                                               
+                                                    <label class="control-label">Aparato</label>
+                                                   
+                                                        @{                                                           
+
+                                                            <select  data-indice="@j"  id="@String.Concat(new string[] { "DAPARATO[", @j.ToString(), "].IOR_APARATO" })" 
+                                                                    name="@String.Concat(new string[] { "DAPARATO[", @j.ToString(), "].IOR_APARATO" })" class="select2 form-control ddlAparatosMutua" data-live-search="true">
+                                                                @foreach (RadioWeb.Models.DAPARATOS aparato in item.DAPARATOS)
+                                                                { 
+
+                                                                        <option data-cod="@aparato.COD_FIL" data-text-value="@aparato.DES_FIL" value="@aparato.OID">@aparato.COD_FIL-@aparato.DES_FIL </option>
+                                                                }
+                                                            </select>
+                                                        }         
+
+                                            </div>
+                                        }
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Exploracion</label>
+                                            <select data-indice="@j" name="@String.Concat(new string[] { "EXPLORACION[", @j.ToString(), "].IOR_TIPOEXPLORACION" })" 
+                                                    id="@String.Concat(new string[] { "EXPLORACION[", @j.ToString(), "].IOR_TIPOEXPLORACION" })" class="selectpicker @String.Concat("ddlExploraciones",j) select2 form-control">
+                                                @foreach (RadioWeb.Models.APARATOS explora in item.EXPLORACIONESCONTARIFA)
+                                                {
+                                                    if (item.APARATO != null && (explora.FIL.Trim() == item.APARATO.FIL.Trim()))
+                                                    {
+                                                        <option selected="selected" data-text-value="@explora.FIL" value="@explora.OID">@explora.FIL-@explora.DES_FIL </option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option data-text-value="@explora.FIL" value="@(explora.OID == -1 ? "" : explora.OID.ToString()) ">@explora.FIL - @explora.DES_FIL </option>
+                                                    }
+
+                                                }
+                                            </select>
+
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="TextoImprimible" class="control-label">Texto Imprimible</label>
+                                            <textarea name="@String.Concat(new string[] { "EXPLORACION[", @j.ToString(), "].TEXTO" })" 
+                                                      id="@String.Concat(new string[] { "EXPLORACION[", @j.ToString(), "].TEXTO" })" 
+                                                      class="form-control" rows="2" style="text-transform: none;">@item.TEXTO</textarea>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            j = j + 1;
+                        }
+                    }
+                </div>
+
+
+                <div class="ibox-footer" style="min-height: 50px;">
+                    <p class="pull-right">
+                        <button class="btn btn-primary" type="submit">Crear Exploraciones</button>
+                    </p>
+
+                </div>
+                        }
+        </div>
+
+    </div>
+
+
+
+
+</div>
+
+
+
+
+@section scripts{
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/AgendaMultiple/Alta.js")"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            //$(".select2").select2();
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+
+            $('#FECHAN').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                language: "es",
+                format: "dd/mm/yyyy"
+            });
+
+        });
+
+
+    </script>
+
+}
+
+
+
+
+
+
+
+
+

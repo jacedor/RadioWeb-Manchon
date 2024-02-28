@@ -1,0 +1,29 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+@{
+
+    var ior_centro = Model.HasValue ? Model : -1;
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+    USUARIO oUser = UsuariosRepositorio.Obtener(User.Identity.Name);
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+    List<CENTROS> oCentros = CentrosRepositorio.List();
+    if (oUser.CENTROASOCIADO.HasValue && oUser.CENTROASOCIADO > -1)
+    {
+        oCentros = oCentros.Where(p => p.OID == oUser.CENTROASOCIADO).ToList();
+    }
+    var centros = oCentros.Select(u => new SelectListItem
+    {
+        Text = u.NOMBRE.ToUpper(),
+        Value = u.OID.ToString(),
+        Selected = u.OID == ior_centro
+    }).ToArray();  
+
+
+
+}
+
+
+
+@Html.DropDownList("", centros, htmlAttributes)
+

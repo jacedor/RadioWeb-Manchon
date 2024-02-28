@@ -1,0 +1,363 @@
+﻿@model RadioWeb.Models.BOLSA_PRUEBAS
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_LayoutPeticiones.cshtml";
+    USUARIO usuario = RadioWeb.Models.Repos.UsuariosRepositorio.Obtener(User.Identity.Name);
+}
+
+<nav style="margin-bottom: 0" role="navigation" class="navbar navbar-fixed-top border-bottom">
+    <div class="navbar-header" style="margin-left:30px">
+        <img alt="image" class="rounded-circle" src="/img/logo-Peticiones.png" width="30%">
+
+    </div>
+    <ul class="nav navbar-top-links navbar-right hidden-xs">
+
+        <li>
+            <strong class="font-bold" id="UserLogged" data-oidPersonal="@usuario.PERSONAL.OID" data-login="@usuario.LOGIN" data-perfil="@usuario.DESCPERFILWEB">BienvenidO @usuario.LOGIN (@usuario.DESCPERFILWEB)</strong>
+
+
+        </li>
+        <li>
+            @Html.ActionLink("Salir", "LogOut", "Users")
+        </li>
+
+    </ul>
+
+</nav>
+<div class="wrapper wrapper-content " style="padding-top:40px;">
+
+    <div class="ibox-title">
+        <h5>Creación/Edición de Solicitudes</h5>
+        <div class="ibox-tools">
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+
+        </div>
+    </div>
+    <div class="ibox-content m-b-sm border-bottom">
+        @using (Html.BeginForm(Model.ACTION, "Peticiones", FormMethod.Post))
+        {
+            @Html.HiddenFor(model => model.OID)
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <i class="fa fa-user-circle-o"></i> DATOS PACIENTE
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.NOMBRE, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.NOMBRE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                                        @Html.ValidationMessageFor(model => model.NOMBRE, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.APELLIDOS, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.APELLIDOS, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                                        @Html.ValidationMessageFor(model => model.APELLIDOS, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.TELEFONO1, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+
+                                            @Html.EditorFor(model => model.TELEFONO1, new
+                                            {
+                                                autocomplete = "off",
+                                                htmlAttributes = new { @class = "form-control" }
+                                            })
+
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.TELEFONO1, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.MAIL, htmlAttributes: new { @class = "control-label" })
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-at"></i></span>
+
+                                            @Html.EditorFor(model => model.MAIL, new { autocomplete = "off", htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.MAIL, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <i class="fa fa-calendar"></i> PRUEBA SOLICITADA
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PRIORIDAD, htmlAttributes: new { @class = "control-label" })
+
+                                        @Html.EditorFor(model => model.PRIORIDAD, new { htmlAttributes = new { @class = "form-control date-picker ", autocomplete = "off" } })
+                                        @Html.ValidationMessageFor(model => model.PRIORIDAD, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    @Html.BootstrapLabelFor(m => m.IOR_TIPOEXPLORACION)
+                                    @Html.EditorFor(model => model.IOR_TIPOEXPLORACION,
+                                                                               new
+                                                                               {
+                                                                                   IOR_APARATO = -1,
+                                                                                   IOR_MUTUA = -1,
+                                                                                   NOMENCLATOR = true
+                                                                               })
+                                    @Html.ValidationMessageFor(model => model.IOR_TIPOEXPLORACION, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.FECHARESULTADO, htmlAttributes: new { @class = "control-label" })
+
+                                        @Html.EditorFor(model => model.FECHARESULTADO, new { htmlAttributes = new { @class = "form-control date-picker ", autocomplete = "off" } })
+                                        @Html.ValidationMessageFor(model => model.FECHARESULTADO, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.COMENTARIO, htmlAttributes: new { @class = "control-label" })
+                                        @Html.EditorFor(model => model.COMENTARIO, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.COMENTARIO, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="form-group row">
+                <div class="col-sm-12 text-right ">
+                    <button class="btn btn-primary " type="submit">@(Model.OID > 0 ? "Guardar Petición" : "Enviar Petición")</button>
+                </div>
+            </div>
+        }
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Listado Solicitudes @usuario.PERSONAL.NOMBRE</h5>
+                </div>
+                <div class="ibox-content">
+
+                    <table id="tblSolicitudes" data-class="table-stripped" class="table table-stripped " data-url="/Peticiones/Index"
+                           data-sortable="true" data-search="true" data-row-attributes="rowAttr" data-pagination="true"
+                           data-side-pagination="server" data-cookie="true"
+                           data-cookie-id-table="saveId" data-sort-name="OID" data-sort-order="desc"
+                           data-page-list="[5, 10, 20, 50, 100, All]">
+                        <thead>
+                            <tr>
+
+                                <th data-sortable="true" data-field="OID">ID</th>
+                                <th data-sortable="true" data-field="FECHAENTRADA" data-formatter="fechaStringConHoraFormat">SOLICITADO</th>
+                                <th data-sortable="true" data-field="PACIENTE" data-formatter="pacienteFormatter">NOMBRE</th>
+                                <th data-sortable="true" data-field="PRIORIDAD">PRIORIDAD</th>
+                                <th data-sortable="true" data-field="IOR_EXPLORACION" data-formatter="statusExploracion">STATUS</th>
+                                <th data-field="EXPLORACIONAGENDADA.FECHA" data-formatter="fechaStringFormat">FECHA CITA</th>
+                                <th data-field="EXPLORACIONAGENDADA.HORA">HORA</th>
+                                <th data-sortable="true" data-field="EXPLORACION">EXPLORACION</th>
+                                <th data-field="TELEFONO1">TELEFONO</th>
+                                <th class="text-right" data-formatter="ActionFormatter">ACCIONES</th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts
+    {
+
+    <script src="~/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/plugins/bootstrap-table/extensions/cookie/bootstrap-table-cookie.js"></script>
+  
+    <script src="~/js/plugins/bootstrap-table/extensions/cookie/bootstrap-table-cookie.js"></script>
+    <script type="text/javascript">
+
+        $(document).on("click", ".generarPDFSinClave", function () {
+            var oidExploracion = $(this).data('oid');
+            var url = "/Informe/Imprimir?oid=" + oidExploracion; //The Url to the Action  Method of the Controller
+            window.open(url, 'popup', 'width=900,height=500');
+            return false;
+        });
+        function rowAttr(row, index) {
+
+            var claseActiva = "";
+            if (row.OID === +getParameterByName('oid')) {
+                claseActiva = "ACTIVA";
+            }
+
+            return {
+                "class": claseActiva,
+                "data-oid": row.OID
+            };
+        }
+
+
+        function getParameterByName(name) {
+            var regexS = "[\\?&]" + name + "=([^&#]*)",
+                regex = new RegExp(regexS),
+                results = regex.exec(window.location.search);
+            if (results == null) {
+                return "";
+            } else {
+                return decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+        }
+
+        function ActionFormatter(value, row) {
+            if (row.IOR_EXPLORACION < 0) {
+                return '<div class="btn-group"><a class="btn-white btn btn-xs editarpeticion" href="/Peticiones/Edit?oid=' + row.OID + '">Editar</a><button class="btn-warning btn btn-xs">Borrar</button></div >';
+            } else {
+                if (row.EXPLORACIONAGENDADA.ESTADO === "3") {
+                    var botones= '<div class="btn-group"><a data-oid="' + row.EXPLORACIONAGENDADA.OID + '"  class="btn-primary btn btn-xs generarPDFSinClave" href="#">Informe</a>';
+                    if (row.EXPLORACIONAGENDADA.INFORMADA) {
+                        return botones;
+                    } else {
+                          botones = botones +'<a data-oid="' + row.EXPLORACIONAGENDADA.OID + '"  class="btn-primary btn btn-xs archivarPeticion" href="#">Archivar</a>'
+
+                        botones = botones + '</div>'
+                    }
+                }
+
+            }
+        }
+
+        function pacienteFormatter(value, row) {
+            return '<span style="font-weight:bold;font-size:12px;">' + row.PACIENTE + '</span>'
+        }
+
+        function statusExploracion(value, row) {
+            switch (value) {
+                case -1:
+                    return '<span class="label badge-borrado  float-right">No Agendado</span>';
+                default:
+                    switch (row.EXPLORACIONAGENDADA.ESTADO) {
+                        case "0":
+                            return '<span class="label badge-PENDIENTE  float-right">Pendiente Realizar</span>';
+                            break;
+                        case "1":
+                            return '<span class="label badge-borrado float-right">Borrada</span>';
+                            break;
+                        case "2":
+                            return '<span class="label badge-presencia float-right">En Proceso</span>';
+                            break;
+                        case "3":
+                            if (row.EXPLORACIONAGENDADA.INFORMADA) {
+                                return '<span class="label badge-confirmado float-right">Realizada</span>';
+                            } else {
+                                return '<span class="label badge-info float-right">Realizada (No informada)</span>';
+                            }
+
+                            break;
+                        case 4:
+                            return '<span class="label panel-NoPresentado float-right">No Presentado</span>';
+                            break;
+                        case 5:
+                            return '<span class="label panel-NoPresentado float-right">Llama Anulando</span>';
+                            break;
+                        default:
+                            if (row.ANULADA) {
+
+                                return '<span class="label badge-danger  float-right">Anulada</span>';
+                            }
+                            if (row.OID < 0) {
+                                return '<span class="label badge-info  float-right">Libre</span>';
+
+                            }
+
+                    }
+            }
+        }
+           function fechaStringConHoraFormat(value) {
+
+            if (value === null || moment(value).format("DD/MM/YYYY") === "31/12/0000") {
+                return '-'
+            } else {
+                return moment(value).format("DD/MM/YYYY HH:mm");
+            }
+
+        }
+        function fechaStringFormat(value) {
+
+            if (value === null || moment(value).format("DD/MM/YYYY") === "31/12/0000") {
+                return '-'
+            } else {
+                return moment(value).format("DD/MM/YYYY");
+            }
+
+        }
+        function Failure() {
+            alert('fallo');
+        }
+        function Success(data) {
+
+            toastr.success('Actualización!', 'Petición Realizada Correctamente !', { timeOut: 5000 });
+            //$("#OID").val(data.OID);
+            $("#tblSolicitudes").bootstrapTable("refresh");
+        }
+
+        $(document).on('load-success.bs.table', '#tblSolicitudes', function () {
+
+            if (getParameterByName('idPeticion') > 0) {
+                $("#tblSolicitudes>tbody>tr[data-oid='" + getParameterByName('idPeticion') + "']").addClass('ACTIVA');
+            }
+        });
+
+        $(document).ready(function () {
+
+            $('input[data-val-required]').each(function () {
+                var req = $(this).attr('data-val-required');
+                if (undefined != req) {
+                    var label = $('label[for="' + $(this).attr('id') + '"]');
+                    var text = label.text();
+                    if (text.length > 0) {
+                        label.append('<span style="color:red"> *</span>');
+                    }
+                }
+            });
+
+            $("#tblSolicitudes").bootstrapTable();
+            //makeBootstrapTable("tblSolicitudes");
+
+        });
+    </script>
+
+
+}

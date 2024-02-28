@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Grupo Manchon</title>
+    <link href="../../Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+
+    <style>
+        input[type="text"]:focus, input[type="password"]:focus,
+        textarea:focus, select:focus {
+            font-size: 16px;
+        }
+
+        .tooltip-inner {
+            max-width: 300px;
+            padding: 0;
+        }
+
+        .tooltip-alert {
+            padding: 8px 10px;
+            font-weight: bolder;
+            color: #A94442;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div id="cabecera" class="row hide" style="margin-bottom: 5px;">
+            <img height="80" src="img/Logo%20Grup%20Manchon.jpg">
+        </div>
+        <div class="row">
+            <form id="EnviarReservarForm" name="EnviarReservarForm">
+
+                <div id="DatosCita" class="col-md-6">
+
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" id="panel-title">Datos Personales</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="NombrePaciente" class="control-label">Nombre</label>
+                                <input type="text" placeholder="Nombre" id="NombrePaciente" name="NombrePaciente" class="form-control"/>
+
+                            </div>
+                            <div class="form-group">
+                                <label for="Apellidos" class="control-label">Apellidos</label>
+                                <input type="text" placeholder="Apellidos" id="ApellidosPaciente" name="ApellidosPaciente" class="form-control" />
+
+                            </div>
+                            <div class="form-group">
+
+                                <label for="dni" class="control-label">DNI/NIE</label>
+                                <input type="text" placeholder="DNI/NIE" id="dni" name="dni" class="form-control" />
+
+                                <!--</div>-->
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Sexo</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" checked="" value="H" id="optionHombre" name="optionsRadios" />
+                                        Hombre
+
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" value="M" id="optionMujer" name="optionsRadios" />
+                                        Mujer
+                                    </label>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label for="fechaNacimiento" class="control-label">Fecha Nacimiento</label>
+                                <input type="datetime" id="fechaNacimiento" name="fechaNacimiento" class="form-control" />
+
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="control-label">Email  </label>
+                                <input type="email" placeholder="Email" id="email" name="email" class="form-control" />
+
+                            </div>
+                            <div class="form-group hide">
+                                <label for="Autorizacion" class="control-label">Nº Autorización</label>
+                                <input type="text" id="AUTORIZA" class="form-control" name="AUTORIZA" />
+                            </div>
+                            <!--<div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Regimen económico </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <label class="control-label"></label>
+                                        <div class="col-md-3">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" checked="" value="privado" id="chkPrivado" name="chkMutua" />
+                                                    Privado
+
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" value="mutua" id="chkMutua" name="chkMutua" />
+                                                    Mutua
+                                                </label>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div id="ContainerMutuas" class="hide">
+                                        <div class="form-group " id="MutuaSelect">
+                                            <label for="MutuaList" class="control-label">Mutua</label>
+                                            <select id="MutuaList" class="form-control">
+                                            </select>
+                                        </div>
+                                        <div class="form-group " id="Div1">
+                                            <label for="Autorizacion" class="control-label">Nº Autorización</label>
+                                            <input type="text" id="AUTORIZA" class="form-control" name="AUTORIZA" />
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>-->
+                            <div class="form-group">
+                                <label for="Number1" class="control-label">Teléfono movil</label>
+                                <input type="text" placeholder="Telefono movil" autocomplete="off" id="Number1" name="Number1" class="form-control" />
+
+                            </div>
+
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="lopd" name="lopd" />
+                                    He leído y acepto
+                                    <a target="_blank" href="PoliticaProteccion.html" class="enlace">Política de privacidad y condiciones de uso</a>
+                                </label>
+                            </div>
+                            <!-- <div class="form-group">
+                                <span style="font-family: Arial; font-size: X-Small;" id="lbPie">&copy; CENTRO DIAGNÓSTICO POR LA IMAGEN FORASTÉ, S.A .  | <a target="_blank" href="PoliticaProteccion.html" class="enlace">Política de privacidad y condiciones de uso</a></span>
+                            </div>-->
+
+
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+                <div class="col-md-6">
+                    <div id="PanelValidadCodigo" class="panel panel-warning ">
+                        <div class="panel-heading">
+                            <h3 id="H1" class="panel-title">Validar teléfono</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <p>Este código sirve para verificar que el telefono introducido le pertence, o bien, para validar su identidad.</p>
+                                <p>Si no ha recibido un SMS con el mismo o tiene cualquier problema, verifique su número de teléfono móvil y presione el botón reenviar.</p>
+                                <label for="codigoRecibido" class="control-label">Código</label>
+                                <input type="text" placeholder="Código Recibido" id="codigoRecibido" class="form-control" />
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="col-md-6">
+                <div id="PanelNoCubierto" class="panel panel-primary ">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Citas Reservadas</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table id="ExploracionesTable" class="table ">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Exploracion</th>
+
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-primary btn-lg pull-right disabled" id="CrearCita" type="submit">Crear Cita</button>
+            </div>
+            <div id="errorCreaCita" class="col-md-6 alert alert-warning hide" role="alert">
+                <span>Ya hay una cita para ese usuario, en la misma hora.</span>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script src="Scripts/jquery-2.0.3.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/moment.min.js"></script>
+    <script src="Scripts/moment-with-locales.min.js"></script>
+    <script src="Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="Scripts/jquery.validate.min.js"></script>
+    <!--<script src="Scripts/jquery.validate.unobtrusive.min.js"></script>-->
+    <script src="Scripts/jquery.ba-throttle-debounce.js"></script>
+
+    <script src="/citaonline28112023.js"></script>
+    <script>
+        function drawTable(data) {
+            for (var i = 0; i < data.length; i++) {
+                drawRow(data[i]);
+            }
+
+            $("#NombrePaciente").val(sessionStorage.nombre);
+            $("#ApellidosPaciente").val(sessionStorage.apellidos);
+            $("#dni").val(sessionStorage.dni);
+            if (sessionStorage.nombre.length > 0) {
+                $("#chkMutua").prop('checked', true);
+                $("#ContainerMutuas").removeClass("hide");
+                $("#MutuaList").val('3820110');
+
+            }
+            $("#fechaNacimiento").val(sessionStorage.fechaNacimiento);
+            if (sessionStorage.sexo == 'M') {
+                $("#optionMujer").prop('checked', true);
+
+            }
+            $("#Number1").val(sessionStorage.telefono);
+            $("#email").val(sessionStorage.email);
+            $("#AUTORIZA").val(sessionStorage.autorizacion);
+
+        }
+
+        function drawRow(rowData) {
+            var row = $("<tr />")
+            $("#ExploracionesTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+            row.append($("<td>" + rowData.fechaHueco + "</td>"));
+            row.append($("<td>" + rowData.horaHueco + "</td>"));
+            row.append($("<td>" + rowData.aparatoDesc + "</td>"));
+
+        }
+
+
+        $('#fechaNacimiento').datetimepicker({
+            viewMode: 'years',
+            format: 'DD/MM/YYYY',
+            locale: 'es',
+            maxDate: $.now()
+        });
+
+
+        $(document).ready(function () {
+            //si la mutua seleccionada no es privada visualizamos el campo número autorización
+            if (sessionStorage.oidMutua !== 3820080) {
+                $("#AUTORIZA").parent().removeClass("hide");
+            }
+            if (sessionStorage.CentroExterno != -1 || sessionStorage.dni) {
+                $("#PanelValidadCodigo").hide();
+                //$("#DatosCita").removeClass("col-md-6").addClass("col-md-12");
+                $("#CrearCita").removeClass("disabled");
+                //$("#cabecera").removeClass('hide');
+                if ($("#lopd").length) {
+                    $("#lopd").prop('checked', true);
+
+                }
+            }
+
+            if (typeof sessionStorage.fechaHueco == 'undefined') {
+                window.location = '/BuscarCita.html';
+            }
+
+            jQuery.validator.addMethod("lettersonly", function (value, element) {
+                return this.optional(element) || /^[A-Za-z\s]+$/i.test(value);
+            }, "Solo letras por favor");
+
+             jQuery.validator.addMethod("lettersandnumbers", function (value, element) {
+                return this.optional(element) || /^[A-Za-z0-9]+$/i.test(value);
+             }, "Solo letras y numeros, por favor");
+
+
+
+            $('#EnviarReservarForm').validate({
+                rules: {
+                    'NombrePaciente': {
+                        minlength: 3,
+                        maxlength: 80,
+                        lettersonly: true,
+                        required: true
+                    },
+                    'ApellidosPaciente': {
+                        minlength: 3,
+                        maxlength: 80,
+                        lettersonly: true,
+                        required: true
+                    },
+                    'dni': {
+                        minlength: 7,
+                        maxlength: 10,
+                        lettersandnumbers: true,
+                        required: true
+                    },
+                    'fechaNacimiento': {
+                        //maxDate: true
+                    },
+                    'email': {
+                        required: false,
+                        email: true,
+                        minlength: 5,
+                        maxlength: 150
+                    },
+                    'AUTORIZA': {
+                        digits: true
+                    },
+                    'Number1': {
+                        digits: true,
+                        required: true
+                    },
+                    'lopd': {
+                        required: true
+                    },
+                },
+                messages: {
+                    'NombrePaciente': "Obligatorio, entre 3 y 80 carácteres de solo letras",
+                    'ApellidosPaciente': "Obligatorio, entre 3 y 80 carácteres de solo letras",
+                    'dni': "Obligatorio, solo números y letras",
+                    'Number1': "Obligatorio: Solo números",
+                    'lopd': "Debe aceptar las condiciones de uso",
+                    //'fechaNacimiento' : "Introduzca una fecha de nacimiento válida.",
+                    'email': {
+                        required: "Campo obligatorio",
+                        email: "Introduzca un mail válido."
+                    }
+                },
+                highlight: function (element) {
+                    $(element).closest('.form-group').addClass('has-error');
+                },
+                unhighlight: function (element) {
+                    $(element).closest('.form-group').removeClass('has-error');
+                }
+            });
+            $("#NombrePaciente").focus();
+            rellenarMutuas();
+            $('#chkPrivado').change(function () {
+                if ($(this).is(":checked")) {
+                    $("#ContainerMutuas").addClass("hide");
+                }
+            });
+            $('#chkMutua').change(function () {
+                if ($(this).is(":checked")) {
+                    $("#ContainerMutuas").removeClass("hide");
+                }
+            });
+
+            $("#Number1").keyup($.debounce(400, function () {
+
+                if (sessionStorage.CentroExterno == -1 || $("#codigoRecibido").val() === "4640") {
+
+                    // Check whether the TextBox Contains text
+                    // if it does then make ajax call
+                    if ($("#Number1").val().length === 9 && sessionStorage.EnviadoSMS != true) {
+                        $.get(endPoint + '/API/SMS', { phone: $(this).val() })
+                            .done(function (data) {
+                                sessionStorage.codigoServer = data;
+                                sessionStorage.EnviadoSMS = true;
+                                alert("Introduzca el codigo recibido en su movil");
+                                $("#codigoRecibido").focus();
+                            });
+
+                    }
+                }
+
+
+            }));
+
+
+            $("#codigoRecibido").keyup($.debounce(400, function () {
+                $("#CrearCita").addClass("disabled");
+                //Si la longitud es de 4, verificamos que el codigo es correcto
+                if ($("#codigoRecibido").val().length === 4) {
+                    if (sessionStorage.codigoServer === $(this).val() || $("#codigoRecibido").val() === "4640") {
+                        $("#CrearCita").removeClass("disabled");
+                    }
+                }
+            }));
+            drawTable(JSON.parse(sessionStorage["huecosReserva"]));
+        });
+    </script>
+
+
+
+</body>
+</html>

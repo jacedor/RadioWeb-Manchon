@@ -1,0 +1,43 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+@{
+    /**/
+
+    var ior_colegiado = Model.HasValue ? Model : -1;
+    bool mostrarBorrados = (ViewData["disabled"] != null ? (bool)ViewData["disabled"] : false);
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+
+    var medico = ColegiadoRepositorio.Obtener(ior_colegiado.Value);
+
+    var medicosList = new List<COLEGIADOS>();
+    medicosList.Add(medico);
+
+    var medicos = medicosList.Select(u => new SelectListItem
+    {
+        Text = u.NOMBRE,
+        Value = u.OID.ToString(),
+        Selected = u.OID == ior_colegiado
+    }).ToArray();
+
+
+}
+
+@if (ViewData["disabled"] != null && (bool)ViewData["disabled"] || ViewData["readonly"] != null && (bool)ViewData["readonly"])
+{
+    var medicoText = medicos.SingleOrDefault(t => t.Value == @ViewData.TemplateInfo.FormattedModelValue.ToString());
+    @Html.Label("", (medicoText != null ? medicoText.Text : "-"), new { @class = "form-control form-control-static" })
+}
+else
+{
+    @Html.DropDownList("", medicos, htmlAttributes)
+
+}
+
+
+
+
+
+

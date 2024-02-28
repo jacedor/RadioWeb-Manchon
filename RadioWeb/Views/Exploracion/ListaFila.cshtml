@@ -1,0 +1,200 @@
+﻿@model List<RadioWeb.Models.LISTADIA>
+@{
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+}
+@foreach (var item in Model)
+{
+<tr data-oid="@item.OID" data-fecha="@item.FECHA.ToString("dd-MM-yyyy")"
+    data-aparato="@item.COD_FIL" data-centro="@item.CENTRO" data-estado="@item.ESTADO"
+    style="color: @item.COLOR" class="hasmenu">
+
+    <td class="hidden-xs ">
+        <input type="checkbox" onclick="return false" checked="@item.INTOCABLE" />
+    </td>
+    <td>
+        @Html.ActionLink(
+                             linkText: @item.FECHA.ToShortDateString(),
+                             actionName: "Details",
+                             controllerName: "Exploracion",
+                             routeValues: new
+                             {
+                                 oid = @item.OID,
+                                 ReturnUrl = "/Paciente/Details?ior_paciente=" + item.IOR_PACIENTE + "&TraerInformesYExplos=true"
+
+
+                             },
+                             htmlAttributes: new { @style = "color:" + @item.COLOR, @class = "linkExploracion" }
+                         )
+
+
+    </td>
+
+    <td class="hidden-xs">
+        <span style="@item.ESTADO">@item.HORA</span>
+
+    </td>
+
+    <td class="hidden-xs" style="background-color:@item.CID">&nbsp;</td>
+
+    <td style="text-align: center;">
+        <span class="hidden">@item.INFORMADA</span>
+        @if (item.INFORMADA)
+        {
+            //recepción Manresa
+            if (oUsuarioLogeado.PERFIL == 202)
+            {
+                <a><i class="fa fa-clipboard" style="font-size: 12px; color: green;" title="Informada"></i></a>
+            }
+            else
+            {
+                //al ser una exploracion hija de otra no dejamos informarla y ponemos el icono en amarillo
+                if (item.IOR_MASTER > 0)
+                {
+                    <a href="/Informe/Duplicar/@item.IOR_MASTER">
+                        <i class="fa fa-copy" style="font-size: 14px;  color:#ffb400;"
+                           title="Ir a Informe exploración relacionada"></i>
+                    </a>
+                }
+                else
+                {
+                    <a href="/Informe/Duplicar/@item.OID">
+                        <i class="fa fa-clipboard" style="font-size: 14px; color: green;"
+                           title="Informada"></i>
+                    </a>
+                }
+
+            }
+
+        }
+        else
+        {
+
+
+            if (item.IOR_MASTER > 0)
+            {
+                <a href="/Informe/Duplicar/@item.IOR_MASTER">
+                    <i class="fa fa-copy" style="font-size: 14px; color:red;"
+                       title="Exploración Relacionada no informada"></i>
+                </a>
+            }
+            else
+            {
+                if (item.ESTADO == "2" || item.ESTADO == "3")
+                {
+                    <a href="/Informe/Duplicar/@item.OID">
+                        <i class="fa fa-clipboard" style="font-size: 14px; color: red;" title="No Informada"></i>
+                    </a>
+                }
+                else
+                {
+                    <i class="fa fa-clipboard" style="font-size: 12px; color: red;" title="No Informada"></i>
+                }
+
+            }
+        }
+
+
+    </td>
+
+    <td><span>@item.MEDICO</span></td>
+    <td><span data-bind="text: TECNICO">@item.TECNICO</span></td>
+    <td><span style="color:@item.COLOR">@item.OID</span></td>
+    <td><span style="color:@item.COLOR">@item.MUTUA</span></td>
+    <td><span style="color:@item.COLOR">@item.NHCAP</span></td>
+
+    <td>
+        <a style="color:@item.COLOR" href="#" data-toggle="popover" data-placement="auto top" data-content="@item.FIL">
+            @item.COD_FIL
+        </a>
+
+
+    </td>
+
+    <td><span style="color:@item.COLOR">@item.EXPLO</span></td>
+    @if (oUsuarioLogeado.VECANTIDADES == 1)
+    {
+        <td>
+
+            <span data-bind="text: CANTIDAD">@item.CANTIDAD</span>
+
+
+        </td>
+        <td>
+
+            @if (item.FACTURADA)
+            {
+                <i style="color: black;" class="fa fa-dollar"></i>
+            }
+
+        </td>
+        <td>
+            @if (item.APLAZADO)
+            {
+                <i style="color: black;" class="fa fa-dollar"></i>
+            }
+
+
+
+        </td>
+        <td>
+
+            @if (item.NOFACTURAB)
+            {
+                <i style="color: black;" class="fa fa-dollar"></i>
+            }
+        </td>
+
+    }
+    @if (!String.IsNullOrEmpty(item.TEXTO))
+    {
+
+        <td class="ui-popover textoExploracion hidden-xs hidden-md" style="min-width: 200px;">
+
+            <span data-toggle="tooltip" data-placement="left" title="@item.TEXTO" style="color: @item.COLOR">
+                <a href="#" data-type="textarea" class="textoXeditable" data-url="/Exploracion/EditarTexto" id="@item.OID"
+                   data-pk="@item.OID" data-value="@item.TEXTO" data-title="Editar texto">@item.SUBTEXTO</a>
+            </span>
+        </td>
+    }
+    else
+    {
+        <td class="textoExploracion hidden-xs hidden-md" data-oid="@item.OID">
+            <span style="color: @item.COLOR">@item.SUBTEXTO</span>
+            <span data-toggle="tooltip" data-placement="left" title="Agregar Texto" style="color: @item.COLOR">
+                <a href="#" data-type="textarea" style="color:@item.COLOR" class="textoXeditable" data-url="/Exploracion/EditarTexto" id="@item.OID"
+                   data-pk="@item.OID" data-value="@item.TEXTO" data-title="Editar texto">...</a>
+            </span>
+
+        </td>
+
+    }
+
+    @if (item.INTOCABLE == false && item.ESTADO != "3")
+    {
+        <td>
+            <div class="btn-group">
+                <button type="button" id="btnBorrar" class="btn btn-danger btn-xs" data-oid="@item.OID" data-hhora="@item.HORA" data-estado="@item.ESTADO">Borrar</button>
+                <button type="button" id="btnBorrarMasOpciones" class="btn btn-danger btn-xs dropdown-toggle " data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" id="btnNoPresentado" data-oid="@item.OID" data-hhora="@item.HORA" data-estado="@item.ESTADO">No presentado</a></li>
+                    <li><a href="#" id="btnLlamaAnulando" data-oid="@item.OID" data-hhora="@item.HORA" data-estado="@item.ESTADO">Anula Paciente</a></li>
+                </ul>
+            </div>
+        </td>
+    }
+    else
+    {
+        <td class="hidden-xs">
+            &nbsp;
+        </td>
+    }
+
+
+
+
+
+</tr>
+}

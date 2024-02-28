@@ -1,0 +1,846 @@
+﻿@model  RadioWeb.ViewModels.VWFactura
+@{
+    var estadoNumeroFactura = ViewData["FACTURAS.NUMFAC"];
+    var numeroFacturaPuedeEditar = false;
+
+    if (estadoNumeroFactura != null)
+    {
+        if ((int)estadoNumeroFactura == 1)
+        {
+            numeroFacturaPuedeEditar = true;
+        }
+
+    }
+    ViewBag.Title = Model.HEADING;
+}
+@section estilos{
+    <link href="~/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+}
+
+@using (Html.BeginForm("CreateOrEdit", "Facturas", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.OID)
+    @Html.HiddenFor(m => m.ACTION)
+    @Html.HiddenFor(m => m.IOR_EXPLORACION)
+    @Html.HiddenFor(m => m.URLPREVIA)
+
+    <input type="hidden" name="IOR_MONEDA" id="IOR_MONEDA" value="@Model.IOR_MONEDA" />
+    <input type="hidden" name="IOR_EMPRESA" id="IOR_EMPRESA" value="@Model.IOR_EMPRESA" />
+    <input type="hidden" name="IOR_ENTIDADPAGADORA" id="IOR_ENTIDADPAGADORA" value="@Model.IOR_ENTIDADPAGADORA" />
+    <input type="hidden" name="IOR_GPR" id="IOR_GPR" value="@Model.IOR_GPR" />
+    <input type="hidden" name="COD3" id="COD3" value="@Model.COD3" />
+    <input type="hidden" id="UltimaSerie" value="@ViewBag.UltimaSerieUsuario" />
+    @Html.HiddenFor(m => m.IOR_PAC)
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-8">
+            <a title="" data-placement="top" data-toggle="tooltip" class="btn btn-white btn-sm " href="@Model.URLPREVIA" data-original-title="Volver">
+                <i class="fa fa-reply"></i>Volver
+            </a>
+            <h2 style="font-weight:bold;"> @Model.NOMBREEMPRESA / @Model.PACIENTE</h2>
+        </div>
+        <div class="col-lg-4 m-t-lg ">
+
+            @if (Model.OID > 0)
+            {
+
+                //el campo cod3 se pone una true cuando se crea una factura de mutua y se ponen todas las exploraciones de esa factura
+                //con el facturado igual a T y en la linea de factura se calcula el importe. Digamos que en ese momento la factura se
+                //vuelve... intocable
+                if (Model.COD3 != "T" || Model.IOR_GPR == 1)
+                {
+
+                    <input type="submit" value="Guardar" class="btn btn-primary  pull-right" />
+                    <a class="btn btn-default pull-right btn-outline pagoRapido"
+                       onclick="javascript: window.open('/Facturas/Imprimir/@Model.OID?oidExploracion=@Model.IOR_EXPLORACION', 'Factura', 'width=900,height=500');"
+                       href="#"><i class="fa fa-print"></i> Imprimir</a>
+                    if (Model.LINEAS.Where(p=>p.OID > 0).Count() == 0)
+                    {
+                        if (!numeroFacturaPuedeEditar)
+                        {
+                            <a data-oid="@Model.OID" class="btn btn-danger pull-right  borrarFactura "
+                              
+                               href="#"><i class="fa fa-eraser"></i> Borrar </a>
+                        }
+
+                    }
+
+                }
+                else
+                {
+
+                    <a id="DesbloquearFactura" class="btn btn-danger pull-right" title="Desbloquear Factura" data-oid="@Model.OID">
+                        <i class="fa fa-unlock"></i> Desbloquear Factura
+                    </a>
+                }
+
+            }
+            else
+            {
+                //el campo cod3 se pone una true cuando se crea una factura de mutua y se ponen todas las exploraciones de esa factura
+                //con el facturado igual a T y en la linea de factura se calcula el importe. Digamos que en ese momento la factura se
+                //vuelve... intocable
+                if (Model.COD3 != "T")
+                {
+                    <input type="submit" value="Guardar" class="btn btn-primary  pull-right" />
+                }
+                else
+                {
+                    <a id="DesbloquearFactura" class="btn btn-danger" title="Desbloquear Factura" data-oid="@Model.OID">
+                        <i class="fa fa-unlock"></i>
+                    </a>
+                }
+            }
+
+        </div>
+    </div>
+  
+    <div class="ibox-content m-t-md " style="padding-top:5px;padding-bottom:0px;">
+        <div class="row">
+            <div class="form-group col-xs-2 col-md-2">
+                @Html.LabelFor(m => m.COD1, new { @class = "control-label" })
+                @Html.EditorFor(m => m.COD1, new { htmlAttributes = new { @style = "text-transform:uppercase" } })
+                @Html.ValidationMessageFor(model => model.COD1, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-xs-2 col-md-2">
+                @Html.LabelFor(m => m.NUM_FAC, new { @class = "control-label" })
+
+                @Html.TextBoxFor(m => m.NUM_FAC, (!numeroFacturaPuedeEditar ? new { @class = "form-control", @readonly = "true", autocomplete = "off" } as object : new { @class = "form-control", autocomplete = "off" } as object))
+                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => m.NUM_FAC)</p>
+            </div>
+            <div class="form-group col-xs-2 col-md-2">
+                @Html.LabelFor(m => m.FECHA_FAC, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.FECHA_FAC, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker", autocomplete = "off" })
+                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => m.FECHA_FAC)</p>
+
+            </div>
+
+            <div class="form-group col-xs-4 col-md-4">
+                @Html.LabelFor(m => m.NOMBRE, new { @class = "control-label" })
+
+                @if (Model.COD3 != "T")
+                {
+                    @Html.EditorFor(model => model.NOMBRE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            autofocus = "autofocus",
+                            @class = "typeahead",
+                            autocomplete = "off",
+                            @style = "text-transform:uppercase"
+                        }
+
+                    })
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.NOMBRE, new
+                    {
+                        htmlAttributes = new
+                        {
+                            autofocus = "autofocus",
+                            @class = "form-control",
+                            autocomplete = "off",
+                            @style = "text-transform:uppercase",
+                            
+                        }
+
+                    })
+                }
+                @Html.ValidationMessageFor(m => m.NOMBRE, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="form-group col-xs-2 col-md-2">
+                @Html.LabelFor(m => m.DNI, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.DNI, "{0:dd/MM/yyyy}", new { @class = "form-control ", autocomplete = "off", })
+                @Html.ValidationMessageFor(m => m.DNI, "", new { @class = "text-danger" })
+
+
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="form-group col-xs-4 col-md-4">
+                @Html.LabelFor(m => m.DIRECCION, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.DIRECCION, new { @class = "form-control", placeholder = "DIRECCION", autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.DIRECCION, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="form-group col-xs-2 col-md-2">
+                @Html.LabelFor(m => m.CIUDAD, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.CIUDAD, new { @class = "form-control", @style = "text-transform:uppercase", autocomplete = "off", })
+                @Html.ValidationMessageFor(m => m.CIUDAD, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="form-group col-xs-2 col-md-2">
+                @Html.LabelFor(m => m.CP, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.CP, "{0:dd/MM/yyyy}", new { @class = "form-control ", autocomplete = "off", })
+                @Html.ValidationMessageFor(m => m.CP, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="form-group col-xs-2 col-md-2">
+                @Html.LabelFor(m => m.PROVINCIA, new { @class = "control-label" })
+                @Html.TextBoxFor(m => Model.PROVINCIA, "{0:dd/MM/yyyy}", new { @class = "form-control ", autocomplete = "off", })
+                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.PROVINCIA)</p>
+            </div>
+            <div class="form-group col-xs-2 col-md-2">
+                @Html.LabelFor(m => m.OWNER, new { @class = "control-label" })
+                @Html.EditorFor(m => m.OWNER)
+                @Html.ValidationMessageFor(m => m.OWNER, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
+    </div>
+    <div class="ibox-content">
+        <div class="row">
+            @*FACTURA DE MUTUAS*@
+            @if (Model.IOR_GPR == 2)
+            {
+                <div class="form-group col-xs-2 col-md-2">
+                    @Html.LabelFor(m => m.FECHA_INICIAL, new { @class = "control-label" })
+
+                    @if (Model.COD3 != "T")
+                    {
+                        @Html.TextBoxFor(m => m.FECHA_INICIAL, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker", autocomplete = "off" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.FECHA_INICIAL, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker", autocomplete = "off", @disabled = "disabled" })
+                    }
+                </div>
+                <div class="form-group col-xs-2 col-md-2">
+                    @Html.LabelFor(m => m.FECHA_FINAL, new { @class = "control-label" })
+                    @*//el campo cod2 se pone una true cuando se crea una factura de mutua y se ponen todas las exploraciones de esa factura
+                    //con el facturado igual a T y en la linea de factura se calcula el importe. Digamos que en ese momento la factura se
+                    //vuelve... intocable*@
+                    @if (Model.COD3 != "T")
+                    {
+                        @Html.TextBoxFor(m => m.FECHA_FINAL, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker", autocomplete = "off" })
+
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.FECHA_FINAL, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker", autocomplete = "off", @disabled = "disabled" })
+                    }
+
+                </div>
+
+
+            }
+            @*FACTURA DE privado*@
+            else
+            {
+                if (Model.FECHAEXPLORACION.HasValue)
+                {
+                    <div class="form-group col-xs-2 col-md-2">
+                        @Html.LabelFor(m => m.FECHAEXPLORACION, new { @class = "control-label" })
+                        @Html.DisplayFor(m => m.FECHAEXPLORACION, "{0:dd/MM/yyyy}", new { @class = "form-control", autocomplete = "off", style = "font-size:1em;" })
+                    </div>
+                }
+
+
+
+            }
+
+
+        </div>
+        <div class="table-responsive ">
+            <table id="tblLineasFactura" class="table invoice-table" data-classes="table table-striped table-bordered table-hover"
+                   data-id-field="OID"
+                   data-url="/Facturas/Lineas/@Model.OID?ior_exploracion=@Model.IOR_EXPLORACION&fecha_inicial=@Model.FECHA_INICIAL&fecha_final=@Model.FECHA_FINAL"
+                   data-striped="true" data-page-list="[5,10, 25, 50, 100, ALL]" data-pagination="true">
+                <thead>
+                    <tr>
+                        @*FACTURA DE MUTUAS*@
+                        @if (Model.IOR_GPR == 2)
+                        {
+                            <th data-sortable="true" data-field="PACIENTE">PACIENTE</th>
+                            <th data-field="ESTADO" data-formatter="estadoFormat">ESTADO</th>
+                            <th data-field="FECHA" data-sortable="true" data-formatter="dateFormat">FECHA</th>
+                            <th data-field="FECHA_FAC" data-sortable="true" data-formatter="dateFormat">F.FAC</th>
+                            <th data-sortable="true" data-field="PERMISO" data-formatter="permisoFormat">PERMISO</th>
+                            <th data-field="NHCAP">AUTORIZACION</th>
+                            <th data-field="TEXTO" data-formatter="textoLineaMutuaFormateer">DESCRIPCION</th>
+                            <th data-sortable="true" data-field="PRECIO">PRECIO</th>
+                            <th data-field="SIMBOLO">M</th>
+                            <th data-field="FACTURADA" data-formatter="facturadoFormat">FACTURADA</th>
+                            <th data-field="OWNER">OWNER</th>
+                            <th data-field="OID" data-formatter="ActionFormatterMutua">---</th>
+                        }
+                        else
+                        {
+                            <th data-field="TEXTO" data-formatter="textoLineaFormateer">DESCRIPCION</th>
+                            <th data-field="PRECIO" data-formatter="precioLineaFormateer">PRECIO</th>
+                            <th data-field="OID" data-formatter="ActionFormatterPrivada">---</th>
+                        }
+
+
+                    </tr>
+                </thead>
+                <tbody></tbody>
+
+            </table>
+        </div><!-- /table-responsive -->
+        <div class="form-group col-md-offset-6 col-xs-6 col-md-6">
+
+
+            <a class="btn btn-primary pull-right " id="addrow" href="#"><i class="fa fa-plus"></i> Agregar Linea</a>
+          
+            <button class="btn btn-success  pull-right" onclick="exportExcel('xlsx','tblLineasFactura','Lineas Factura');">
+                <i class="fa fa-file-excel-o"></i>
+                Exportar a Excel
+            </button> 
+
+        </div>
+        <div class="row">
+            <div class="col-md-offset-6 col-md-6">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>BASE</th>
+                            <th>IVA %</th>
+                            <th>IVA IMPUTADO</th>
+                            <th>TOTAL FACTURA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                   
+                                <input type="hidden" name="TOTALSINIVA" id="TOTALSINIVA" value="@Model.TOTALSINIVA" />
+                                <span id="TotalSinIvaDisplay" style="font-size:2em;">@Model.TOTALSINIVA</span>@Model.SIMBOLO
+
+                            </td>
+                            <td width="200px">
+                                @Html.TextBoxFor(m => Model.IVA, new { @class = "form-control touchspin", placeholder = "IVA" })
+                            </td>
+                            <td>
+                                <input type="hidden" name="IVAIMPUTADO" id="IVAIMPUTADO" value="@Model.IVAIMPUTADO" />
+
+                                <span id="TotalIvaImputado">@Model.IVAIMPUTADO</span>
+                            </td>
+                            <td>
+                                <input type="hidden" name="TOTALCONIVA" id="TOTALCONIVA" value="@Model.TOTALCONIVA" />                                
+
+                                <span id="TotalConIvaDisplay" style="font-size:2em;">@Model.TOTALCONIVA</span>@Model.SIMBOLO
+
+
+                                @* <span id="TotalConIvaDisplay">@Model.TOTALCONIVA</span>€*@
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="well m-t">
+            <strong>  <label for="COMENTARIO" class="control-label">No Imprimible</label></strong>
+            <textarea id="COMENTARIO" name="COMENTARIO" class="form-control" rows="2" style="text-transform: none;">@Model.COMENTARIO</textarea>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-form-Exploracion" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width:80%;">
+
+            <div class="modal-content">
+                <div class="modal-header" style="padding-top:10px;padding-bottom:10px;">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="tituloEntrada">
+                        <span id="NombrePacienteEntrada"></span>
+
+                    </h4>
+                </div>
+                <div class="modal-body" style="min-height:350px;">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="contenedorExploracion" class="tabs-container">
+
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+}
+
+
+
+@section scripts
+    {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- TouchSpin -->
+
+    <script src="~/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
+    <script type="text/javascript">
+
+
+
+
+        function permisoFormat(value, row) {
+
+            if (value === 'T') {
+                return '<i style="color: green;" title="Permiso" class="fa fa-thumbs-up"></i>';
+            } else {
+                return '<i style="color: red;" title="No Facturada" class="fa fa-thumbs-down"></i>';
+
+            }
+
+        }
+
+
+        function estadoFormat(value, row) {
+            switch (row.ESTADO) {
+
+                case "0":
+                    return '<span class="label badge-PENDIENTE  float-right">Pendiente</span>';
+                    break;
+                case "1":
+                    return '<span class="label badge-borrado float-right">Borrada</span>';
+                    break;
+                case "2":
+                    return '<span class="label badge-presencia float-right">Presencia</span>';
+                    break;
+                case "3":
+                    return '<span class="label badge-confirmado float-right">Realizado</span>';
+                    break;
+                case 4:
+                    return '<span class="label panel-NoPresentado float-right">No Presentado</span>';
+                    break;
+                case 5:
+                    return '<span class="label panel-NoPresentado float-right">Llama Anulando</span>';
+                    break;
+                default:
+                    if (row.ANULADA) {
+
+                        return '<span class="label badge-danger  float-right">Anulada</span>';
+                    }
+                    if (row.OID < 0) {
+                        return '<span class="label badge-info  float-right">Libre</span>';
+
+                    }
+
+            }
+
+        }
+
+        function facturadoFormat(value, row) {
+            if (value === 'T') {
+                return '<i style="color: green;" title="Facturada" class="fa fa-money"></i>';
+            } else {
+                return '<i style="color: red;" title="No Facturada" class="fa fa-money"></i>';
+
+            }
+
+        }
+        function textoLineaMutuaFormateer(value, row, index) {
+            var oidHidden = "";
+            oidHidden = oidHidden + '<input type="hidden" id="LINEAS[' + index + '].OID" name="LINEAS[' + index + '].OID" value="' + row.OID + '" />';
+            oidHidden = oidHidden + '<input type="hidden" id="LINEAS[' + index + '].TEXTO" name="LINEAS[' + index + '].TEXTO" value="' + row.TEXTO + '" />';
+            oidHidden = oidHidden + '<input type="hidden" id="LINEAS[' + index + '].PRECIO" name="LINEAS[' + index + '].PRECIO" value="' + row.PRECIO.toString().replace('.', ',') + '" />';
+            oidHidden = oidHidden + '<input type="hidden" id="LINEAS[' + index + '].PERMISO" name="LINEAS[' + index + '].PERMISO" value="' + row.PERMISO + '" />';
+            oidHidden = oidHidden + '<label id="LINEAS[' + index + '].TEXTO" name="LINEAS[' + index + '].TEXTO" >' + row.TEXTO + '</label>';
+
+            return oidHidden;
+
+        }
+
+        function textoLineaFormateer(value, row, index) {
+            var oidHidden = "";
+            if (row.TIPOLINEA == "CONSUMIBLE") {
+                oidHidden = oidHidden + '<input type="hidden" id="LINEAS[' + index + '].IOR_EXPCONSUMIBLE" name="LINEAS[' + index + '].IOR_EXPCONSUMIBLE" value="' + row.IOR_EXPCONSUMIBLE + '"/>';
+            }
+            else {
+                oidHidden = oidHidden + '<input type="hidden" id="LINEAS[' + index + '].IOR_EXPLORACION" name="LINEAS[' + index + '].IOR_EXPLORACION" value="' + row.IOR_EXPLORACION + '"/>';
+
+            }
+            oidHidden = oidHidden + '<input type="hidden" id="LINEAS[' + index + '].OID" name="LINEAS[' + index + '].OID" value="' + row.OID + '" />';
+            oidHidden = oidHidden + '<input type="hidden" id="LINEAS[' + index + '].PERMISO" name="LINEAS[' + index + '].PERMISO" value="' + row.PERMISO + '" />';
+            return oidHidden + '<input class="form-control" data-val="true" data-val-required="El campo TEXTO es obligatorio." id="LINEAS[' + row.INDEX + '].TEXTO" name="LINEAS[' + index + '].TEXTO" placeholder="TEXTO" type="text" value="' + row.TEXTO + '">';
+
+        }
+
+        function precioLineaFormateer(value, row) {
+          
+            return '<input class="form-control preciolinea" data-val="true" readonly="true" data-val-required="El campo PRECIO es obligatorio." id="LINEAS[' + row.INDEX + '].PRECIO" name="LINEAS[' + row.INDEX + '].PRECIO" placeholder="PRECIO" type="text" value="' + row.PRECIO + '">';
+        }
+
+        function ActionFormatterMutua(value, row) {
+            var botones = '';
+            botones = botones + '<a href="#" class="btnVerExploracion" data-oid=' + row.IOR_EXPLORACION + ' data-toggle="modal" data-target="#modal-form-Exploracion" title="Ver Exploración"><span class="label label-success " data-oid=' + row.OID + '><i class="fa fa-eye"></i></span></a>';
+            botones = botones + '<a href="#"><span class="label label-danger ibtnDel" data-oid=' + row.OID + '><i class="fa fa-trash-o"></i></span></a>';
+            return botones;
+        }
+
+        function ActionFormatterPrivada(value, row) {
+            var botones = '';
+            botones = botones + '<a href="#"><span class="label label-danger ibtnDel" data-oid=' + row.OID + '><i class="fa fa-trash-o"></i></span></a>';
+            return botones;
+        }
+
+        $('#modal-form-Exploracion').on('hidden.bs.modal', function () {
+            // do something…
+            actualizarTablaLineasFacturas();
+        });
+
+        $(document).on("click", ".btnVerExploracion", function myfunction() {
+
+            var ContenedorModalExploracion = $('#contenedorExploracion');
+            var oExploracion = {};
+            oExploracion.OID = $(this).data('oid');
+
+            var request = $.ajax({
+                url: "/Exploracion/GetPanelExploracion",
+                data: JSON.stringify({ oExploracion: oExploracion, cambiaRegimenEconomicoActual: false }),
+                contentType: 'application/json',
+                type: "POST"
+            });
+
+            ContenedorModalExploracion.empty();
+            request.done(function (data) {
+
+                ContenedorModalExploracion.html(data);
+                $(".fecha-picker,.date-picker").datepicker({
+                    format: "dd/mm/yyyy",
+                    todayBtn: true,
+                    language: "es",
+                    autoclose: true,
+                    todayHighlight: true
+                });
+
+            });
+
+            return false;
+
+        });
+
+
+        $(document).on("click", "#addrow", function () {
+            var counter = $('#tblLineasFactura tbody tr').length;
+            var newRow = $("<tr>");
+            var cols = "";
+            cols += '<td style=""><input type="hidden" id="LINEAS[' + counter + '].OID" name="LINEAS[' + counter + '].OID" value="-1"><input type="hidden" id="LINEAS[' + counter + '].PERMISO" name="LINEAS[' + counter + '].PERMISO" value="T"><input class="form-control valid" data-val="true" data-val-required="El campo TEXTO es obligatorio." id="LINEAS[' + counter + '].TEXTO" name="LINEAS[' + counter + '].TEXTO" placeholder="TEXTO" type="text" value=""></td>';
+            cols += '<td style=""><input class="form-control preciolinea" data-val="true" data-val-required="El campo PRECIO es obligatorio." id="LINEAS[' + counter + '].TEXTO" name="LINEAS[' + counter + '].PRECIO" placeholder="PRECIO" type="text" value=""></td>';
+            cols += '<td><a href="#"><span class="label label-danger ibtnDel" data-oid="-1"><i class="fa fa-trash-o"></i></span></a></td>';
+            newRow.append(cols);
+            $("#tblLineasFactura").append(newRow);
+            counter++;
+        });
+
+         $(document).on('click', '.borrarFactura', function () {
+            var oid = $(this).data('oid');
+            swal({
+                title: "¿Confirma borrar esta Factura?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Sí",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Facturas/Borrar?oid=' + oid,
+                        success: function (data) {
+                            location.href='/Home/Index';
+                        }
+                    });
+
+
+                }
+            });
+
+        });
+
+
+        $(document).on('click', '#DesbloquearFactura', function () {
+            var oid = $(this).data('oid');
+            swal({
+                title: "¿Confirma desbloquear esta Factura?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Sí",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Facturas/Borrar?oid=' + oid,
+                        success: function (data) {
+                            location.reload();
+                        }
+                    });
+
+
+                }
+            });
+
+        });
+
+
+
+
+        $("#tblLineasFactura").on("click", ".ibtnDel", function (event) {
+            var oid = $(this).data('oid');
+            var td = $(this);
+            swal({
+                title: "¿Confirma eliminar esta linea de Factura?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Sí",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    if ($(this).data('oid')) {
+                        $(this).closest("tr").remove();
+                    } else {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Facturas/BorrarLineaFactura?oid=' + oid,
+                            success: function (data) {
+                                td.closest("tr").remove();
+                            }
+                        });
+                    }
+
+                }
+            });
+
+
+
+        });
+
+        function actualizarTablaLineasFacturas(ev) {
+
+            $("#tblLineasFactura").bootstrapTable("refresh", {
+                /**/
+                url: "/Facturas/Lineas/" + $("#OID").val() + "?ior_exploracion=" + $("#IOR_EXPLORACION").val()
+                    + "&fecha_inicial=" + $("#FECHA_INICIAL").val() + "&fecha_final=" + $("#FECHA_FINAL").val()
+                    + "&ior_entidadPagadora=" + $("#IOR_ENTIDADPAGADORA").val()
+            });
+        }
+
+        function dateChanged(ev) {
+            actualizarTablaLineasFacturas();
+        }
+        function activarTypeAhead() {
+            var iorgrp = $("#IOR_GPR").val();
+            $('.typeahead').typeahead({
+                minLength: 3,
+                source: function (query, process) {
+                    var url = '/Paciente/Buscar';
+
+                    if (iorgrp === "2") {
+                        url = '/Mutuas/Buscar';
+                    }
+                    return $.post(url, { query: query, conDirecciones: true }, function (data) {
+                        return process(data)
+                    }, 'json');
+                },
+                afterSelect: function (data) {
+                    var $this = this;
+                    swal({
+                        title: "¿Desea asignar el pagador a la factura?",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Sí",
+                        cancelButtonText: "No",
+                        closeOnConfirm: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+
+                            if (iorgrp === "2") {
+                                $this.$element[0].value = data.NOMBRE;
+                                $("#nombreFacturaLabel").html(data.NOMBRE);
+                                $("#DNI").val(data.NIF);
+                                $("#IOR_PAC").val(-1);
+                                $("#IOR_GPR").val(2);
+                                $("#IOR_ENTIDADPAGADORA").val(data.OID);
+                                $("#tblLineasFactura").bootstrapTable("refresh", {
+                                    /**/
+                                    url: "/Facturas/Lineas/" + $("#OID").val() + "?ior_exploracion=" + $("#IOR_EXPLORACION").val()
+                                        + "&fecha_inicial=" + $("#FECHA_INICIAL").val() + "&fecha_final=" + $("#FECHA_FINAL").val()
+                                        + "&ior_entidadPagadora=" + $("#IOR_ENTIDADPAGADORA").val()
+                                });
+
+
+
+                            } else {
+                                $this.$element[0].value = data.PACIENTE1;
+                                $("#nombreFacturaLabel").html(data.PACIENTE1);
+                                $("#IOR_PAC").val(data.OID);
+                                $("#IOR_GPR").val(1);
+                                $("#DNI").val(data.DNI);
+
+
+                            }
+
+                            $("#DIRECCION").val(data.DIRECCIONES[0].DIRECCION1);
+                            $("#CIUDAD").val(data.DIRECCIONES[0].POBLACION);
+                            $("#CP").val(data.DIRECCIONES[0].CP);
+                            $("#PROVINCIA").val(data.DIRECCIONES[0].PROVINCIA);
+
+                        } else {
+                            //
+                            if (iorgrp === "2") {
+                                $this.$element[0].value = data.NOMBRE;
+                            } else {
+                                $this.$element[0].value = data.PACIENTE1;
+                            }
+
+                        }
+                    });
+
+                },
+                displayText: function (data) {
+                    if (iorgrp === "2") {
+                        return data.NOMBRE + ' (' + data.NIF + ')';
+
+                    } else {
+                        return data.PACIENTE1 + ' (' + data.EDAD + ')' + ' - ' + data.CODMUTUA;
+
+                    }
+                }
+            });
+
+        }
+
+
+        $(document).on('change', '#COD1', function () {
+            var serie = $(this).val();
+            $.ajax({
+                type: 'POST',
+                url: '/Facturas/NumeroFactura?serie=' + serie,
+
+                success: function (data) {
+                    $("#NUM_FAC").val(data);
+                }
+            });
+        });
+
+        $(document).on('blur', '.preciolinea,.touchspin', function () {
+            
+            var total_price = 0;
+            $(".preciolinea").each(function () {
+                total_price += parseFloat($(this).val());
+            });
+            $("#TotalSinIvaDisplay").html(total_price);
+            $("#TOTALSINIVA").val(total_price);
+            var totalSinIva = $("#TOTALSINIVA").val();
+            var Iva = $("#IVA").val();
+            var totalConIva = totalSinIva * (1 + (Iva / 100));
+            $("#TotalIvaImputado").html(totalConIva - totalSinIva);
+            $("#IVAIMPUTADO").val(totalConIva - totalSinIva);
+            $("#TOTALCONIVA").val(totalConIva);
+            $("#TotalConIvaDisplay").html(totalConIva);
+        });
+
+        $(document).ready(function () {
+
+
+            $("li[data-view]").removeClass('active');
+
+            $("[data-view=ViewFacturas]").parents("ul").removeClass("collapse");
+
+            //ponemos la ultima serie realizada por el usuario si existe
+            if ($("#UltimaSerie").val()) {
+                $("#COD1").val($("#UltimaSerie").val());
+                $.ajax({
+                    type: 'POST',
+                    url: '/Facturas/NumeroFactura?serie=' + $("#UltimaSerie").val(),
+
+                    success: function (data) {
+                        $("#NUM_FAC").val(data);
+                    }
+                });
+            }
+
+
+            $("#FECHA_FINAL").datepicker({
+                format: "dd/mm/yyyy",
+                todayBtn: true,
+                language: "es",
+                autoclose: true,
+                todayHighlight: true
+            }).on('changeDate', dateChanged);
+
+
+            makeBootstrapTable("tblLineasFactura");
+
+            activarTypeAhead();
+
+
+
+            $(".touchspin").TouchSpin({
+                min: 0,
+                max: 100,
+                step: 1,
+                decimals: 0,
+                boostat: 5,
+                maxboostedstep: 10,
+                buttondown_class: 'btn btn-white',
+                buttonup_class: 'btn btn-white'
+            }).on('touchspin.on.stopdownspin', function (e) {
+                var totalSinIva = +$("#TOTALSINIVA").val();
+                var Iva = $("#IVA").val();
+                var totalConIva = totalSinIva * (1 + (Iva / 100));
+                $("#TotalIvaImputado").html(totalConIva.toFixed(2) - totalSinIva.toFixed(2));
+                  $("#IVAIMPUTADO").val(+(totalConIva.toFixed(2) - totalSinIva.toFixed(2)).toFixed(2));
+                $("#TOTALCONIVA").val(totalConIva.toFixed(2));
+                $("#TOTALSINIVA").val(totalSinIva.toFixed(2));
+
+                $("#TotalConIvaDisplay").html(totalConIva.toFixed(2));
+            }).on('touchspin.on.stopupspin', function (e) {
+                var totalSinIva = +$("#TOTALSINIVA").val();
+                var Iva = $("#IVA").val();
+                var totalConIva = totalSinIva * (1 + (Iva / 100));
+                $("#TotalIvaImputado").html(+(totalConIva.toFixed(2) - totalSinIva.toFixed(2)).toFixed(2));
+                  $("#IVAIMPUTADO").val(+(totalConIva.toFixed(2) - totalSinIva.toFixed(2)).toFixed(2));
+                $("#TOTALCONIVA").val(totalConIva.toFixed(2));
+                $("#TOTALSINIVA").val(totalSinIva.toFixed(2));
+                $("#TotalConIvaDisplay").html(totalConIva.toFixed(2));
+            });
+
+
+
+
+        });
+    </script>
+}
+
+

@@ -1,0 +1,137 @@
+﻿@model RadioWeb.ViewModels.VWImprimirFicha
+@{
+    Layout = String.Empty;
+}
+<!doctype html>
+<html>
+<head>
+
+    <style type="text/css">
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+            font-size: 12px;
+            font-family: 'Verdana, Geneva, Tahoma, sans-serif';
+            color: #555;
+        }
+
+            .invoice-box table {
+                width: 100%;
+                line-height: inherit;
+            }
+
+                .invoice-box table td {
+                    font-size: 12px;
+                    vertical-align: bottom;
+                }
+
+                .invoice-box table tr td:nth-child(2) {
+                    text-align: right;
+                }
+
+
+                .invoice-box table tr.top table td.title {
+                    font-size: 14px;
+                    color: #333;
+                }
+
+
+
+                .invoice-box table tr.heading td {
+                    background: #eee;
+                    border-bottom: 1px solid #ddd;
+                    font-weight: bold;
+                }
+
+                .invoice-box table tr.details td {
+                    padding-bottom: 20px;
+                }
+
+                .invoice-box table tr.item td {
+                    border-bottom: 1px solid black;
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+
+                .invoice-box table tr.item.last td {
+                    border-bottom: none;
+                }
+
+                .invoice-box table tr.total td:nth-child(2) {
+                    border-top: 2px solid #eee;
+                    font-weight: bold;
+                }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+
+
+
+        <table cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr class="item" style="vertical-align:bottom;">
+                    <td colspan="2" style="vertical-align:bottom;">Consentimiento para la entrega de resultados médicos por vía electrónica</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            Don/Dña.: @Model.PACIENTE   , mayor de edad y con DNI/NIE núm: @Model.DNI , por la presente
+            solicito que todos los resultados de las pruebas médicas que me sean realizadas en @Model.NOMBRECENTRO,
+            me sean entregados a través de la plataforma online Qualitas Report www.qualitasreport.com (en
+            adelante, la Plataforma).
+        </p>
+        <p>
+            Con dicho fin, solicito que cada vez que mis resultados estén disponibles en dicha Plataforma se me envíe
+            un mensaje a:
+        </p>
+
+
+        <table style="width:100%;">
+            <tr>
+                <td>E-mail: @Model.EMAIL</td>
+                <td>Movil: @Model.NUMEROMOVIL</td>
+                </tr>
+            </table>
+            <p>
+                Dicho mensaje incluirá un código identificativo que deberé introducir junto con mi DNI/NIE en la Plataforma
+                para acceder al resultado al que va referido.<br />
+                <br />
+                La Plataforma enviará también un mensaje al médico que haya solicitado la realización de mi prueba médica,
+                informándole de la fecha en que se ha realizado la prueba y de que el resultado ya ha sido puesto a mi
+                disposición por la Plataforma.<br /><br />
+
+                Configuración opcional del servicio:<br /><br />
+
+                Al firmar este documento, consiento que cada médico que solicite la realización de mi prueba médica pueda
+                comunicar y contrastar el resultado de la misma con otros profesionales médicos de su elección,
+                invitándoles a acceder al resultado a través de la Plataforma.
+                <br /><br />
+                En prueba de conformidad, firmo la presente en Barcelona , a @DateTime.Now.ToLongDateString()
+            </p>
+            <br />
+
+        <div style="float:right;color:white;">
+            FIRMAPACIENTE
+        </div>
+
+
+        </div>
+        <div style="position: absolute;bottom: 0;font-size:8px;margin-top:170px;padding-top:280px;">
+            El paciente que presta este consentimiento manifiesta que el e-mail y/o número de teléfono móvil arriba
+            consignados son suyos y sólo él tiene acceso a su contenido. El paciente sabe y acepta que si algún tercero no
+            autorizado logra acceder a los mensajes que envía la Plataforma, también podría acceder a sus resultados
+            médicos alojados en la misma.
+            Los datos facilitados por medio de este formulario se incluirán en un fichero titularidad de GABINETE NUCLEAR
+            DELFOS, con la finalidad de poder llevar a cabo la entrega de resultados médicos por vía electrónica en los
+            términos expuestos. El paciente puede ejercer en cualquier momento sus derechos de acceso, rectificación,
+            cancelación y oposición, o revocar el presente consentimiento, mediante solicitud escrita dirigida a [dirección
+            postal completa], acompañando en todo caso una copia de su documento nacional de identidad, pasaporte u otro
+            documento válido que le identifique.
+
+        </div>
+    </body>
+</html>

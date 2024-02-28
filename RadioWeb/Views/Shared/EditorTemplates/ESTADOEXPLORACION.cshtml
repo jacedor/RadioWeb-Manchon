@@ -1,0 +1,27 @@
+﻿@model int?
+@{
+
+    var modelValue = Model.HasValue ? Model : -1;
+
+    var tipos = new SelectList(
+new List<SelectListItem> {
+new SelectListItem {Text ="TODOS",Value = "-1",Selected = "-1" == modelValue.ToString()},
+new SelectListItem {Text ="PENDIENTE",Value = "0",Selected = "0" == modelValue.ToString()},
+new SelectListItem {Text = "BORRADO",Value = "1", Selected = "1" == modelValue.ToString() },
+new SelectListItem {Text = "PRESENCIA",Value = "2", Selected = "2" == modelValue.ToString()},
+new SelectListItem {Text = "REALIZADO",Value = "3", Selected = "3" == modelValue.ToString()},
+new SelectListItem {Text = "NO PRESENTADO",Value = "4", Selected = "4" == modelValue.ToString()},
+new SelectListItem {Text = "LLAMA ANULANDO",Value = "5", Selected = "5" == modelValue.ToString()},
+new SelectListItem {Text = "HUECOS",Value = "6", Selected = "6" == modelValue.ToString()}
+}, "Value", "Text", modelValue
+);
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+@Html.DropDownList("",
+            tipos,
+            htmlAttributes)

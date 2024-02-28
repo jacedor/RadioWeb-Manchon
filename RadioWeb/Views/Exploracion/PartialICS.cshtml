@@ -1,0 +1,328 @@
+﻿@model RadioWeb.Models.EXPLORACION
+
+@{
+
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+
+<div data-tipoexplo="ICS" class="container">
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+
+                <div class="col-sm-12 ">
+                    <p style="font-weight: bold; font-size: 14px; text-align: center;" class="form-control-static ">@Model.DIASEMANA.ToString().ToUpper() </p>
+                </div>
+            </div>
+            <div class="form-group">
+
+                <div class="col-sm-12 ">
+                    <p style="font-weight: bold; font-size: 15px; text-align: center;" id="fechaExploracion" class="form-control-static ">@Model.FECHA.Value.ToShortDateString() </p>
+                </div>
+            </div>
+            <div class="form-group">
+
+                <div class="col-sm-12">
+                    <input type="text" class="form-control time" style="font-size:15px;text-align:center;font-size: 15px;font-weight:bold;" id="horaExploracion" required  value="@Model.HORA" />
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <fieldset style="border: 1px solid #DDDDDD; padding: 4px; text-align: center; margin-top: 20px;">
+                        <label>
+                            <input type="radio" value="PRI" name="radio1" class="TipoExploracion">
+                            PRI
+                        </label>
+
+                        <label>
+                            <input type="radio" value="MUT" class="TipoExploracion" name="radio1">
+                            MUT
+                        </label>
+                        <label>
+                            <input type="radio" value="ICS" class="TipoExploracion disabled" name="radio1" checked="checked">
+                            ICS
+                        </label>
+                    </fieldset>
+
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12" style="text-align: center; margin-top: 10px;">
+                    @{
+                
+                        var color = "red";
+                        switch (@Model.ESTADO)
+                        {
+                            case "0":
+                                color = "blue";
+                                break;
+                            case "2":
+                                color = "green";
+                                break;
+                            case "3":
+                                color = "black";
+                                break;
+
+                            default:
+                                break;
+                        }        
+
+
+                        <h3 style="color:@color" >@Model.ESTADODESCRIPCION</h3>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="inputEmail" class="col-sm-2 control-label">Mutua</label>
+                <div class="col-sm-10 ">
+                    @{
+                        IEnumerable<RadioWeb.Models.MUTUAS> oListTemp = ((IEnumerable<RadioWeb.Models.MUTUAS>)Session["Mutuas"]).Where(s => s.OWNER == 3);
+                        <select id="ddlMutuasExplo" class="selectpicker form-control" data-live-search="true">
+                            @foreach (RadioWeb.Models.MUTUAS item in oListTemp)
+                            {
+                                if (item.CODMUT == Model.ENTIDAD_PAGADORA.CODMUT)
+                                {
+                                <option  selected="selected"  data-text-value="@item.CODMUT" value="@item.OID" >@item.CODMUT-@item.NOMBRE </option>
+                                }
+                                else
+                                {
+                                <option  data-text-value="@item.CODMUT" value="@item.OID" >@item.CODMUT-@item.NOMBRE </option>
+                                }
+
+                            }
+                        </select>
+                    }
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" class="col-sm-2 control-label">Aparato</label>
+                <div class="col-sm-10 ">
+                    @{
+                        List<RadioWeb.Models.DAPARATOS> oListAparatos = (List<RadioWeb.Models.DAPARATOS>)Session["Daparatos"];
+                        <select id="ddlAparatosExplo" class="selectpicker form-control ddlAparatosICS" data-live-search="true">
+                            @foreach (RadioWeb.Models.DAPARATOS item in oListAparatos)
+                            {
+                                if (item.COD_FIL == Model.DAPARATO.COD_FIL)
+                                {
+                                <option  selected="selected" data-cod="@item.COD_FIL"  data-text-value="@item.DES_FIL" value="@item.OID" >@item.COD_FIL-@item.DES_FIL </option>
+                                }
+                                else
+                                {
+                                <option data-cod="@item.COD_FIL"   data-text-value="@item.DES_FIL" value="@item.OID" >@item.COD_FIL-@item.DES_FIL </option>
+                                }
+
+                            }
+                        </select>
+                    }
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" class="col-sm-2 control-label">Explo</label>
+                <div class="col-sm-10 ">
+
+                    @{
+                        
+                        <select id="ddlExploracionExplo" class="selectpicker form-control">
+                            @foreach (RadioWeb.Models.APARATOS item in Model.EXPLORACIONESCONTARIFA)
+                            {
+                                if (Model.APARATO == null)
+                                {
+                                <option  data-text-value="@item.FIL" value="@item.OID" >@item.COD_FIL-@item.DES_FIL </option>
+                                }
+                                else
+                                {
+                                    if (item.COD_FIL == Model.APARATO.COD_FIL)
+                                    {
+                                <option  selected="selected"  data-text-value="@item.FIL" value="@item.OID" >@item.COD_FIL-@item.DES_FIL </option>
+                                    }
+                                    else
+                                    {
+                                <option  data-text-value="@item.FIL" value="@item.OID" >@item.COD_FIL-@item.DES_FIL </option>
+                                    }
+                                }
+
+
+                            }
+                        </select>
+                    }
+
+
+
+                </div>
+            </div>
+           
+            @if (oUsuarioLogeado.VECANTIDADES == 1)
+            {    
+                <div class="form-group">
+                    <label for="inputCantidad" class="col-sm-2 control-label">Precio</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control money"   value="@Model.CANTIDAD" />
+                    </div>
+                    <label for="inputMoneda" class="col-sm-1 control-label" style="text-align: left;">@Model.MONEDA.SIMBOLO</label>
+                </div>
+            }
+            <div class="form-group">
+                <label for="inputCantidad" class="col-sm-2 control-label">F. Fac.</label>
+                <div class="col-sm-3">
+                    @if (Model.FECHA_FAC.HasValue)
+                    {
+                      
+                        <input id="fechaFac" type="text" class="form-control"   value="  @Model.FECHA_FAC.Value.ToShortDateString()" />
+                    }
+                    else
+                    {
+                        <input id="fechaFac" type="text" class="form-control " />
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label for="inputCantidad" class="col-sm-2 control-label">F. Deri.</label>
+                <div class="col-sm-3">
+                    @if (Model.FECHA_FAC.HasValue)
+                    {
+                      
+                        <input type="text" class="form-control" value="@Model.FECHADERIVACION.Value.ToShortDateString()"   name="fechaDerivacion">
+                    }
+                    else
+                    {
+                        <input id="fechaDerivacion" type="text" class="form-control " />
+                    }
+
+
+                </div>
+                <label for="inputCantidad" class="col-sm-2 control-label">Confirmada</label>
+                <div class="col-sm-3">
+                    @if (Model.FECHAENVIO.HasValue)
+                    {
+                      
+                        <input type="text" class="form-control" value="@Model.FECHAENVIO.Value.ToShortDateString()" id="fechaRecogido"  name="fechaRecogido">
+                    }
+                    else
+                    {
+                        <input type="text" class="form-control" value="" name="fechaRecogido" id="fechaRecogido">
+                    }
+
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+
+                <div class="col-sm-12 ">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="chkPagado" disabled="disabled"  @(Model.PAGADO == "T" ? "checked='checked'" : "")   name="chkPagado">
+                            PAGADO
+									 
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="chkPermiso"  @(Model.PERMISO == "T" ? "checked='checked'" : "")     name="chkPermiso">
+                            PERMISO									 
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="chkRecogido" @(Model.RECOGIDO == "T" ? "checked='checked'" : "")   name="chkRecogido">
+                            RECOGIDO							 
+                        </label>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+        </div>
+    </div>
+    <div class="row">
+         <div class="form-group">
+                <label for="ICS" class="col-sm-2 control-label">Códi ICS</label>
+                <div class="col-sm-4 ">
+                    @{
+                     
+                        <select id="ddlReferenciaICS" class="selectpicker form-control">
+                            @foreach (RadioWeb.Models.RX item in @Model.CODIGOSICS)
+                            {
+                                if (item.OID == Model.IOR_CODIGORX)
+                                {
+                                <option  selected="selected"   data-text-value="@item.CODI" value="@item.OID" >@item.CODI - @item.DENOM </option>
+                                }
+                                else
+                                {
+                                <option  data-text-value="@item.CODI" value="@item.OID" >@item.CODI -  @item.DENOM</option>
+                                }
+                            }
+                        </select>
+                    }
+                </div>
+               <label for="inputPeso" class="col-sm-2 control-label">Autoriza</label>
+                <div class="col-sm-4">
+
+                    <input type="text" name="PESO" value="@Model.NHCAP" class="form-control ">
+                </div>
+            </div>
+        <div class="col-md-4">
+           
+            <div class="form-group">
+                <label for="inputPeso" class="col-sm-2 control-label">Peso</label>
+                <div class="col-sm-3">
+                    <input type="text" name="PESO" value="@Model.PESO" class="form-control ">
+                </div>
+                <label for="inputPeso" class="col-sm-2 control-label">Ex</label>
+                <div class="col-sm-3">
+
+                    <input type="text" name="expediente" value="@Model.IDENTIFICA" class="form-control ">
+                </div>
+
+            </div>
+
+        </div>
+        <div class="col-md-9 ">
+            <div class="form-group">
+
+                <div class="col-sm-12">
+                    <label for="Nota" class="col-sm-12 control-label" style="text-align: left;">Nota</label>
+
+                    <textarea id="textoExploracion" class="form-control col-sm-12" rows="1" style="text-transform: none;"> @Model.TEXTO</textarea>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+</div>
+
+
+

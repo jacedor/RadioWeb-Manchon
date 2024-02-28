@@ -1,0 +1,115 @@
+﻿@model IEnumerable<RadioWeb.Models.AparatosComplejos>
+
+@{
+    ViewBag.Title = "Mantenimiento Aparatos Complejos";
+}
+
+<div class="ibox-title">
+    <h5>
+        <strong>
+            Mantenimiento de Aparatos Complejos
+        </strong>
+    </h5>
+    <div class="ibox-tools">
+        <a href="/AparatosComplejos/Create" class="btn btn-primary btn-xs">Crear Nueva</a>
+    </div>
+</div>
+<div class="ibox-content ">
+
+    <table class="table table-hover  table-bordered" id="tblAparatosCompeljos" data-height="700"
+           data-pagination="true" data-search="true" data-page-size="15" data-page-list="[15,30,50,100,200,1000]">
+        <thead>
+            <tr>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.OID)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO1)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO2)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO3)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO4)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO5)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO6)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO7)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO8)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.APARATO9)
+                </th>
+
+                <th>....</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO2)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO3)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO4)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO5)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO6)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO7)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO8)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO9)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.OID }) |
+                    @Html.ActionLink("Borrar", "Delete", new { id = item.OID })
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            makeBootstrapTable("tblAparatosComplejos");
+            $("li[data-view]").removeClass('active');
+            $("[data-view=viewAparCompl]").addClass("active");
+            $("[data-view=viewAparCompl]").parents("ul").removeClass("collapse");
+        });
+
+    </script>
+
+}

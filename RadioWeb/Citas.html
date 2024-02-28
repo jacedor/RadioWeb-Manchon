@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Grupo Manchon</title>
+    <link href="../../Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+       <link href="css/plugins/toastr/toastr.min.css" rel="stylesheet"/>
+    <style>
+        .centro {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: lightgrey;
+            border: 1px solid black;
+        }
+
+            .centro:hover {
+                cursor: pointer;
+                /*background-color: HighlightText;*/
+                background-color: red;
+            }
+
+        .table tr:hover {
+            cursor: pointer;
+            color: black;
+            background-color: #6bc3c4;
+        }
+
+        .spinnerBuscando {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="margin-top: 20px;">
+        <div id="cabecera" class="row hide" style="margin-bottom: 5px;">
+            <img height="80" src="img/Logo%20Grup%20Manchon.jpg" />
+        </div>
+
+
+
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-offset-1 col-md-11" id="CitasResult">
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">
+                        Citas Planificadas -
+                        <span id="nombrePaciente" style="font-size:14px;"></span>
+                    </div>
+                    <div class="panel-body" style="padding: 0px;">
+                        <!-- Table -->
+                        <img class="spinnerBuscando hide" src="Images/buscando.gif" alt="Alternate Text" />
+                        <table class="table table-hover clicable">
+                            <thead>
+                                <tr class="warning">
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Aparato</th>
+                                    <th>Exploración</th>
+                                    
+                                    <th>Centro</th>
+                                    <th>Observaciones</th>
+                                    <th>#</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tablebody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <h4 class="modal-title custom_align" id="Heading">Anular cita</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span>Esta seguro de anular esta cita?</div>
+
+                </div>
+                <div class="modal-footer ">
+                    <button type="button" id="ConfirmaAnularCita" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span>Si</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>No</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <script src="/Scripts/jquery-2.0.3.min.js"></script>
+    <script src="/Scripts/bootstrap.min.js"></script>
+    <script src="/Scripts/moment.min.js"></script>
+    <script src="/Scripts/moment-with-locales.min.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="/Scripts/jQuery.tmpl.min.js"></script>
+     <!-- Toastr -->
+    <script src="/js/plugins/toastr/toastr.min.js"></script>
+    <script src="/citaonline110220.js"></script>
+    <script>
+
+
+        $('#fechaNacimiento').datetimepicker({
+            viewMode: 'years',
+            format: 'DD/MM/YYYY',
+            locale: 'es'
+
+        });        
+
+        
+
+        $(document).on("click", ".BorrarCita", function () {
+            var myCitaId = $(this).data('oid');
+            $("#ConfirmaAnularCita").data("oid", myCitaId);
+            // As pointed out in comments, 
+            // it is superfluous to have to manually call the modal.
+            // $('#addBookDialog').modal('show');
+        });
+
+        $(document).on("click", "#ConfirmaAnularCita", function () {
+            var CitaId = $(this).data('oid');
+            $("#ConfirmaAnularCita").data("oid", CitaId);
+            //Rellenamos los Aparatos
+            $.ajax({
+                url: '/API/Service/' + CitaId,
+                type: 'DELETE',
+                success: function (data) {
+                    rellenarMisCitas(true);
+                    $('#delete').modal('hide');
+                    toastr.success('', 'Cita Anulada!', { timeOut: 5000 });
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+            // As pointed out in comments, 
+            // it is superfluous to have to manually call the modal.
+            // $('#addBookDialog').modal('show');
+        });
+        $(document).ready(function () {
+          
+            //if (sessionStorage.CentroExterno != -1) {
+            //    $("#PanelValidadCodigo").hide();
+            //    $("#DatosCita").removeClass("col-md-6").addClass("col-md-12");
+            //    $("#CrearCita").removeClass("disabled");
+            //    $("#cabecera").removeClass('hide');
+            //}
+            $.ajax({
+                url: '/API/Paciente/' + getParameterByName("oid"),
+                type: 'GET',
+                success: function (data) {
+                    $("#nombrePaciente").html(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+
+            
+            rellenarMisCitas(true);
+
+        });
+    </script>
+
+
+
+
+
+</body>
+</html>

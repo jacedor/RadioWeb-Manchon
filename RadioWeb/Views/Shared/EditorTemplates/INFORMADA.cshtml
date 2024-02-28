@@ -1,0 +1,22 @@
+﻿@model string
+@{
+    var ior_informada =(String.IsNullOrEmpty(Model)? "" : Model );
+
+    var tipos = new SelectList(
+new List<SelectListItem> {
+new SelectListItem {Text ="TODOS",Value = "A",Selected = "A" ==ior_informada},
+new SelectListItem {Text ="INFORMADA",Value = "T",Selected = "T" == ior_informada.ToString()},
+new SelectListItem {Text = "NO INFORMADA",Value = "F", Selected = "F" == ior_informada.ToString() }
+
+}, "Value", "Text", ior_informada
+);
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+@Html.DropDownList("",
+            tipos,
+            htmlAttributes)

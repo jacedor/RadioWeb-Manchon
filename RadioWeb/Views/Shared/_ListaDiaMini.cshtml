@@ -1,0 +1,154 @@
+﻿@model IEnumerable<RadioWeb.Models.LISTADIA>
+
+<button data-dismiss="popover" class="close" id="cerrarCarrito" type="button">
+    <span aria-hidden="true">×</span><span class="sr-only">Cerrar</span>
+</button>
+
+
+<table id="ExploracionesMiniTable" class="table table-stripped " data-height="300" style="font-size: 12px;"
+       data-sortable="true" data-search="true">
+    <thead>
+        <tr>
+            <th data-field="FECHA" data-sortable="true">Fecha</th>
+            <th data-field="HORA" data-sortable="true">Hora</th>
+            <th data-field="PACIENTE" data-sortable="true">Paciente</th>
+          
+            <th data-field="MUTUA" data-sortable="true">Mutua</th>
+            <th data-field="EXPLO" data-sortable="true">Exploración</th>
+            <th data-field="OID">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+
+            var esHueco = "huecoOcupado";
+
+        <tr class="@esHueco" data-ior_paciente="@item.IOR_PACIENTE" data-oid="@item.OID" data-facturada="@item.FACTURADA"
+            data-hora="@( item.HORA != null ? @item.HORA.Substring(0, 2) : "")" data-pagado="@item.PAGADO"
+            data-owner="@item.IOR_PACIENTE" data-estado="@item.ESTADO" data-style="color: @item.COLOR">
+
+            <td>
+                <span style="color:@item.COLOR">   @item.FECHA.ToShortDateString()</span>
+
+            </td>
+            <td>
+                <span class="centro">@item.CENTRONAME</span>
+            </td>
+            <td>
+                <span class="hora">@item.HORA</span>
+            </td>
+            <td>
+                @if (esHueco == "huecoLibre")
+                {
+                    <span style="color:@item.COLOR">@item.PACIENTE</span>
+                }
+                else
+                {
+                    if (item.OID > 0)
+                    {
+                        @Html.ActionLink(
+                                                                                                         linkText: @item.PACIENTE,
+                                                                                                         actionName: "Details",
+                                                                                                         controllerName: "Exploracion",
+                                                                                                         routeValues: new
+                                                                                                         {
+                                                                                                             oid = @item.OID
+                                                                                                         },
+                                                                                                         htmlAttributes: new { @style = "color:" + @item.COLOR })
+                    }
+                    else
+                    {
+                        <span style="color:@item.COLOR"><b>@item.PACIENTE</b></span>
+                    }
+                }
+            </td>
+           
+            <td>
+                @if (ViewBag.CampoMutua == "NOMBRE")
+                {
+                    <span title="Mutua" style="color:@item.COLOR">@item.MUTUA</span>
+                }
+                else
+                {
+                    <span title="Mutua" style="color:@item.COLOR">@item.COD_MUT</span>
+                }
+            </td>
+            <td>
+                @if (item.OID < 0)
+                {
+                    <span title="exploracion" style="color:@item.COLOR">@item.EXPLO</span>
+                }
+                else
+                {
+                    if (ViewBag.CampoMutua == "NOMBRE")
+                    {
+                        <a style="color:@item.COLOR" href="#" class="filtroAparatoCarrito" data-aparato="@item.COD_FIL">@item.EXPLO</a>
+                    }
+                    else
+                    {
+                        <a style="color:@item.COLOR" href="#" class="filtroAparatoCarrito" data-aparato="@item.COD_FIL">@item.COD_FIL</a>
+                    }
+                }
+
+
+
+
+            </td>
+           
+            <td>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                @if (@item.ESTADO == "0")
+                                {
+
+                                    <a data-oid="@item.OID" class="btn btn-info  btn-xs  trasladarExploracion " href="#">
+                                        <i class="fa fa-exchange" style="color: green;" title="Trasladar"></i>&nbsp;Trasladar
+                                    </a>
+                                }
+                            </td>
+                            <td>
+                                @if (item.OID < 0)
+                                {
+                                    <a data-oid="@item.OID" data-iorgrupoaparato="@item.GRUPOAPA" data-iorBolsa="@item.IOR_BOLSAPETICIONES" class="btn btn-warning btn-facebook  btn-xs agendarPeticion" data-iorpaciente="@item.IOR_PACIENTE" href="#">
+                                        <i class="fa  fa-calendar" style="color: black;" title="Agendar Exploracion"></i>&nbsp;Citar
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a data-oid="@item.OID" class="btn btn-success btn-facebook  btn-xs duplicarExploracion" data-iorpaciente="@item.IOR_PACIENTE" href="#">
+                                        <i class="fa  fa-copy" style="color: black;" title="Duplicar Exploracion"></i>&nbsp; Duplicar
+                                    </a>
+                                }
+                            </td>
+                            <td>
+                                @if (item.OID > 0)
+                                {
+                                    <a data-oid="@item.OID" data-iorpaciente="@item.IOR_PACIENTE" class="btn btn-primary   btn-xs exploracionRelacionada" href="#">
+                                        <i class="fa fa-arrows-h" style="color: darkslategrey;" title="Crear Exploracion Complementaria"></i>&nbsp;Complemen
+                                    </a>
+                                }
+                            </td>
+                            <td>
+                                @if (item.OID > 0)
+                                {
+                                    <a data-oid="@item.OID" class="eliminarDelCarrito" href="#"><i class="fa fa-times" style="color: red;" title="Eliminar"></i></a>
+
+                                }
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </td>
+
+
+        </tr>
+        }
+    </tbody>
+</table>

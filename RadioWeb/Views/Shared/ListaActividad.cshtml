@@ -1,0 +1,27 @@
+﻿@model IEnumerable<RadioWeb.Models.Logica.ActividadUsuario>
+<div class="sidebar-title">
+    <h3><i class="fa fa-comments-o"></i>Ultimos accesos </h3>
+</div>
+
+<div>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+           
+        <div class="sidebar-message">
+            <a href="@item.URL">
+
+                <div class="media-body">
+                    @item.DESCRIPCION
+                    <br>
+                    <small class="text-muted">@item.CUANDO.ToString("HH:mm:ss")</small>
+                </div>
+            </a>
+        </div>
+        }
+    }
+
+
+
+</div>

@@ -1,0 +1,249 @@
+﻿@model RadioWeb.Models.BOLSA_PRUEBAS
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>BOLSA_PRUEBAS</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.VERS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VERS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CANAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CANAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OWNER)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OWNER)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.USERNAME)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USERNAME)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BORRADO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BORRADO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FECHAENTRADA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FECHAENTRADA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PACIENTE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PACIENTE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FECHANACIMIENTO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FECHANACIMIENTO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DNI)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DNI)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.POLIZA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.POLIZA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PASSAPORTE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PASSAPORTE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MAIL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MAIL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TELEFONO1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TELEFONO1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TELEFONO2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TELEFONO2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DIRECCION)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIRECCION)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CODIGOPOSTAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CODIGOPOSTAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.POBLACION)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.POBLACION)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PROVINCIA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PROVINCIA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FECHAPRUEBA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FECHAPRUEBA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.HORAPRUEBA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HORAPRUEBA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PRUEBA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PRUEBA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.COMENTARIO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.COMENTARIO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IOR_REFERIDOR)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IOR_REFERIDOR)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MEDICOREFERENTE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MEDICOREFERENTE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MUTUA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MUTUA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IOR_TIPOEXPLORACION)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IOR_TIPOEXPLORACION)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IOR_ENTIDADPAGADORA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IOR_ENTIDADPAGADORA)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

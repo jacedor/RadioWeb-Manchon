@@ -1,0 +1,121 @@
+﻿@model IEnumerable<RadioWeb.Models.LISTADIAAMBFORATS>
+@{
+    //radioweb2.0
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)ViewData["oUsuario"];
+   
+}
+
+
+<input type="hidden" name="TEXTOAGENDADIARIA" id="TEXTOAGENDADIARIA" value="@ViewBag.MensajeAgendadiaria" />
+<input type="hidden" name="orderField" id="orderField" value="" />
+<input type="hidden" name="OrderDirection" id="orderDirection" value="" />
+
+<table id="ExploracionesTable" class="table table-hover table-bordered" 
+       data-search="true" data-search-align="left"> 
+    <thead>
+        <tr>
+            <th data-field="intocable" class="hidden-xs hidden-md">i</th>
+
+            @*<th data-sortable="true" data-field="HORA"
+                data-sorter="horarioSorter">H</th>*@
+            <th data-field="hhora">H</th>
+            <th data-field="hora">Hora</th>
+            <th data-field="HORA_LL" title="Espera">Esp</th>
+            <th data-field="CIDCOLOR" title="Color">C</th>
+            <th data-field="VERS" class="hidden-xs hidden-md"><span title="Primera Visita">V</span></th>
+            <th data-field="QRCOMPARTIRCASO" class="hidden-xs hidden-md"><span title="Q REPORT">QR</span></th>
+            <th  data-sortable="true" data-field="PACIENTE" width="200">Paciente</th>
+            <th data-sortable="true"><span title="Informada">I</span></th>
+            @if (ViewBag.ModuloVidSigner == "TRUE")
+            {
+                <th class="hidden-xs hidden-md"><span title="Firmada LOPD">L</span></th>
+                <th class="hidden-xs hidden-md"><span title="Consentimiento informado">C</span></th>
+            }
+            <th class="hidden-xs hidden-md"><span title="Fecha Máxima Entrega">F.Entrega</span></th>
+
+            <th data-sortable="true"><span title="Medico Informante">Me</span></th>
+            <th class="hidden-xs hidden-md"><span title="Medico Referidor">Col</span></th>
+            <th class="hidden-xs hidden-md"><span title="Técnico">Te</span></th>
+            <th class="hidden-xs hidden-md" data-field='oid'><span title="Id Exploación">Id</span></th>
+            <th data-sortable="true"><span title="Mutua">Mutua</span></th>
+            <th>Apa</th>
+            <th>Explo</th>
+            <th class="hidden-xs hidden-md"><span title="Consumible/Trazador">C</span></th>
+            @if (oUsuarioLogeado.VECANTIDADES == 1)
+            {
+                <th><span title="Precio">Precio</span> </th>
+                <th class="hidden-xs hidden-md"><span title="Facturada">F</span></th>
+                <th class="hidden-xs hidden-md"><span title="Aplazada">A</span> </th>
+                <th class="hidden-xs hidden-md"><span title="No Facturable">NF</span> </th>
+            }
+            <th class="hidden-xs hidden-md">Texto </th>
+        </tr>
+    </thead>
+    <tbody>
+        @Html.Partial("_ListaDiaFilas",Model)
+    </tbody>
+</table>
+
+
+<!-- context menu -->
+<ul id="context-menu" class="dropdown-menu">
+    <li data-item="vincularaHL7" class="hide">
+        <a>
+            <i title="Vincular a HL7" style="color: orangered; font-size: 1.3em;" class="fa fa-anchor "></i>
+            <span class="nav-label" style="display:inline;">&nbsp;Vincular a HL7</span>
+        </a>
+    </li>
+    <li data-item="desvincularMaster" class="hide">
+        <a>
+            <i title="Desvincular Exploración Hija" style="color: darkred; font-size: 1.3em;" class="fa fa-chain-broken "></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Desvincular Exploración</span>
+        </a>
+    </li>
+    <li data-item="entradaCarrito">
+        <a>
+            <i title="Dar Entrada" style="color: green; font-size: 1.3em;" class="fa fa-map-marker "></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Entrada Paciente</span>
+        </a>
+    </li>
+    <li data-item="carrito">
+        <a>
+            <i title="Carro Exploraciones" style="color: green; font-size: 1.3em;" class="fa fa-shopping-cart "></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Enviar al carrito</span>
+        </a>
+    </li>
+    <li data-item="carritoTodas">
+        <a>
+            <i title="Carro Exploraciones" style="color: green; font-size: 1.3em;" class="fa fa-tasks "></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Enviar todas al carrito</span>
+        </a>
+    </li>
+
+    <li data-item="enviarSMS">
+        <a data-toggle="modal" data-target="#modalSMS">
+            <i title="Enviar SMS" style="color: black; font-size: 1.3em;" class="fa fa-phone "></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Enviar SMS</span>
+        </a>
+    </li>
+
+    <li data-item="tiempoEspera">
+        <a data-toggle="modal" data-target="#modalTiempoEspera">
+            <i title="Tiempo Espera" style="color: black; font-size: 1.3em;" class="fa fa-clock-o "></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Tiempo Espera</span>
+        </a>
+
+    </li>
+    <li data-item="imprimirLista">
+        <a>
+            <i title="Imprimir Lista" style="color: green; font-size: 1.3em;" class="fa fa-print "></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Imprimir Lista</span>
+        </a>
+    </li>
+    <li data-item="enviarQreport">
+        <a>
+            <i title="Enviar a Qreport" style="color: blue; font-size: 1.3em;" class="fa fa-envelope"></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Qreport</span>
+        </a>
+    </li>
+
+
+</ul>

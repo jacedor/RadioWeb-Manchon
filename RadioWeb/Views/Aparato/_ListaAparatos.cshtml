@@ -1,0 +1,87 @@
+﻿@model IEnumerable<RadioWeb.Models.DAPARATOS>
+
+<div class="ibox-tools" style="margin-bottom:10px;">    
+    <a href="/Aparato/CreateAparato?groupOid=@ViewBag.groupOid" class="btn btn-primary btn-xs">Crear Nuevo</a>
+</div>
+
+<table class="table table-bordered" id="tblAparatos" data-pagination="true" data-search="false" data-page-size="8" data-page-list="[8,16,32,64]">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.COD_FIL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DES_FIL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IDENTIFICADOR)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.USERNAME)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.XEROX)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VERS)
+            </th>
+            <th>....</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Count() == 0)
+        {
+            <tr class="no-data">
+                <td colspan="8" class="text-center"><span>No hay aparatos definidos</span></td>
+            </tr>
+        }
+
+
+        @foreach (var item in Model)
+        {
+            <tr data-oidGrupo="@ViewBag.groupOid" data-oidAparato="@item.OID">
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.COD_FIL)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DES_FIL)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CENTRO.NOMBRE)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IDENTIFICADOR)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.USERNAME)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.XEROX)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VERS)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "EditAparato", new { id = item.OID }) |
+                    @Html.ActionLink("Borrar", "DeleteAparato", new { id = item.OID })
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        makeBootstrapTable("tblAparatos");
+    });
+
+</script>

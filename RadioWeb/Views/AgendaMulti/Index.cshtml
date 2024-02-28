@@ -1,0 +1,249 @@
+﻿@model IEnumerable<RadioWeb.ViewModels.VWAgendaMultiple>
+@{
+    //radioweb2.0
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+
+    RadioWeb.Models.Logica.FiltrosBusquedaExploracion oFiltrosBusqueda = null;
+    if (Session["FiltrosBusqueda"] != null)
+    {
+        oFiltrosBusqueda = ((RadioWeb.Models.Logica.FiltrosBusquedaExploracion)Session["FiltrosBusqueda"]);
+
+    }
+
+    int buscadores = 6;
+    ViewBag.Title = "Multi Agenda";
+
+}
+
+@section estilos{
+
+    @*  <link href="~/css/plugins/switchery/switchery.css" rel="stylesheet">
+        <link href="~/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">*@
+    <style>
+        table.clicable tbody tr.huecoLibre {
+            cursor: pointer;
+        }
+
+            table.clicable tbody tr.huecoLibre:hover {
+                background-color: rgba(0, 255, 33, 0.86);
+            }
+    </style>
+
+    <link href="~/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="~/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="~/css/plugins/dualListbox/bootstrap-duallistbox.min.css" rel="stylesheet">
+    <link href="~/css/plugins/bootstrap-table/bootstrap-table.css" rel="stylesheet" />
+}
+
+<input type="hidden" id="buscadores" value="@buscadores" />
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="row ">
+            <div class="col-md-4" style="margin-top: 15px;">
+                <div class="btn-group" style="clear: both;">
+                    <button id="btnAnterior" class="btn btn-white btn-sm"><i class="fa fa-arrow-left"></i></button>
+                    <button id="btnSiguiente" class="btn btn-white btn-sm"><i class="fa fa-arrow-right"></i></button>
+                </div>
+                @if (Session["FiltrosBusqueda"] != null && oFiltrosBusqueda.modoAgendaMultiple == "mismaFecha")
+                {
+                    <label class="radio-inline">
+                        <input type="radio" name="optModo" value="mismaFecha" checked="checked">Misma Fecha
+                    </label>
+                }
+                else
+                {
+                    <label class="radio-inline">
+                        <input type="radio" name="optModo" value="mismaFecha">Misma Fecha
+                    </label>
+                }
+                @if (Session["FiltrosBusqueda"] != null && oFiltrosBusqueda.modoAgendaMultiple == "mismoAparato")
+                {
+                    <label class="radio-inline">
+                        <input type="radio" name="optModo" value="mismoAparato" checked="checked">Mismo Aparato
+                    </label>
+                }
+                else
+                {
+                    <label class="radio-inline">
+                        <input type="radio" name="optModo" value="mismoAparato">Mismo Aparato
+                    </label>
+                }
+
+            </div>
+            @*CENTRO*@
+            <div class="col-md-2">
+                <label class="control-label">Centro</label>
+
+                @{
+                    List<RadioWeb.Models.CENTROS> oListCentros = (List<RadioWeb.Models.CENTROS>)System.Web.HttpContext.Current.Application["Centros"];
+                    <select id="ddlCentros" class="select2 form-control " data-filter-calendar="true" data-live-search="true" style="padding: 4px;">
+
+                        @foreach (RadioWeb.Models.CENTROS item in oListCentros)
+                        {
+                            if (Session["FiltrosBusqueda"] != null && item.OID == oFiltrosBusqueda.oidCentro)
+                            {
+                                <option selected="selected" value="@item.OID">@item.NOMBRE </option>
+                            }
+                            else
+                            {
+                                <option value="@item.OID">@item.NOMBRE </option>
+                            }
+                        }
+                    </select>
+                }
+            </div>
+
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label class="control-label">Grupo</label>
+
+                    @Html.DropDownList("ddlGrupo", Model.First().GruposAparatos, new { data_filter_calendar = "true", @class = "form-control select2 grupo ", style = "padding:4px;" })
+
+                </div>
+            </div>
+            <div class="col-sm-1 ">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Huecos</label>
+                    <div class="col-sm-10">
+                        @if (Session["FiltrosBusqueda"] != null && oFiltrosBusqueda.SoloHuecos == "true")
+                        {
+                            <input type="checkbox" id="chkHuecos" name="chkHuecos" class="js-switch" checked />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkHuecos" name="chkHuecos" class="js-switch" />
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-2 pull-right" style="margin-top: 15px;">
+                <a id="btnBuscarPaciente" style="padding: 5px; min-height: 20px;" class="btn   btn-primary btn-bitbucket disabled pull-right" role="button">
+                    Siguiente <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div id="wrapperBuscadores" class="row">
+
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        <div class="col-lg-2 contenedorLista" id="@string.Concat("container", @i.ToString())" style="padding-left:5px;padding-right:5px;">
+            @Html.Partial("~/Views/AgendaMulti/_ListaDia.cshtml", Model.ElementAt(i))
+        </div>
+    }
+
+<ul id="context-menu" class="dropdown-menu">
+
+    <li data-item="carrito">
+        <a>
+            <i title="Carro Exploraciones" style="color: green; font-size: 1.3em;" class="fa fa-shopping-cart "></i>
+            <span class="nav-label" style="display:inline;">&nbsp;Enviar al carrito</span>
+        </a>
+    </li>
+    <li data-item="carritoTodas">
+        <a>
+            <i title="Carro Exploraciones" style="color: green; font-size: 1.3em;" class="fa fa-tasks "></i>
+            <span class="nav-label" style="display:inline;">&nbsp;Enviar todas al carrito</span>
+        </a>
+    </li>
+    
+        <li data-item="enviarSMS">
+        <a data-toggle="modal" data-target="#modalSMS">
+            <i title="Enviar SMS" style="color: black; font-size: 1.3em;" class="fa fa-phone "></i>
+            <span class="nav-label" style="display:inline;">&nbsp;Enviar SMS</span>
+        </a>
+    </li>
+    
+
+
+    <li data-item="tiempoEspera">
+        <a data-toggle="modal" data-target="#modalTiempoEspera">
+            <i title="Tiempo Espera" style="color: black; font-size: 1.3em;" class="fa fa-clock-o "></i>
+            <span class="nav-label" style="display:inline;">&nbsp;Tiempo Espera</span>
+        </a>
+    </li>
+
+    <li data-item="imprimirLista">
+        <a>
+            <i title="Imprimir Lista" style="color: green; font-size: 1.3em;" class="fa fa-print "></i>
+            <span class="nav-label" style="display:inline;">&nbsp;Imprimir Lista</span>
+        </a>
+    </li>
+
+
+
+</ul>
+
+    <div id="modal-form-MotivoAnular" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <i class="fa fa-exclamation modal-icon"></i>
+                    <h4 class="modal-title">Motivo anulación</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form class="form-inline" role="form">
+                                <div class="form-group">
+
+                                    <label class="sr-only" for="MotivoAnulacion">Motivo anulación</label>
+                                    <select id="MotivoAnulacion" class="form-control motivos">
+                                        <option value="No doctor">No doctor</option>
+                                        <option value="No técnico/auxiliar">No técnico/auxiliar</option>
+                                        <option value="Averia">Averia</option>
+                                        <option value="Mantenimiento">Mantenimiento</option>
+                                        <option value="Demora">Demora</option>
+                                        <option value="Cambio máquina RM1">Cambio máquina RM1</option>
+                                        <option value="Cambio máquina RM2">Cambio máquina RM2</option>
+                                        <option value="Cambio máquina RM3">Cambio máquina RM3</option>
+                                        <option value="Reserva ORT">Reserva ORT</option>
+                                        <option value="Reserva DEN">Reserva DEN</option>
+                                        <option value="Otros">Otros</option>
+                                    </select>
+                                    <label class="sr-only" for="MotivoAnulacion">Otros</label>
+                                    <input type="text" name="OtrosAnulacion" class="form-control hide" id="OtrosAnulacion" />
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-sm-12 hide">
+
+                            <div class="form-group">
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                    <button type="button" id="anularHuecoLibre" data-dismiss="modal" class="btn btn-primary pull-right">Anular</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</div>
+
+
+@section scripts{
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/AgendaMultiple/AgendaMultiple.js")"></script>
+    @*<script src="~/js/plugins/contextmenu/bootstrap-table.min.js"></script>
+        <script src="~/js/plugins/contextmenu/bootstrap-table-contextmenu.js"></script>*@
+
+}

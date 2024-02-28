@@ -1,0 +1,196 @@
+﻿@model IEnumerable<RadioWeb.Models.BOLSA_PRUEBAS>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.VERS)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CANAL)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OWNER)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.USERNAME)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BORRADO)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FECHAENTRADA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PACIENTE)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FECHANACIMIENTO)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DNI)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.POLIZA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PASAPORTE)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MAIL)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TELEFONO1)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TELEFONO2)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DIRECCION)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CODIGOPOSTAL)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.POBLACION)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PROVINCIA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FECHAPRUEBA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HORAPRUEBA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PRUEBA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.COMENTARIO)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IOR_MEDICOREFERENTE)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MEDICOREFERENTE)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MUTUA)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IOR_TIPOEXPLORACION)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IOR_ENTIDADPAGADORA)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.VERS)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CANAL)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OWNER)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.USERNAME)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BORRADO)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FECHAENTRADA)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PACIENTE)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FECHANACIMIENTO)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DNI)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.POLIZA)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PASAPORTE)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MAIL)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TELEFONO1)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TELEFONO2)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DIRECCION)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CODIGOPOSTAL)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.POBLACION)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PROVINCIA)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FECHAPRUEBA)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.HORAPRUEBA)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PRUEBA)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.COMENTARIO)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IOR_MEDICOREFERENTE)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MEDICOREFERENTE)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MUTUA)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IOR_TIPOEXPLORACION)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IOR_ENTIDADPAGADORA)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.OID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.OID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.OID })
+        </td>
+    </tr>
+}
+
+</table>

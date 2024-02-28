@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument>
+ <sender>""</sender>
+ <translation code="RX"/>
+ <effectiveTime value="@FECHA"/>
+ <patient>
+  <cip value=""/>
+  <nhc value="@NHCPACIENTEBADALONA"/>
+  <documentType value="1"/>
+  <documentNumber value=""/>
+ </patient>
+ <location>
+  <serviceProviderOrganization>
+   <code>10115</code>
+   <asOrganizationPartOf>
+    <code>H08000032</code>
+   </asOrganizationPartOf>
+  </serviceProviderOrganization>
+ </location>
+ <reason>
+  <observationDx>
+   <value code="" codeSystemName="" displayName=""/>
+  </observationDx>
+ </reason>
+ <author>
+  <name>
+  <given value="@NOMBREMEDICOINFORME"/>
+  <family value="@APELLIDOMEDICOINFORME"/>
+  <family value="@APELLIDO2MEDICOINFORME"/>
+  <rol value="MD"/>
+  <code value="@NUMCOL"/>
+  <documentType value="1"/>
+  <documentNumber value="@DNI"/>
+  </name>
+ </author>
+ <component>
+  <text mediaType="pdf">
+   <serverreference/>
+   <URLreference/>
+   <parameter/>
+  </text>
+ </component>
+ <content>@CONTENTPDF</content>
+</ClinicalDocument>

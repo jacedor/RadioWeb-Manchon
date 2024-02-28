@@ -1,0 +1,90 @@
+﻿@model DIRECCION
+@{
+
+    var htmlField = ViewData.TemplateInfo.HtmlFieldPrefix;
+}
+
+<div id="@(Model.OID<=0? Model.INDICE:Model.OID)" data-owner="@Model.OWNER"
+     class="tab-pane  direccion @(Model.INDICE==0 || Model.OID <=0?"fade in active":"fade")">
+    <div class="panel-body form-horizontal">
+        <input type="hidden" id="@String.Concat(new string[] {htmlField,"[", Model.INDICE.ToString(), "].OID" })"
+               name="@String.Concat(new string[] { htmlField,"[", Model.INDICE.ToString(), "].OID" })" value="@Model.OID" />
+        <input type="hidden" id="@String.Concat(new string[] {htmlField, "[", Model.INDICE.ToString(), "].OWNER" })"
+               name="@String.Concat(new string[] { htmlField,"[", Model.INDICE.ToString(), "].OWNER" })" value="@Model.OWNER" />
+
+        @if (Model.INDICE == 0)
+        {
+            <div id="divResultadoDireccion">
+
+            </div>
+        }
+
+        <div class="form-group">
+            <div class="col-sm-9">
+
+                @Html.BootstrapLabelFor(m => Model.DIRECCION1)
+                @Html.TextBoxFor(m => Model.DIRECCION1,
+                                                  new
+                                                  {
+                                                      @class = "form-control",
+                                                      @style = "text-transform:uppercase;",
+                                                      autocomplete = "off",
+                                                      placeHolder = "Nombre de la calle",
+                                                      id = String.Concat(new string[] { htmlField, "[", Model.INDICE.ToString(), "].DIRECCION1" }),
+                                                      Name = String.Concat(new string[] { htmlField, "[", Model.INDICE.ToString(), "].DIRECCION1" })
+                                                  })
+                @Html.ValidationMessageFor(m => Model.DIRECCION1, "", new { @class = "text-danger" })
+
+
+            </div>
+            <div class="col-sm-3">
+                @Html.BootstrapLabelFor(m => Model.CP)
+                @Html.TextBoxFor(m => Model.CP,
+                                                         new
+                                                         {
+                                                             @class = "form-control codigoPostal",
+                                                             @style = "text-transform:uppercase;",
+                                                             placeHolder = "Código Postal",
+                                                             autocomplete = "off",
+                                                             id = String.Concat(new string[] { htmlField, "[", Model.INDICE.ToString(), "].CP" }),
+                                                             Name = String.Concat(new string[] { htmlField, "[", Model.INDICE.ToString(), "].CP" })
+                                                         })
+                @Html.ValidationMessageFor(m => Model.CP)
+
+            </div>
+        </div>
+        <div class="form-group">
+
+            <div class="col-sm-5">
+                <label class="control-label" for="POBLACION">Población</label>
+                @if (!String.IsNullOrEmpty(Model.POBLACION) && !Model.POBLACION.ToUpper().Equals("SIN DIRECCIÓN"))
+                {
+                    <input class="form-control"
+                           id="@String.Concat(new string[] {htmlField, "[", Model.INDICE.ToString(), "].POBLACION" })"
+                           name="@String.Concat(new string[] {htmlField, "[", Model.INDICE.ToString(), "].POBLACION" })"
+                           maxlength="30" type="text" value="@Model.POBLACION" autocomplete="off" />
+                }
+                else
+                {
+                    <input class="form-control" id="@String.Concat(new string[] {htmlField, "[", Model.INDICE.ToString(), "].POBLACION" })"
+                           name="@String.Concat(new string[] { htmlField,"[", Model.INDICE.ToString(), "].POBLACION" })" maxlength="40" type="text" autocomplete="off"  />
+
+                }
+
+            </div>
+            <div class="col-sm-4">
+                <label class="control-label" for="Provincia">Provincia</label>
+                <input class="form-control" id="@String.Concat(new string[] { htmlField,"[", Model.INDICE.ToString(), "].PROVINCIA" })"
+                       name="@String.Concat(new string[] { htmlField,"[", Model.INDICE.ToString(), "].PROVINCIA" })"
+                       maxlength="30" type="text" value="@Model.PROVINCIA" autocomplete="off"  />
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label" for="Pais">Pais</label>
+                <input class="form-control" id="@String.Concat(new string[] { htmlField,"[", Model.INDICE.ToString(), "].PAIS" })"
+                       name="@String.Concat(new string[] { htmlField,"[", Model.INDICE.ToString(), "].PAIS" })"
+                       maxlength="25" type="text" value="@Model.PAIS" autocomplete="off"  />
+
+            </div>
+        </div>
+    </div>
+</div>

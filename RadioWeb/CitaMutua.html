@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+    <title>Grupo Manchon</title>
+    <link href="../../Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="css/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <style>
+        .passwordBox {
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    max-width: 460px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 100px;
+}
+        input[type="text"]:focus, input[type="password"]:focus,
+textarea:focus, select:focus {
+  font-size: 16px;
+}
+
+        .centro {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: lightgrey;
+            border: 1px solid black;
+        }
+
+            .centro:hover {
+                cursor: pointer;
+                /*background-color: HighlightText;*/
+                background-color: red;
+            }
+
+        .table.clicable tr td:hover {
+            cursor: pointer;
+            color: black;
+            background-color: #6bc3c4;
+        }
+
+        .spinnerBuscando {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+   
+    <div class="container" style="margin-top: 20px;">
+        <div class="passwordBox animated fadeInDown">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="ibox-content">
+                        <h2 class="font-bold">Mutua</h2>
+                        <p>
+                          Seleccione su Mutua
+                        </p>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <form class="m-t" role="form" action="index.html">
+                                    <div class="form-group " id="MutuaSelect">
+                                    
+                                        <select id="MutuaList" class="form-control"></select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary block full-width m-b">Buscar Cita</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                   Bienvenido a Grup Manchon
+                </div>
+               
+            </div>
+        </div>
+    </div>
+    
+
+
+    <script src="/Scripts/jquery-2.0.3.min.js"></script>
+    <script src="/Scripts/bootstrap.min.js"></script>
+
+
+    <script src="js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/mutuaCitaOnline.js"></script>
+    
+
+
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+﻿@model RadioWeb.ViewModels.VWImprimirFicha
+@{
+    Layout = String.Empty;
+}
+<!doctype html>
+<html>
+<head>
+
+    <script src="https://app.simm.barcelona/js/custom/code39/code39.js"></script>
+    <style type="text/css">
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+            font-size: 12px;
+            font-family: 'Verdana, Geneva, Tahoma, sans-serif';
+            color: #555;
+        }
+
+            .invoice-box table {
+                width: 100%;
+                line-height: inherit;
+            }
+
+                .invoice-box table td {
+                    font-size: 12px;
+                    vertical-align: bottom;
+                }
+
+                .invoice-box table tr td:nth-child(2) {
+                    text-align: right;
+                }
+
+
+                .invoice-box table tr.top table td.title {
+                    font-size: 14px;
+                    color: #333;
+                }
+
+
+
+                .invoice-box table tr.heading td {
+                    background: #eee;
+                    border-bottom: 1px solid #ddd;
+                    font-weight: bold;
+                }
+
+                .invoice-box table tr.details td {
+                    padding-bottom: 20px;
+                }
+
+                .invoice-box table tr.item td {
+                    border-bottom: 1px solid black;
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+
+                .invoice-box table tr.item.last td {
+                    border-bottom: none;
+                }
+
+                .invoice-box table tr.total td:nth-child(2) {
+                    border-top: 2px solid #eee;
+                    font-weight: bold;
+                }
+    </style>
+</head>
+<body>
+
+    <div class="invoice-box">
+
+        <table cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr class="item" style="vertical-align:bottom;">
+                    <td style="vertical-align:bottom;">DADES DE LES PROVES REALITZADES</td>
+                    <td align="right"></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <table cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td>Pacient:</td>
+                    <td>@Model.PACIENTE</td>
+                </tr>
+                <tr>
+                    <td>Prescriptor:</td>
+                    <td>@Model.NOMBRECOLEGIADO</td>
+                </tr>
+                @*<tr>
+                        <td>Explorador:</td>
+                        <td>@Model.te</td>
+                    </tr>*@
+                <tr>
+                    <td>Finançador:</td>
+                    <td>@Model.NOMBRE</td>
+                </tr>
+                <tr>
+                    <td>Data Visita:</td>
+                    <td>@Model.FECHA.ToShortDateString()</td>
+                </tr>
+                <tr>
+                    <td>Prova:</td>
+                    <td>@Model.DES_FIL</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr class="item" style="vertical-align:bottom;">
+                    <td colspan="2" style="vertical-align:bottom;">DADES PER A LA RECOLLIDA DE PROVES</td>
+                </tr>
+            </tbody>
+        </table>
+        <table cellpadding="0" cellspacing="0">
+            <tbody>
+
+                <tr>
+                    <td>Data de la recollida:</td>
+                    <td>@Model.FECHAMAXIMA</td>
+                </tr>
+                <tr>
+                    <td>Lloc:</td>
+                    <td>@Model.DIRECCIONCENTRO</td>
+
+                </tr>
+                <tr>
+                    <td>Horari:</td>
+                    <td>@Model.HORARIOREGOGIDA</td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr class="item" style="vertical-align:bottom;">
+                    <td colspan="2" style="vertical-align:bottom;">ACREDITACIÓ DE LA RECOLLIDA DE PROVES</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table border="0" class="table ">
+            <tbody>
+
+                <tr>
+                    <td colspan="2">
+                        <span style="font-size:12px;">
+                            Aquest centre garanteix la seguretat i la confidencialitat de les seves dades de carácter personal i médico-sanitáries recaptades
+                            durant la seva estada.
+                        </span><br />
+                        <span style="font-size:12px;font-weight:bold;text-decoration:underline">
+                            El resultat de les proves efectuades només pot ser lllurat al pacient o a una persona expressament autoritzada
+                            per aquest.
+                        </span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding:5px;">
+                        <table border="0" class="table" cellpadding="0" cellspacing="0">
+
+                            <tr>
+                                <td colspan="2">
+                                    <span style="font-weight:bold;">Per a la recollida de les proves és imprescindible aportar aquest document</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Recull la prova
+                                </td>
+                                <td>
+                                    Requisits per a la recollida
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align:top;border-bottom: 1px solid black;">
+                                    El pacient-->
+                                </td>
+                                <td style="border-bottom: 1px solid black;">
+                                    <ul>
+                                        <li>
+                                            Aportar aquest full de recollida signat per el pacient.
+                                        </li>
+                                        <li>
+                                            Acreditar-se presentant el DNI, passaport o carnet de conduir.
+                                        </li>
+                                    </ul>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align:top;border-bottom: 1px solid black;">
+                                    Autoritzat -->
+                                </td>
+
+                                <td style="vertical-align:middle;border-bottom: 1px solid black;">
+                                    <ul style="margin-top:5px;padding-top:5px;">
+                                        <li style="margin-top:5px;padding-top:5px;">
+                                            Aportar aquest full de recollida signat per el pacient i per la persona autoritzada, excepte si
+                                            el pacient és menor d'edat.
+                                        </li>
+                                        <li>
+                                            <span style="font-weight:bold;">  Aportar fotocòpia del DNI del pacient (i el ¡libre de familia si el pacient és menor)</span>
+                                        </li>
+                                        <li>
+                                            Acreditar-se presentant el DNI, passaport o carnet de conduir.
+                                        </li>
+                                    </ul>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+
+                </tr>
+
+
+            </tbody>
+        </table>
+
+        <table cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr class="item" style="vertical-align:bottom;">
+                    <td style="vertical-align:bottom;">SIGNATURES PER A LA RECOLLIDA DE PROVES</td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tbody>
+                <tr style="height:50px;">
+                    <td height="50px;">
+                        <span style="font-weight:bold;">Pacient (en tot cas)</span>
+                        <br />
+                        Signatura:
+
+                        <span style="color:white"> FIRMAPACIENTE </span>
+                    </td>
+                    <td>
+                        <span style="font-weight:bold;">Persona autoritzada</span>
+                        <br />
+                        Signatura:
+
+                    </td>
+                </tr>
+                <tr>
+                    <td height="50px;"><br /></td>
+                    <td>
+                        Cognoms i nom:
+                        <br />
+                        DNI:
+                    </td>
+                </tr>
+
+
+            </tbody>
+        </table>
+        <br />
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tbody>
+                <tr>
+                    <td style="vertical-align:bottom">Barcelona, a: </td>
+                    <td style="border-bottom: 1px solid black;color:white;vertical-align:middle;">
+                        esto es un texto en el pdf lorep ipusum
+                        esto es un texto en el pdf lorep ipusumesto es un texto en el pdf lorep
+                    </td>
+                    <td>  </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    
+    <div style="position: absolute;bottom: 0;font-size:8px;margin-top:30px;padding-top:80px;">
+        En compliment de la Llei orgánica 15/1 999, de 13 de desembre, de Protecció de Dades de Carácter Personal, l'informem que les seves dades personals quedaran
+        recollides en un fitxer, titularitat de SIMM IMAGE MÈDICA SL., amb adreça a Josep Irla i Bosch 5-7 08034 (Barcelona) - Teléfon 93 204 64 39 amb la finalitat
+        de gestionar ¡ controlar ¡'entrega d'informes ¡ resultats.<br />
+        Vosté te dreat a accedir, cancel-lar, rectificar i opsar-se al tractament de les seves dades dirigint-se per escrit al Dpt. Protecció de dades al carrer Buigas 19- 08017
+        Barcelona.
+    </div>
+    @*<script src="C:\Users\jaced\Documents\RadioWeb2.0\RadioWeb\js\custom\code39\code39.js"></script>*@
+
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        function get_object(id) {
+            var object = null;
+            if (document.layers) {
+                object = document.layers[id];
+            } else if (document.all) {
+                object = document.all[id];
+            } else if (document.getElementById) {
+                object = document.getElementById(id);
+            }
+            return object;
+        }
+        get_object("inputdata").innerHTML = DrawCode39Barcode(get_object("inputdata").innerHTML, 1);
+/* ]]> */
+    </script>
+</body>
+</html>

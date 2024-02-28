@@ -1,0 +1,232 @@
+﻿@model RadioWeb.Models.MUTUAS
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>MUTUAS</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.VERS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VERS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CANAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CANAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OWNER)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OWNER)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.USERNAME)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.USERNAME)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MODIF)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MODIF)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IOR_EMPRESA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IOR_EMPRESA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BORRADO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BORRADO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CODIGO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CODIGO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NOMBRE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NOMBRE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.COD_MUT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.COD_MUT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.COD_CAP)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.COD_CAP)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.COD_DAP)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.COD_DAP)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PREFIJO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PREFIJO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NIF)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NIF)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CONTACTO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CONTACTO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TRATA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TRATA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NUM_CLI)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NUM_CLI)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CODMUT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CODMUT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IOR_DAP)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IOR_DAP)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CONTRATOICS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CONTRATOICS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CODIICS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CODIICS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IOR_CENTRAL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IOR_CENTRAL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TIPOPAGO)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TIPOPAGO)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DIASCARENCIA)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIASCARENCIA)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MAILING)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MAILING)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

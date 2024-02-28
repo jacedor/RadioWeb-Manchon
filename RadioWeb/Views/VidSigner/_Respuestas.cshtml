@@ -1,0 +1,88 @@
+﻿@model IEnumerable<RadioWeb.Models.VID_RESPUESTAS>
+@if (Model.Count() == 0)
+{
+    <h3>No hay respuestas asociadas a este Consentimiento.</h3>
+}else
+{
+    <table class="table table-hover ConsumiblesList" >
+        <thead>
+            <tr>
+
+                <th>Pregunta</th>
+                <th>Respuesta</th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var respuesta in Model)
+                {
+
+                <tr data-respuesta="@respuesta.RESPUESTABOOL">
+
+                    <td>
+                        @if (respuesta.RESPUESTABOOL == "T")
+                        {
+
+                            <span class="text-danger">@respuesta.PREGUNTA</span>
+                        }else
+                        {
+
+                            @respuesta.PREGUNTA
+                        }
+
+                    </td>
+
+                    <td>
+                    @if (respuesta.RESPUESTABOOL == "T")
+                    {
+                        
+                        <span class="label label-danger">Sí</span>
+                    }
+                    else
+                    {
+                        if (String.IsNullOrEmpty(respuesta.RESPUESTABOOL))
+                        {
+                            @respuesta.RESPUESTATEXTO
+                        }
+                        else
+                        {
+
+                            @:No
+                        }
+                        
+                    }
+                    </td>
+
+
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+    <div class="modal-footer">
+
+
+        @Html.ActionLink(
+                                                linkText: "Ver PDF",
+                                                actionName: "Download",
+                                                controllerName: "Exploracion",
+                                                routeValues: new
+                                                {
+                                                    Ruta = ViewBag.RUTA_CONSEN
+
+                                                },
+                                                htmlAttributes: new
+                                                {
+                                                    @class = "btn btn-primary",
+                                                    target = "_blank"
+                                                }
+
+                                                )
+
+        <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+    </div>
+
+

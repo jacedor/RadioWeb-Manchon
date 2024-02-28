@@ -1,0 +1,124 @@
+﻿@model RadioWeb.Models.AparatosComplejos
+
+@{
+    ViewBag.Title = "Mantenimiento de Aparato Complejo";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.OID)
+    @Html.HiddenFor(model => model.BORRADO)
+
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+
+            <li class="active">
+                <a data-toggle="tab" href="#general">Aparato Complejo</a>
+            </li>
+
+        </ul>
+
+        <div class="tab-content form-horizontal">
+            <div id="general" class="tab-pane active">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO1)
+                            @Html.DropDownListFor(m => Model.APARATO1, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO2)
+                            @Html.DropDownListFor(m => Model.APARATO2, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO3)
+                            @Html.DropDownListFor(m => Model.APARATO3, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO3, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO4)
+                            @Html.DropDownListFor(m => Model.APARATO4, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO4, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO5)
+                            @Html.DropDownListFor(m => Model.APARATO5, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO5, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO6)
+                            @Html.DropDownListFor(m => Model.APARATO6, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO6, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO7)
+                            @Html.DropDownListFor(m => Model.APARATO7, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO7, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO8)
+                            @Html.DropDownListFor(m => Model.APARATO8, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO8, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.APARATO9)
+                            @Html.DropDownListFor(m => Model.APARATO9, new SelectList(Model.DAPARATOS, "COD_FIL", "COD_FIL"), "", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.APARATO9, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="user-button ibox-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-default btn-sm btn-block"><i class="fa fa-backward">@Html.ActionLink("Volver a Aparatos Complejos", "Index", "AparatosComplejos")</i></button>
+
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">
+                        <i class="fa fa-save"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+
+
+

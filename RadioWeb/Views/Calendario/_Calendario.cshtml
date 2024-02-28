@@ -1,0 +1,176 @@
+﻿@model RadioWeb.Models.Logica.Mes
+
+
+
+
+<div class="col-md-12 col-sm-12 col-xs-12 ">
+    <div id="NavigationMonths" style="float:right;">
+
+        <ul id="NavigationMonth" style="text-align: left;margin:0px;" class="pager">
+            <li class="">
+                <a class="btn btn-white btn-outline" title="Año Anterior" data-mes="@Model.Dias[0].Date.AddYears(-1).ToString("dd/MM/yyyy")">
+                    <i class="fa fa-angle-double-left"></i>
+                </a>
+            </li>
+            <li class="">
+                <a class="btn btn-white btn-outline" title="Anterior" data-mes="@Model.Dias[0].Date.AddMonths(-1).ToString("dd/MM/yyyy")">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            </li>
+            <li class=""><a href="javascript:;" class="btnHoy">Hoy</a></li>
+            <li class="">
+                <a class="btn btn-white btn-outline" title="Siguiente" data-mes="@Model.Dias[0].Date.AddMonths(1).ToString("dd/MM/yyyy")">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+            <li class="">
+                <a class="btn btn-white btn-outline" title="Año Siguiente" data-mes="@Model.Dias[0].Date.AddYears(1).ToString("dd/MM/yyyy")">
+                    <i class="fa fa-angle-double-right"></i>
+                </a>
+            </li>
+            <li class="">
+                <a class="btn btn-white btn-outline visible-xs" title="Ir ListaDia" id="IrListadia">
+                    <i class="fa fa-tasks" style="margin-right:2px;"></i>Ver Exploraciones
+                </a>
+            </li>
+
+        </ul>
+
+
+    </div>
+    <h3 id="headerMes" class="month" data-manchon-fechaInicial="@Model.FechaInicial" data-manchon-fechaFinal="@Model.FechaFinal">@Model.Descripcion</h3>
+</div>
+<div id="calendar" class="cal-context" style="width: 100%;">
+    <div class="cal-row-fluid cal-row-head">
+        <div class="cal-cell1"><span class="">Lunes</span></div>
+        <div class="cal-cell1"><span class="">Martes</span></div>
+        <div class="cal-cell1"><span class="">Miercoles</span></div>
+        <div class="cal-cell1"><span class="">Jueves</span></div>
+        <div class="cal-cell1"><span class="">Viernes</span></div>
+        <div class="cal-cell1"><span class="">Sábado</span></div>
+        <div class="cal-cell1"><span class="">Domingo</span></div>
+    </div>
+    <div class="cal-month-box">
+
+        @{
+            int contador = 0;
+            DateTime FechaInicial = DateTime.Parse(Model.FechaInicial);
+
+
+            DateTime DiaInicial = FechaInicial.AddDays(Model.DiasVaciosPintarDelante * -1);
+
+            @:<div class="cal-row-fluid cal-before-eventlist">
+                for (int i = 0; i < Model.DiasVaciosPintarDelante; i++)
+                {
+                    <div class="cal-cell1 cal-cell" data-cal-row="-day1">
+                        <div class="cal-month-day cal-day-outmonth cal-month-first-row">
+                            <span class="pull-right" title="" data-cal-date="@DiaInicial">  @Html.Raw(DiaInicial.Day.ToString())</span>
+                        </div>
+                    </div>
+
+                    DiaInicial = DiaInicial.AddDays(1);
+                    contador++;
+
+                }
+
+
+                foreach (var dia in Model.Dias)
+                {
+                    string isToday = (dia.Date.Equals(DateTime.Today)) ? "cal-day-today" : " ";
+
+                    string esFestivo = (dia.EsFestivo) ? "festivo" : " ";
+
+                    string diaSemana = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(dia.Date.DayOfWeek);
+                    if ((contador % 7) == 0 && contador != 0)
+                    {
+                        @:</div><div class="cal-row-fluid cal-before-eventlist">
+                    }
+
+                    if ((dia.Date.DayOfWeek.ToString().Equals("Sunday") && !dia.EsFestivo) || dia.EsFestivo && !dia.Date.DayOfWeek.ToString().Equals("Sunday"))
+                    {
+                        <div class="cal-cell1 cal-cell @isToday @esFestivo " data-dia="@diaSemana" data-cal-row="-day1" data-fecha="@dia.Date.ToString("dd/MM/yyyy")">
+                            <div class="cal-month-day cal-day-weekend cal-month-first-row">
+                                <span class="pull-right" title="" data-cal-date="@dia.Date"> @dia.Descripcion</span>
+                                @if (dia.Count != 0)
+                                {
+                                    <span data-cal-cuenta="@dia.Count" title="" class="pull-center">@dia.Count</span>
+                                }
+                               @* <a href="#" data-toggle="tooltip" data-placement="right" data-html="true" title="1st line of text <br> 2nd line of text">Hover over me</a>*@
+
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(dia.Texto))
+                        {
+                            <div class="cal-cell1 cal-cell @isToday ui-popover" data-cal-row="-day1" data-dia="@diaSemana" data-fecha="@dia.Date.ToString("dd/MM/yyyy")" data-content="@dia.Texto" data-toggle="popover" data-trigger="hover" data-placement="top" data-original-title="Texto">
+                                <div class="cal-month-day  cal-month-first-row">
+                                    <span class="pull-right" title="" data-cal-date="@dia.Date"> @dia.Descripcion</span>
+                                    <div class="clear"></div>
+                                    @if (dia.Count != 0)
+                                    {
+                                    <span data-cal-cuenta="@dia.Count" title="" class="pull-center">*@dia.Count</span>
+                                        <div class="text-center" style=" position:absolute;left:60%;top:20%;">
+                                            @*<div class="graficoOcupacion" data-ocupados="@dia.PorcentageOcupacion" data-libre="@dia.PorcentageLibre"></div>*@
+                                            
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span data-cal-cuenta="@dia.Count" title="" class="pull-center">*</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cal-cell1 cal-cell @isToday  " data-cal-row="-day1" data-dia="@diaSemana" data-fecha="@dia.Date.ToString("dd/MM/yyyy")">
+                                <div class="cal-month-day   cal-month-first-row">
+                                    <span class="pull-right" title="" data-cal-date="@dia.Date"> @dia.Descripcion</span>
+                                    <div class="clear"></div>
+                                    @if (dia.Count != 0)
+                                    {
+                                        <span data-cal-cuenta="@dia.Count" title="" class="pull-center">@dia.Count </span>
+                                        <div class="text-center" style=" position:absolute;left:60%;top:20%;">
+                                            @*   <div class="graficoOcupacion" data-ocupados="@dia.PorcentageOcupacion" data-libre="@dia.PorcentageLibre"></div>*@
+                                        </div>
+                                    }
+
+
+                                </div>
+                            </div>
+                        }
+
+                    }
+
+
+
+                    contador++;
+
+                }
+                int diasFinal = 1;
+                while (contador % 7 != 0)
+                {
+                    <div class="cal-cell1 cal-cell disabled" data-cal-row="-day1">
+                        <div class="cal-month-day cal-day-outmonth  cal-month-first-row">
+                            <span class="pull-right" title="" data-cal-date="@DiaInicial">  @Html.Raw(diasFinal)</span>
+                        </div>
+                    </div>
+
+                    diasFinal++;
+                    contador++;
+                }
+
+
+                @:</div>
+        }
+
+    </div>
+</div>
+
+
+
+
+
+

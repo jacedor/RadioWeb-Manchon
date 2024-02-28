@@ -1,0 +1,27 @@
+﻿@model  RadioWeb.ViewModels.Paciente.VMHistoriaClinica
+
+@using (Ajax.BeginForm("GuardarHc",
+  "HistoriaClinica",
+  new AjaxOptions
+  {
+
+      HttpMethod = "POST",
+      UpdateTargetId = "divResultado"
+  }))
+{
+
+    <div class="form-group">
+        <div id="divResultado">
+
+        </div>
+        @Html.Hidden("OIDPACIENTE", Model.OIDPACIENTE)
+        <textarea name="TEXTOHTML" id="TEXTOHTML" data-oid="@Model.OIDPACIENTE">
+                        @Model.TEXTOHTML
+                    </textarea>
+    </div>
+
+    <div class="form-group">
+
+        <button class="btn btn-primary" type="submit" >Guardar</button>
+    </div>
+}

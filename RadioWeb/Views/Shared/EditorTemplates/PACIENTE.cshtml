@@ -1,0 +1,456 @@
+﻿@model PACIENTE
+@using RadioWeb.Models.Repos;
+
+@{
+    var estadoPanel = "in";
+    var containerObject = "PACIENTE";
+
+    if (ViewData["controlador"] != null)
+    {
+        containerObject = (string)ViewData["controlador"];
+    }
+    var lopdsn = ViewBag.ModLOPDPaciente;
+    var icon = "fa-chevron-up";
+    if (ViewData[containerObject + ".DATOSPERSONALES"] != null && ViewData[containerObject + ".DATOSPERSONALES"].ToString() == "0")
+    {
+        estadoPanel = "";
+        icon = "fa-chevron-down";
+    }
+
+    USUARIO oUsuarioLogeado = UsuariosRepositorio.Obtener(User.Identity.Name);
+
+    bool privilegiado = false;
+    privilegiado = (oUsuarioLogeado.PRIVILEGIADO == -1 ? true : false);
+}
+
+<input type="hidden" name="VOLVERTRASGUARDARPACIENTE" id="VOLVERTRASGUARDARPACIENTE" value="F" />
+
+<div class="panel panel-info">
+    <div class="panel-heading" data-toggle="collapse" data-target="#collapsePaciente">
+        <h5 class="panel-title">
+            <b>@Model.PACIENTE1 - @Model.DESCMUTUA </b> -- (@Model.EDAD)
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapsePaciente">
+                <i class="fa @icon collapse-link-accordion"></i>
+            </a>
+            <span class="pull-right">
+                ID: <span class=" ">@Model.OID</span>
+            </span>
+        </h5>
+
+    </div>
+
+
+    <div id="collapsePaciente" class="panel-collapse collapse @estadoPanel" data-controlador="@containerObject" data-objeto="datospersonales">
+        <div class="panel-body">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#DetailsPaciente"><i class="fa fa-2x fa-id-card-o"></i>GENERAL</a>
+                    </li>
+                    @*<li>
+                            <a data-toggle="tab" href="#contacto"><i class="fa fa-2x fa-home"></i>CONTACTO</a>
+                        </li>*@
+                    <li>
+                        <a data-toggle="tab" href="#OtrasExploraciones">
+                            <i class="fa fa-2x fa-bars"></i>EXPLORACIONES
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#ListInformesPaciente">
+                            <i class="fa fa-2x fa-file-pdf-o"></i>INFORMES
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#ListDocumentosPaciente">
+                            <i class="fa fa-2x fa-file-archive-o"></i>DOCUMENTOS
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#historiaClinica">
+                            <i class="fa fa-2x fa-puzzle-piece"></i>HC
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content ">
+                    <div id="DetailsPaciente" class="tab-pane  active">
+                        <div class="panel-body">
+                            @using (Ajax.BeginForm("Details",
+"Paciente", null,
+new AjaxOptions
+{
+HttpMethod = "POST",
+OnSuccess = "SuccessPaciente(data)",
+OnFailure = "FailurePaciente"
+}, new { @class = "form-horizontal" }))
+                            {
+                                // @Html.HiddenFor(m => m.HAYCAMBIOSPACIENTE)
+                                @Html.HiddenFor(m => m.URLPREVIAPACIENTE)
+                                @Html.HiddenFor(m => m.OID)
+                                <div class="form-group ">
+
+                                    <div class="col-sm-6">
+                                        @Html.BootstrapLabelFor(m => m.PACIENTE1)
+                                        @Html.EditorFor(model => model.PACIENTE1, "", new { @style = "text-transform:uppercase;" })
+                                        @Html.ValidationMessageFor(model => model.PACIENTE1, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="col-sm-6" id="accionesPaciente">
+                                        <div class="col-md-2" style="padding-left:0px;padding-right:0px;">
+                                            <div class="editor-label">
+                                                @Html.BootstrapLabelFor(m => m.NUEVA_LOPD)
+
+                                            </div>
+                                            <div class="editor-field">
+                                                @Html.EditorFor(model => model.NUEVA_LOPD)
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2" style="padding-left:0px;padding-right:0px;">
+                                            <div class="editor-label">
+                                                @Html.BootstrapLabelFor(m => m.VIP)
+                                            </div>
+                                            <div class="editor-field">
+                                                @Html.EditorFor(model => model.VIP)
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2" style="padding-left:0px;padding-right:0px;">
+                                            <div class="editor-label">
+                                                @Html.BootstrapLabelFor(m => m.RIP)
+                                            </div>
+                                            <div class="editor-field">
+                                                @Html.EditorFor(model => model.RIP)
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2" style="padding-left:0px;padding-right:0px;">
+                                            <div class="editor-label">
+                                                @Html.BootstrapLabelFor(m => m.COMPARTIR)
+                                            </div>
+                                            <div class="editor-field">
+                                                @Html.EditorFor(model => model.COMPARTIR)
+                                            </div>
+                                        </div>
+                                        @{
+                                            var EstaBorrado = "none;";
+                                            if (@Model.BORRADO == "T")
+                                            {
+                                                EstaBorrado = "block;";
+                                            }
+                                        }
+                                        <div class="checkbox-inline">
+                                            <label>
+                                                <span class="label label-danger" style="display:@EstaBorrado">BORRADO</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+
+                                    <div class="col-sm-2">
+                                        @Html.BootstrapLabelFor(m => m.FECHAN)
+                                        @Html.EditorFor(model => model.FECHAN)
+                                        @Html.ValidationMessageFor(model => model.FECHAN, "", new { @class = "text-danger", autocomplete = "false" })
+
+                                    </div>
+
+
+                                    <div class="col-md-2">
+                                        @Html.BootstrapLabelFor(m => m.SEXO)
+                                        @Html.EditorFor(model => model.SEXO)
+                                        @Html.ValidationMessageFor(model => model.SEXO, "", new { @class = "text-danger" })
+                                    </div>
+
+
+                                    @*<div class="col-sm-2">
+                                            @Html.BootstrapLabelFor(m => m.TRAC)
+                                            @Html.EditorFor(model => model.TRAC)
+                                            @Html.ValidationMessageFor(model => model.TRAC, "", new { @class = "text-danger" })
+                                        </div>*@
+
+                                    <div class="col-sm-2">
+                                        @Html.BootstrapLabelFor(m => m.OTROS4)
+                                        @Html.EditorFor(model => model.OTROS4)
+                                        @Html.ValidationMessageFor(model => model.OTROS4, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.BootstrapLabelFor(m => m.TARJETA)
+                                        @Html.EditorFor(model => model.TARJETA)
+                                        @Html.ValidationMessageFor(model => model.TARJETA, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        @Html.BootstrapLabelFor(m => m.EMAIL)
+                                        @Html.EditorFor(model => model.EMAIL)
+                                        @Html.ValidationMessageFor(model => model.EMAIL, "", new { @class = "text-danger" })
+
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-sm-2">
+                                        @Html.BootstrapLabelFor(m => m.TIPO_DOC)
+                                        @Html.EditorFor(model => model.TIPO_DOC)
+                                        @Html.ValidationMessageFor(model => model.TIPO_DOC, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.BootstrapLabelFor(m => m.DNI)
+                                        @Html.EditorFor(model => model.DNI)
+                                        @Html.ValidationMessageFor(model => model.DNI, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        @Html.BootstrapLabelFor(m => m.POLIZA)
+                                        @Html.EditorFor(model => model.POLIZA)
+                                        @Html.ValidationMessageFor(model => model.POLIZA, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.BootstrapLabelFor(m => m.CIP)
+                                        @Html.EditorFor(model => model.CIP)
+                                        @Html.ValidationMessageFor(model => model.CIP, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-3">
+
+                                        @Html.BootstrapLabelFor(m => m.CID)
+                                        @Html.EditorFor(model => model.CID)
+                                        @Html.ValidationMessageFor(model => model.CID, "", new { @class = "text-danger" })
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        @Html.BootstrapLabelFor(m => m.RESPONSABLE)
+                                        @Html.EditorFor(model => model.RESPONSABLE)
+                                        @Html.ValidationMessageFor(model => model.RESPONSABLE, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.BootstrapLabelFor(m => m.DNIRESPONSABLE)
+                                        @Html.EditorFor(model => model.DNIRESPONSABLE)
+                                        @Html.ValidationMessageFor(model => model.DNIRESPONSABLE, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.BootstrapLabelFor(m => m.PROFESION)
+                                        @Html.EditorFor(model => model.PROFESION)
+                                        @Html.ValidationMessageFor(model => model.PROFESION, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                if (Model.MODULO_LOPD && Model.NUEVA_LOPD == "T")
+                                {
+                                    //En caso de que El módulo de la LOPD esté cargado, mostramos los controles para modificar los mismos del paciente.
+
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <label for="TEXTO" class="control-label">Imprimible</label>
+                                            @Html.EditorFor(model => model.TEXTO, new { rows = "2" })
+                                        </div>
+                                        <div class="editor-label">
+                                            <label class="control-label">
+                                                Consentimientos LOPD del paciente:
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="editor-label">
+                                                @Html.BootstrapLabelFor(m => m.ENVIO_PROPAGANDA)
+                                            </div>
+                                            <div class="editor-field">
+                                                @if (privilegiado)
+                                                {
+                                                    @Html.EditorFor(model => model.ENVIO_PROPAGANDA)
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(model => model.ENVIO_PROPAGANDA)
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="editor-label">
+                                                @Html.BootstrapLabelFor(m => m.LLAMADA_NOMBRE)
+                                            </div>
+                                            <div class="editor-field">
+                                                @if (privilegiado)
+                                                {
+                                                    @Html.EditorFor(model => model.LLAMADA_NOMBRE)
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(model => model.LLAMADA_NOMBRE)
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-2">
+                                            <div class="editor-label">
+                                                @Html.BootstrapLabelFor(m => m.ACCESO_WEB)
+                                            </div>
+                                            <div class="editor-field">
+                                                @if (privilegiado)
+                                                {
+                                                    @Html.EditorFor(model => model.ACCESO_WEB)
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(model => model.ACCESO_WEB)
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <label for="TextoNoImprimible" class="control-label">No Imprimible</label>
+                                            @Html.EditorFor(model => model.COMENTARIO, new { rows = "2" })
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="editor-label">
+                                                @Html.BootstrapLabelFor(m => m.CONSULTA_PREVIA)
+                                            </div>
+                                            <div class="editor-field">
+                                                @if (privilegiado)
+                                                {
+                                                    @Html.EditorFor(model => model.CONSULTA_PREVIA)
+
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(model => model.CONSULTA_PREVIA)
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-2">
+                                            <div class="editor-label">
+                                                
+                                            </div>
+                                            <div class="editor-field">
+                                                @if (privilegiado)
+                                                {
+                                                    
+                                                }
+                                                else
+                                                {
+                                                    
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-2">
+                                            <div class="editor-label">
+                                                
+                                            </div>
+                                            <div class="editor-field">
+                                                @if (privilegiado)
+                                                {
+                                                   
+                                                }
+                                                else
+                                                {
+                                                    
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <label for="TEXTO" class="control-label">Imprimible</label>
+                                            @Html.EditorFor(model => model.TEXTO, new { rows = "2" })
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="TextoNoImprimible" class="control-label">No Imprimible</label>
+                                            @Html.EditorFor(model => model.COMENTARIO, new { rows = "2" })
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <div class="col-md-12">
+
+                                        @Html.EditorFor(p => p.DIRECCIONES, new { owner = Model.OID })
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(p => p.TELEFONOS)
+                                    </div>
+                                    <div class="col-md-12 pull-right">
+                                        <button type="submit" data-toggle="tooltip" data-protect="true"
+                                                data-placement="top" title="Guardar" class="btn btn-primary pull-right"
+                                                onclick="javascript:$('#VOLVERTRASGUARDARPACIENTE').val('F');">
+                                            <i class="fa fa-save" title="Guardar"></i> Guardar
+                                        </button>
+                                        @if (!String.IsNullOrEmpty(Model.URLPREVIAPACIENTE))
+                                        {
+                                            <button type="submit" data-protect="true" data-toggle="tooltip" data-placement="top"
+                                                    title="Guardar y volver" onclick="javascript:$('#VOLVERTRASGUARDARPACIENTE').val('T');"
+                                                    class="btn  btn-success pull-right">
+                                                <i class="fa fa-sign-in" title="Guardar y Volver"></i> Guardar y Volver
+                                            </button>
+                                        }
+                                    </div>
+
+                                </div>
+                                <div class="form-group pull-right">
+
+
+
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+
+
+                    @*<div id="contacto" class="tab-pane ">
+                            <div class="panel-body">
+
+                                <div class="form-group">
+                                    <div class="col-md-12">
+
+                                        @Html.EditorFor(p => p.DIRECCIONES, new { owner = Model.OID })
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(p => p.TELEFONOS)
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>*@
+                    <div id="OtrasExploraciones" data-iorpaciente="@Model.OID" class="tab-pane">
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+                    <div id="ListInformesPaciente" class="tab-pane " data-oid="@Model.OID">
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+                    <div id="ListDocumentosPaciente" class="tab-pane " data-oid="@Model.OID">
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+
+                    <div id="historiaClinica" data-iorpaciente="@Model.OID" class="tab-pane">
+                        <div class="panel-body">
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+

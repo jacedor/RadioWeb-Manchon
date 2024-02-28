@@ -1,0 +1,35 @@
+﻿@model RadioWeb.Models.CENTROSEXTERNOS
+
+@* <div class="form-horizontal"> *@
+    <div class="form-group">
+      
+            
+            <label class="control-label col-sm-2" for="IOR_CENTROEXTERNO">Centro Externo</label>
+            @{
+                List<RadioWeb.Models.CENTROSEXTERNOS> oListTemp = (List<RadioWeb.Models.CENTROSEXTERNOS>)System.Web.HttpContext.Current.Application["CentrosExternos"];
+                <div class="col-sm-8">
+                    <select id="IOR_CENTROEXTERNO" name="IOR_CENTROEXTERNO" class="select2 form-control" style="width : 100%;">
+                        @foreach (RadioWeb.Models.CENTROSEXTERNOS item in oListTemp)
+                        {
+
+                            if (item.OID == Model.OID)
+                            {
+                            <option  selected="selected"   value="@item.OID" >@item.NOMBRE  </option>
+                              
+                            }
+                            else
+                            {
+                            <option  value="@item.OID" >@item.NOMBRE  </option>
+                            }
+
+                        }
+                    </select>
+                </div>
+            }
+     <div class="col-sm-2">
+         <button type="button" id="btnInfoCentroExterno" class="btn btn-sm btn-white btn-primary" data-toggle="modal" title="Información Centro Externo">
+         <i class="fa fa-info" title="Info Centro Externo"></i></button>
+     </div>
+
+    </div>
+@*</div>*@

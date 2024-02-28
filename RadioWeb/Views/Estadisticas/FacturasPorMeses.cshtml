@@ -1,0 +1,155 @@
+﻿@model RadioWeb.ViewModels.VWFiltros
+
+
+@section Estilos{
+
+
+    <style type="text/css">
+
+        .modal-dialog {
+            width: 90%;
+            height: 90%;
+            margin: 0;
+            padding: 0;
+            padding-left: 10%;
+            padding-top: 2%;
+        }
+
+        .modal-content {
+            height: auto;
+            min-height: 90%;
+            border-radius: 0;
+        }
+    </style>
+    <link href="~/css/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet">
+    <link href="~/css/plugins/textSpinners/spinners.css" rel="stylesheet" />
+    <link href="/css/c3.css" rel="stylesheet" />
+
+}
+
+<div class="row">
+    <div class="col-lg-12 form-horizontal">
+
+        @using (Ajax.BeginForm("FacturasPorMeses", "Estadisticas", new AjaxOptions
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "ContentTable",
+            OnComplete = "CompleteBusqueda()"
+        }))
+        {
+            <div class="ibox ">
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <div class="col-sm-2 col-md-2">
+
+                            @Html.BootstrapLabelFor(m => m.FECHA_INICIO)
+                            @Html.EditorFor(model => model.FECHA_INICIO, new
+                            {
+                                htmlAttributes = new { autocomplete = "off", @class = "fecha-picker" }
+                            })
+                        </div>
+                        <div class="col-sm-2 col-md-2">
+
+                            @Html.BootstrapLabelFor(m => m.FECHA_FIN)
+                            @Html.EditorFor(model => model.FECHA_FIN, new
+                            {
+                                htmlAttributes = new { autocomplete = "off", @class = "fecha-picker" }
+                            })
+                        </div>
+                        @*<div class="col-sm-3 col-md-3">
+                                @{
+                                    var classeFechaPicker = "multiFecha";
+                                    if (ViewData["fechaPicker"] != null)
+                                    {
+                                        classeFechaPicker = ViewData["fechaPicker"].ToString();
+                                    }
+                                }
+
+                                @Html.BootstrapLabelFor(m => m.FECHA)
+                                @Html.EditorFor(model => model.FECHA, new
+                                {
+                                    htmlAttributes = new { autocomplete = "off", @class = classeFechaPicker }
+                                })
+                            </div>*@
+                        <div class="col-sm-3 col-md-3">
+                            @Html.BootstrapLabelFor(m => m.IOR_ENTIDADPAGADORA)
+                            @Html.EditorFor(model => model.IOR_ENTIDADPAGADORA, new
+                            {
+                                htmlAttributes = new
+                                {
+                                    data_filter_calendar = "true",
+                                    multiple = "multiple",
+                                    name = "MUTUALIST[]"
+                                }
+                            })
+                        </div>
+                        <div class="col-sm-2 col-md-2">
+                            @Html.BootstrapLabelFor(m => m.IOR_CENTRO)
+                            @Html.EditorFor(model => model.IOR_CENTRO, new
+                            {
+                                htmlAttributes = new { data_filter_calendar = "true" }
+                            })
+                        </div>
+
+
+                        <div class="col-sm-2 col-md-2" style="margin-top:5px;">
+                            <br />
+                            <button class="btn btn-primary btn-block" type="submit">Buscar</button>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+
+            <div class="ibox" style="margin-bottom:5px;">
+                <div class="ibox-content" id="ContentTable">
+
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<div id="modal-grafico" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+
+                <h4 class="modal-title">Gráfico</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="ibox-content ">
+                    <div id="ViewGrafico" class="graficoContainer" style="display:block;min-height:500px;">
+
+                        <div id="chart" style="display:block;min-height:500px;">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="printDiv('chart')">Imprimir</button>
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+@section scripts{
+
+
+    <script src="~/js/custom/c3/d3.v3.min.js"></script>
+    <script src="~/js/custom/c3/c3.js"></script>
+
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/custom/estadisticas/facturacionmeses.js"></script>
+
+}

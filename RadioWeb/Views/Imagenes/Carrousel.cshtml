@@ -1,0 +1,28 @@
+﻿@model IEnumerable<RadioWeb.Models.IMAGENES>
+@if (Model.Count() == 0)
+{
+    <h3>No hay imágenes asociadas a esta exploración.</h3>
+}
+else
+{
+    <div class="slick_demo_3">
+     
+            @foreach (RadioWeb.Models.IMAGENES item in Model)
+            {
+                <div>
+                    <div class="ibox-content"  width="620" height="480">
+                        <img src="@RadioWeb.Helpers.ImageHelper.PhotoBase64ImgSrc(item.PATH + item.NOMBRE + "." + item.EXT)" class="img-responsive imagenExploracion" />
+                    </div>
+                </div>
+            }
+            
+
+    </div>
+
+
+
+
+}
+
+
+

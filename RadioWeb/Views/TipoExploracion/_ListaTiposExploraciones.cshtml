@@ -1,0 +1,83 @@
+﻿@model IEnumerable<RadioWeb.Models.APARATOS>
+
+<div class="ibox-tools" style="margin-top:10px;">
+    <a href="/TipoExploracion/CreateTipoExploracion?groupOid=@ViewBag.groupOid" class="btn btn-primary btn-xs">Crear Nuevo</a>
+</div>
+
+<table class="table table-bordered" id="tblTiposExploraciones" data-pagination="true" data-search="true" data-page-size="8" data-page-list="[8,16,32,64]">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FIL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DES_FIL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RECUENTO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TEXTO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.APARATO1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.APARATO2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.APARATO3)
+            </th>
+            <th>....</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Count() == 0)
+        {
+            <tr class="no-data">
+                <td colspan="8" class="text-center"><span>No hay aparatos tipos de exploración definidos</span></td>
+            </tr>
+        }
+
+        @foreach (var item in Model)
+        {
+            <tr data-oidGrupo="" data-oidTipoExploracion="@item.OID">
+                <td>
+                    @Html.DisplayFor(modelItem => item.FIL)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DES_FIL)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RECUENTO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TEXTO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO2)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.APARATO3)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "EditTipoExploracion", new { id = item.OID }) |
+                    @Html.ActionLink("Borrar", "DeleteTipoExploracion", new { id = item.OID })
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        makeBootstrapTable("tblTiposExploraciones");
+    });
+
+</script>

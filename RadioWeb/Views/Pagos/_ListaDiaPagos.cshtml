@@ -1,0 +1,95 @@
+﻿@model IEnumerable<RadioWeb.Models.EXPLORACION>
+<table id="ExploracionesList" class="table table-hover table-bordered"
+       data-totalpendiente="@ViewBag.TotalPendiente"
+       data-pendienteexplos="@ViewBag.PendienteExplos">
+    <thead>
+        <tr>
+            <th>Estado</th>
+            <th>Mutua</th>
+            <th>Fecha</th>
+            <th>Apa</th>
+            <th>Exp</th>
+            <th style="text-align:right;">Cant</th>
+            <th title="Aplazado">A</th>
+            <th title="Facturado">F</th>
+            <th title="No Facturable">NF</th>
+            <th>Incluir en Factura</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{string Activa = "ACTIVA";
+            foreach (var explo in Model)
+            {
+                <tr class="@Activa" data-oid="@explo.OID" data-facturado="@explo.FACTURADA"
+                    data-mutua="@explo.ENTIDAD_PAGADORA.CODMUT" data-owner="@explo.ENTIDAD_PAGADORA.OWNER" data-grupo="@explo.GAPARATO.OID"
+                    data-factura="@explo.IOR_FACTURA" data-pagar="@explo.PAGAR" data-oid-mutua="@explo.IOR_ENTIDADPAGADORA" data-cantidad="@explo.CANTIDAD">
+                    @{Activa = "";
+                    }
+
+                    <td>
+
+                        @if (@explo.PAGADO == "T")
+                        {
+                            <span class="label label-primary">Pagado</span>
+                        }
+                        else
+                        {
+                            <span class="label label-danger">Pendiente</span>
+                        }
+                    </td>
+                    <td title="@explo.ENTIDAD_PAGADORA.NOMBRE">@explo.ENTIDAD_PAGADORA.CODMUT</td>
+                    <td>@explo.FECHA.Value.ToShortDateString()</td>
+                    <td>@explo.DAPARATO.COD_FIL</td>
+                    <td>@explo.APARATO.DES_FIL</td>
+
+                    <td style="text-align: right;">@explo.CANTIDAD @explo.MONEDA.SIMBOLO</td>
+                    <td>
+                        @if (@explo.APLAZADO == "T")
+                        {
+                            <i style="color: #f70000; font-size: 1.2em;" title="Aplazado" class="fa fa-clock-o"></i>
+                        }
+                    </td>
+                    <td>
+                        @if (explo.FACTURADA == "T")
+                        {
+                        <i style="color: black; font-size: 1.2em;" title="Facturado" class="fa fa-dollar"></i>
+
+                        }
+                    </td>
+                    <td>
+                        @if (explo.NOFACTURAB == "T")
+                        {
+                            <i style="color: black; font-size: 1.2em;" title="No Facturable" class="fa fa-thumbs-down"></i>
+                        }
+                    </td>
+                    <td>
+                        @if (explo.IOR_FACTURA < 0)
+                        {
+                            if (explo.PAGAR == "T")
+                            {
+                                <a href="#">
+                                    <i class="fa fa-check fa-2x text-navy marcarExploracion" data-oid="@explo.OID"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#">
+                                    <i class="fa fa-times fa-2x text-danger marcarExploracion" data-oid="@explo.OID"></i>
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <a href="/Facturas/CreateOrEdit?ior_factura=@explo.IOR_FACTURA&ior_exploracion=@explo.OID">
+                                <span class="label label-primary">Ver Factura</span>
+                               
+                            </a>
+
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

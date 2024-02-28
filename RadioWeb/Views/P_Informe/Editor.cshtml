@@ -1,0 +1,98 @@
+﻿@model  RadioWeb.ViewModels.Informes.VMP_Informe
+@{RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"]; }
+
+@section estilos{
+
+
+    <link href="~/css/plugins/summernote/summernote.css" rel="stylesheet" />
+    <link href="~/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+    <style>
+        .note-editable {
+            font-family: Verdana;
+            font-size: 14px !important;
+        }
+
+            .note-editable p {
+                font-size: 14px;
+                font-weight: normal;
+                font-family: Verdana;
+            }
+    </style>
+}
+
+
+
+@using (Html.BeginForm(Model.ACTION, "P_Informe", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="OID" name="OID" value="@Model.OID" />
+    @Html.HiddenFor(m => m.OWNER)   
+   
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title" >
+                    <h5>@Model.TITULO </h5>
+                
+                </div>
+                <div class="ibox-content m-b-none no-paddings">
+                    <div class="form-horizontal" id="DetailInforme">
+                        <div class="form-group ">
+                            <div class="col-sm-4">
+                                <label class="control-label" for="titulo">Titulo</label>
+                                <input class="form-control" id="titulo" name="titulo" type="text" value="@Model.TITULO" />
+                                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.TITULO)</p>
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.LabelFor(m => m.FECHA)
+                                @Html.TextBoxFor(m => Model.FECHA, "{0:dd/MM/yyyy}",
+                                   new Dictionary<string, object>() {
+                                    { "class", "form-control date-picker" },
+                                    {  "readonly " , "readonly " }
+                              })
+                            </div> 
+                            <div class="col-sm-2">
+                                @Html.LabelFor(m => m.TIPO)
+                              @Html.DropDownList("TIPO", new SelectList(Model.TIPOS, "Key", "Value"), new { @class = "form-control " })
+                              
+                            </div>  
+                            <div class="col-sm-2">
+                                @Html.LabelFor(m => m.IDIOMA)
+                                @Html.DropDownList("IDIOMA", new SelectList(Model.IDIOMAS, "Key", "Value"), new { @class = "form-control " })
+                             
+                            </div>        
+                        </div>
+                
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+        <textarea name="TEXTOHTML" id="TEXTOHTML" data-oid="@Model.OID">
+            @Model.TEXTOHTML
+        </textarea>
+                                        }
+
+@section scripts
+    {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var unsaved = false;
+            $(window).bind('beforeunload', function () {
+                if (unsaved) {
+                    return "Existen cambios pendientes en este informe, ¿está seguro de cerrar está página?";
+                }
+            });
+        });
+
+    </script>
+    <script src="~/js/plugins/summernote/summernote.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote-es-ES.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote-save-button.js"></script>  
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/p_informe/editor.js")"></script>
+}

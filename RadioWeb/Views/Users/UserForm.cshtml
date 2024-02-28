@@ -1,0 +1,136 @@
+﻿@model RadioWeb.Models.USUARIO
+
+@{
+    /**/
+
+    ViewBag.Title = "Edit";
+}
+
+
+
+@using (Html.BeginForm("Edit", "Users", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.IDUSER)
+    <div class="ibox-title">
+        <h5>
+            <strong>
+                @Model.LOGIN
+            </strong>
+        </h5>
+
+    </div>
+    <div class="ibox-content p-xl" style="padding-top:5px;">
+
+        <div class="form-horizontal">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.IDUSER)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.LOGIN, htmlAttributes: new { @class = "control-label " })
+                @Html.EditorFor(model => model.LOGIN)
+                @Html.ValidationMessageFor(model => model.LOGIN, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.PASSWORDWEB, htmlAttributes: new { @class = "control-label " })
+                @Html.EditorFor(model => model.PASSWORDWEB)
+                @Html.ValidationMessageFor(model => model.PASSWORDWEB, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NOME, htmlAttributes: new { @class = "control-label " })
+                @Html.EditorFor(model => model.NOME)
+                @Html.ValidationMessageFor(model => model.NOME, "", new { @class = "text-danger" })
+
+
+            </div>
+
+
+
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EMAIL, htmlAttributes: new { @class = "control-label " })
+                @Html.EditorFor(model => model.EMAIL, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EMAIL, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PRIVILEGIADO, htmlAttributes: new { @class = "control-label " })
+
+                @Html.EditorFor(model => model.PRIVILEGIADO, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PRIVILEGIADO, "", new { @class = "text-danger" })
+
+            </div>
+
+
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PERFIL, htmlAttributes: new { @class = "control-label " })
+                @Html.EditorFor(m => m.PERFIL)
+                @Html.ValidationMessageFor(model => model.PERFIL, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        Datos para peticiones de prueba
+                    </div>
+                    <div class="panel-body p-lg">
+                        <div class="alert alert-warning">
+                            Al vincular un usuario a alguno de las 3 siguientes opciones dará acceso a la ventana
+                            de <b>PETICIONES DE PRUEBA</b>. Este usuario dejará de tener acceso al RIS.
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IOR_COLEGIADO, htmlAttributes: new { @class = "control-label " })
+                            @Html.EditorFor(model => model.IOR_COLEGIADO)
+                            @Html.ValidationMessageFor(model => model.IOR_COLEGIADO, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IOR_ENTIDADPAGADORA, htmlAttributes: new { @class = "control-label " })
+                            @Html.EditorFor(model => model.IOR_ENTIDADPAGADORA)
+                            @Html.ValidationMessageFor(model => model.IOR_ENTIDADPAGADORA, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IOR_CENTROEXTERNO, htmlAttributes: new { @class = "control-label " })
+                            @Html.EditorFor(model => model.IOR_CENTROEXTERNO)
+                            @Html.ValidationMessageFor(model => model.IOR_CENTROEXTERNO, "", new { @class = "text-danger" })
+                        </div>
+
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CITACIONONLINE, htmlAttributes: new { @class = "control-label " })
+                            @Html.EditorFor(model => model.CITACIONONLINE)
+                            @Html.ValidationMessageFor(model => model.CITACIONONLINE, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.BLOQUEADO, htmlAttributes: new { @class = "control-label " })
+                @Html.EditorFor(m => m.BLOQUEADO)
+                @Html.ValidationMessageFor(model => model.BLOQUEADO, "", new { @class = "text-danger" })
+            </div>
+
+
+            <hr />
+
+            <div class="form-group">
+
+                <input type="submit" value="Save" class="btn btn-primary btn-block" />
+
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Permisos", "Index", new { @IOR_ROLE = Model.PERFIL })
+</div>

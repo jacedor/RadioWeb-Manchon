@@ -1,0 +1,213 @@
+﻿@model RadioWeb.ViewModels.VWAgendaMultiple
+@{ RadioWeb.Models.Logica.FiltrosBusquedaExploracion oFiltrosBusqueda = null;
+    List<RadioWeb.ViewModels.VWAgendaMultiple> oCondicionesBusqueda = null;
+    if (Session["FiltrosBusqueda"] != null)
+    {
+        oFiltrosBusqueda = ((RadioWeb.Models.Logica.FiltrosBusquedaExploracion)Session["FiltrosBusqueda"]);
+    }
+    if (Session["CondicionesBusquedaAgendaMultiple"] != null)
+    {
+        oCondicionesBusqueda = (List<RadioWeb.ViewModels.VWAgendaMultiple>)Session["CondicionesBusquedaAgendaMultiple"];
+    }
+}
+
+
+
+
+<div class="panel ">
+    <div class="panel-heading" style="padding-bottom: 0px;">
+
+
+        <ul class="list-group clear-list " style="margin-bottom: 0px;">
+            <li class="list-group-item fist-item">
+                <span class="pull-right">@Model.HuecosLibres - huecos disponibles</span>
+                <span class="label label-success">@Model.DiaSemana </span>
+            </li>
+            <li class="list-group-item">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <div class="col-sm-6 col-md-6" style="padding:0px;">
+                            @{
+                                IEnumerable<RadioWeb.Models.DAPARATOS> oListTemp = ((List<RadioWeb.Models.DAPARATOS>)System.Web.HttpContext.Current.Application["DAparatos"]);
+                                if (Session["FiltrosBusqueda"] != null && oFiltrosBusqueda.oidCentro > 0)
+                                {
+                                    oListTemp = oListTemp.Where(s => s.CID == oFiltrosBusqueda.oidCentro);
+                                }
+                                <select class="form-control  aparato select2">
+                                    @foreach (RadioWeb.Models.DAPARATOS item in oListTemp)
+                                    {
+                                        if (!item.COD_FIL.Contains("OBSOLETO"))
+                                        {
+                                            if (item.OID == Model.oidAparato)
+                                            {
+                                                <option selected="selected" value="@item.OID">@item.COD_FIL</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.OID">@item.COD_FIL</option>
+                                            }
+                                        }
+
+                                    }
+                                </select>
+                            }
+
+
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" style="width:90%;" value="@Model.Fecha.ToString("dd/MM/yyyy")" class="form-control date-picker fecha ">
+
+                        </div>
+
+                    </div>
+
+
+                </form>
+            </li>
+        </ul>
+
+
+
+
+
+
+    </div>
+    <div class="panel-body" style="padding-top: 0px;">
+        <div class="scroll_content">
+            <table class="table table-hover clicable listadiaMultiple">
+                <thead class="hide">
+                    <tr>
+                        <th>Hora Horario</th>
+                        <th>Action</th>
+                        <th>Explo</th>
+                        <th>Paciente</th>
+                        <th data-field='oid'>oid</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ListaDia)
+                    {
+                        var claseActiva = "";
+                        var esHueco = "huecoOcupado";
+
+                        if (item.OID <= 0 && item.ANULADA == false)
+                        {
+                            esHueco = "huecoLibre";
+                        }
+
+                        <tr style="color: @item.COLOR" class="@esHueco @claseActiva" data-aparato="@Model.oidAparato" data-fecha="@Model.Fecha.ToString("dd/MM/yyyy")" data-hora="@item.HORA" data-ior_paciente="@item.IOR_PACIENTE" data-horaex="@item.HORA_EX" data-anulada="@item.ANULADA" data-hhora="@item.HHORA" data-oid="@item.OID" data-facturada="@item.FACTURADA" data-hora="@( item.HORA != null ? @item.HORA.Substring(0, 2) : "")" data-pagado="@item.PAGADO" data-owner="@item.IOR_PACIENTE">
+
+                            <td style="padding-top: 3px; font-size: 13px">
+                                <span style="color:@item.COLOR_HORARIO" class="hhora">@item.HHORA </span>
+                            </td>
+                            <td class="cid" style="background-color:@item.CIDCOLOR;">
+
+                                @if (esHueco == "huecoLibre")
+                                {
+                                    <a href="#modal-form-MotivoAnular" data-toggle="modal" class="dropdown-toggle">
+                                        <i class="fa fa-remove" style="color: red; font-size: 11px;" title="Anular Hora"></i>
+                                    </a>
+                                }
+                                @if (item.ANULADA)
+                                {
+                                    <i class="fa fa-thumbs-up desanularHora" style="color: green; font-size: 11px;" title="Desanular Hora"></i>
+
+                                }
+
+                            </td>
+                            <td style="padding-top: 3px; font-size: 13px" title="@item.DES_FIL">
+                                @item.FIL
+                            </td>
+
+                            <td style="padding: 1px;">
+
+                                @if (esHueco == "huecoLibre" || item.ANULADA)
+                                {
+                                    <span style="color:@item.COLOR;font-size:13px;">@item.PACIENTE     </span>
+
+                                }
+                                else
+                                {
+                                    if (item.PACIENTE.Length != 0)
+                                    {
+                                        @Html.ActionLink(
+                                     linkText: @item.PACIENTE,
+                                     actionName: "Details",
+                                     controllerName: "Exploracion",
+                                     routeValues: new
+                                     {
+                                         oid = @item.OID
+                                     },
+                                     htmlAttributes: new { @style = "color:" + @item.COLOR + ";font-size:11px;font-weight:bold;" }
+                                 )
+                                    }
+
+
+
+                                }
+
+
+
+                            </td>
+                            <td class="hide">@item.OID</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer" style="font-weight: bold;">
+        @Model.TextoAgenda
+    </div>
+</div>
+
+
+
+
+
+<div class="modal inmodal fade" id="modalSMS" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Enviar SMS</h4>
+            </div>
+            <div class="modal-body">
+                <div id="displayPermisoLOPDsms">
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Plantilla SMS</label>
+
+
+                    @{
+                        List<RadioWeb.Models.EMAIL> oListEmail = (List<RadioWeb.Models.EMAIL>)System.Web.HttpContext.Current.Application["PlantillasCorreoSMS"];
+
+                        <select id="ddlEmail" name="ddlEmail" class="selectpicker form-control ">
+                            @foreach (RadioWeb.Models.EMAIL item in oListEmail)
+                            {
+                                if (item.DIRECCION != null && item.TEXTO != null)
+                                {
+                                    <option data-contenido="@item.TEXTO" data-oid="@item.OID" value="@item.OID">@item.DIRECCION </option>
+                                }
+                            }
+                        </select>
+                    }
+
+                </div>
+                <p>
+
+                    <input type="hidden" value="GRUP MANCHON:  Se le ha enviado un informe de su estudio por mail. El código de acceso es CDPI . Si tiene alguna duda llame al 934450600. Gracias" id="textoSMSPlantilla" />
+                    <textarea class="form-control" id="textoSMS" name="textoSMS" rows="3"> </textarea>
+                </p>
+                <p>
+                    <input type="text" name="movilEnvioSMS" id="movilEnvioSMS" class="form-control" value=" " />
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="EnviarSMS">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,99 @@
+﻿@model RadioWeb.Models.CARTELERA
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>CARTELERA</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.VERS)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.VERS)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CID)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CID)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CANAL)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CANAL)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.OWNER)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.OWNER)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.USERNAME)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.USERNAME)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.FECHA)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.FECHA)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.HORA)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.HORA)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.BORRADO)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.BORRADO)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.GRUPO)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.GRUPO)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.NUMERO)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.NUMERO)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DESCRIPCION)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DESCRIPCION)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.TEXTO)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.TEXTO)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.OID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

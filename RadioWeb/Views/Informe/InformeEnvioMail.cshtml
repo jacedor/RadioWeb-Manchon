@@ -1,0 +1,146 @@
+﻿@model RadioWeb.Models.EMAIL
+
+<div class="container col-md-12 m-t-0 m-b-md">
+    <div id="displayPermisoLOPDmail">
+
+    </div>
+</div>
+
+
+<form class="form-horizontal m-r-md" method="get" name="frmEnvioInformeMail">
+    @*ESTO ES EL OID DEL INFORME*@
+    <input type="hidden" id="OWNER" NAME="OWNER" value="@Model.OWNER" />
+    <input type="hidden" id="OIDINFORME" NAME="OIDINFORME" value="@Model.OWNER" />
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Para:</label>
+
+        <div class="col-sm-10">
+            <input type="text" id="email" name="email" value="@Model.USERNAME" class="form-control" required>
+            @Html.ValidationMessageFor(m => m.CONCOPIA)
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">CC:</label>
+
+        <div class="col-sm-10">
+            @*    <input type="text" id="concopia" name="concopia" value="@Model.CONCOPIA" class="form-control" >*@
+            @Html.TextBoxFor(x => x.CONCOPIA, new { @class = "form-control" })
+            @Html.ValidationMessageFor(x => Model.CONCOPIA, string.Empty, new { @class = "help-block" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Asunto:</label>
+
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="asunto" name="asunto" value="@Model.ASUNTO">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Texto:</label>
+
+        <div class="col-sm-10">
+            <textarea class="form-control" id="texto" name="texto" rows="3">
+@Model.TEXTO
+ </textarea>
+        </div>
+    </div>
+</form>
+<div class="col-md-6">
+
+    <div class="attachment" style="padding: 0px;">
+        <div class="file-box" style="width: 400px;">
+            <div class="file">
+                <a href="#">
+                    <span class="corner"></span>
+
+                    <div class="icon">
+                        <i class="fa fa-file-pdf-o"></i>
+                    </div>
+                    <div class="file-name">
+                        <div id="adjunto1" data-ruta="@Model.ADJUNTO1">
+                            <a href="/Informe/Imprimir?oid=@Model.OWNER&password=@Model.OWNER" target="_blank">@Model.ADJUNTO1.Substring(Model.ADJUNTO1.LastIndexOf(@"\"))</a>
+                        </div>
+
+                        <small>@Model.ADJUNTO2</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+
+    <div class="attachment" style="padding: 0px;">
+        <div class="file-box" style="width: 400px;">
+            <div class="file">
+                <a href="#">
+                    <span class="corner"></span>
+
+                    <div class="icon">
+                        <i class="fa fa-phone"></i>
+                    </div>
+                    <div class="file-name">
+
+                        <div class="input-group m-b">
+                            <span class="input-group-addon"> <input type="checkbox" checked="checked" id="checkEnvioSMS" name="checkEnvioSMS"> </span>
+                            <input type="text" id="movilPaciente" name="movilPaciente" value="@Model.CANAL " class="form-control">
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<script>
+
+    @*
+
+    $(document).ready(function () { 
+
+            $.ajax({
+            type: 'POST',
+            url: '/Paciente/getLOPDsettingsById',
+            data: {
+                idPaciente: @Model.IOR_PACIENTE,
+            },
+            beforeSend: function () {
+                $("#displayPermisoLOPDmail").empty();
+                $("#EnviarEmail").prop("disabled", true);
+            },
+            success: function (res) {
+                $("#displayPermisoLOPDmail").html(res);
+                $("#EnviarEmail").prop("disabled", false);
+                if ($("#ENVIO_SMS").val() === "T") {
+                    $("#checkEnvioSMS").prop("checked", false);
+                    toastr.warning('El paciente no consiente el envío de SMS en su declaración de la LOPD', 'El SMS no se enviará', {
+                        timeOut: 5000
+                    });
+                }
+            }
+        });
+    });
+
+     $("#checkEnvioSMS").change(function () {
+        if ($(this).is(":checked") && $("#ENVIO_SMS").val() === 'T') {
+            $(this).prop("checked", false);
+            toastr.error("Este paciente no permite el envío de notificaciones por SMS.", "Permisos LOPD");
+        }
+     });
+            
+    *@
+
+
+
+</script>
+
+
+
+<link rel="stylesheet" href="~/js/plugins/jquery-confirm/jquery-confirm.min.css">
+<script src="~/js/plugins/jquery-confirm/jquery-confirm.min.js"></script>

@@ -1,0 +1,22 @@
+﻿@model string
+@{
+    var IOR_PAGADO =(String.IsNullOrEmpty(Model)? "" : Model );
+
+    var tipos = new SelectList(
+new List<SelectListItem> {
+new SelectListItem {Text ="TODOS",Value = "A",Selected = "A" ==IOR_PAGADO},
+new SelectListItem {Text ="PAGADO",Value = "T",Selected = "T" == IOR_PAGADO.ToString()},
+new SelectListItem {Text = "NO PAGADO",Value = "F", Selected = "F" == IOR_PAGADO.ToString() }
+
+}, "Value", "Text", Model
+);
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+@Html.DropDownList("",
+            tipos,
+            htmlAttributes)

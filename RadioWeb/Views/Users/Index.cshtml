@@ -1,0 +1,104 @@
+﻿@model  RadioWeb.Models.USUARIO
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RadioWeb 2.0 | Login</title>
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+    @{
+        var hayLogo = false;
+        if (ViewBag.NombreEmpresa != null)
+        {
+            var imagen = ViewBag.NombreEmpresa.ToString().Replace(" ", "") + ".png";
+            var filePath = "~/img/logo-" + imagen;
+            if (File.Exists(Server.MapPath(filePath)))
+            {
+                hayLogo = true;
+                <div class="text-center" style="margin-top:30px;">
+                    <img alt="image" class="rounded-circle" src="~/img/logo-@imagen">
+
+                </div>
+            }
+        }
+
+    }
+
+    <div class="middle-box text-center loginscreen animated fadeInDown" style="margin-top:10px;">
+
+        <div>
+            <div>
+
+                @if (!hayLogo)
+                {
+                    <h1 class="logo-name">RW+</h1>
+                }
+
+
+            </div>
+            <h3>Bienvenido a RadioWeb</h3>
+            <p>
+                @ViewBag.NombreEmpresa
+            </p>
+
+            <p>Login in. Inicio de sesión.</p>
+
+            @if (ViewBag.UsuarioBloqueado != null)
+            {
+                <div class="alert alert-danger">@ViewBag.UsuarioBloqueado</div>
+            }
+
+            <form id="form1" class="m-t" method="post" action="/Users/Login">
+                <div class="form-group">
+
+                    <input type="text" id="LOGIN" name="LOGIN" class="form-control" placeholder="Usuario" required="">
+                    <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.LOGIN)</p>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="PASSWORDWEB" name="PASSWORDWEB" class="form-control" placeholder="Contraseña" required="">
+                    <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.PASSWORDWEB)</p>
+                    @Html.ValidationMessageFor(model => model.PASSWORDWEB, "", new { @class = "text-danger" })
+                </div>
+                <button id="butonSend" type="submit" class="btn btn-primary block full-width m-b">Entrar</button>
+
+
+            </form>
+            <p class="m-t"> <small>ADPM - Análisis y Desarrollo de Programas Médicos</small> </p>
+            <p class="m-t"><img src="~/img/brand-comodo-seal.png" title="Sitio Seguro" /> </p>
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="~/js/jquery-2.1.1.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#username").focus();
+            $('.collapse').addClass('hidden');
+            $('.extra').addClass('hidden');
+            $('.footer').addClass('hidden');
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>

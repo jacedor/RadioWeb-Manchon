@@ -1,0 +1,401 @@
+﻿@model RadioWeb.Models.INFORMES
+@using RadioWeb.Models;
+@{List<PERSONAL> oListMedicos = (List<PERSONAL>)ViewBag.Medicos;}
+@section estilos{
+    <link href="~/css/plugins/summernote/summernote.css" rel="stylesheet">
+    <link href="~/css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+    <link href="~/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+    <link href="~/css/plugins/chosen/chosen.css" rel="stylesheet">
+}
+<input type="hidden" name="oidInforme" id="oidInforme" value="@Model.OID" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Datos del informe - @Model.PACIENTE.PACIENTE1</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+
+
+                <div class="form-horizontal" id="DetailInforme">
+                    <div class="form-group ">
+                        <div class="col-sm-6">
+                            <label class="control-label" for="titulo">Titulo</label>
+                            <input class="form-control" id="titulo" name="titulo" type="text" value="@Model.TITULO" required />
+                        </div>
+                        <div class="col-sm-2">
+                            <label for="OID" class=" control-label">Password PDF</label>
+                            <p class="form-control-static" id="OID">@Model.OID</p>
+                        </div>
+                        <div class="col-sm-4">
+                            @if (@Model.VALIDACION == "T")
+                            {
+                            <a href="#" class="btn btn-primary btn-sm pull-right" data-toggle="tooltip" data-placement="top" title="Validado"><i class="fa fa-thumbs-up"></i>Validado</a>
+                            }
+                            else
+                            {
+                            <a href="#" class="btn btn-danger btn-sm pull-right" data-toggle="tooltip" data-placement="top" title="No validado"><i class="fa fa-times"></i>No validado</a>
+                            }
+                        </div>
+
+                    </div>
+
+                    <div class="form-group ">
+                        <div class="col-sm-2">
+                            <label for="FECHA" class="control-label">Fecha </label>
+                            <input class="form-control" id="FECHA" name="FECHA" type="datetime" value="@Model.FECHA.Value.ToShortDateString()" />
+
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label" for="titulo">Hora</label>
+                            <div class="input-group clockpicker" data-autoclose="true">
+                                <input type="text" class="form-control" value="@Model.HORA">
+                                <span class="input-group-addon">
+                                    <span class="fa fa-clock-o"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <label for="IOR_MEDINFORME" class=" control-label">M. Informe.</label>
+                            <select id="IOR_MEDINFORME" name="IOR_MEDINFORME" class="selectpicker form-control ">
+                                @foreach (PERSONAL item in oListMedicos)
+                                {
+                                    if (item.OID == Model.IOR_MEDINFORME)
+                                    {
+
+                                <option selected="selected" value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                    }
+                                    else
+                                    {
+                                <option value="@item.OID">@item.COD - @item.NOMBRE </option>
+
+                                    }
+
+
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <label for="IOR_MEDREVISION" class=" control-label">M. Revisión</label>
+                            <select id="IOR_MEDREVISION" name="IOR_MEDREVISION" class="selectpicker form-control ">
+                                @foreach (PERSONAL item in oListMedicos)
+                                {
+                                    if (item.OID == Model.IOR_MEDREVISION)
+                                    {
+
+                                <option selected="selected" value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                    }
+                                    else
+                                    {
+                                <option value="@item.OID">@item.COD - @item.NOMBRE </option>
+
+                                    }
+
+
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <label for="IOR_TECNICO" class="control-label">Técnico</label>
+                            <select id="IOR_TECNICO" name="IOR_TECNICO" class="selectpicker form-control ">
+                                @foreach (PERSONAL item in oListMedicos)
+                                {
+                                    if (item.OID == Model.IOR_TECNICO)
+                                    {
+
+                                <option selected="selected" value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                    }
+                                    else
+                                    {
+                                <option value="@item.OID">@item.COD - @item.NOMBRE </option>
+
+                                    }
+
+
+                                }
+                            </select>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-lg-9" style="padding-right: 1px;">
+        <div class="wrapper  " style="padding: 0;">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="pull-right" style="margin-bottom: 10px;">
+                            <div class="tooltip-demo">
+                                <button title="Editar" data-placement="left" data-toggle="tooltip" class="btn btn-white btn-xs EditButton" onclick="edit()"><i class="fa fa-pencil"></i></button>
+                                <button title="Guardar" data-placement="top" data-oid="@Model.OID" data-toggle="tooltip" class="btn btn-white btn-xs SaveButton" onclick="save()"><i class="fa fa-save"></i></button>
+                                <button title="Imprimir" data-placement="top" data-oid="@Model.OID" data-toggle="tooltip" class="btn btn-white btn-xs ImprimirButton" onclick="imprimir()"><i class="fa fa-print"></i></button>
+                                <button title="Intocable" data-placement="top" data-toggle="tooltip" class="btn btn-white btn-xs"><i class="fa fa-exclamation"></i></button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="height: 600px;">
+
+                        <div id="InformeContent" class="text-left click2edit  full-height-scroll ">
+
+                            @Html.Raw(@Model.TEXTOHTML)
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3" style="padding-left: 1px;">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs navs-3">
+
+                <li class="active">
+                    <a data-toggle="tab" href="#tabRelacionados">
+                        <i class="fa fa-bars" data-toggle="tooltip" data-placement="top" title="Informes Relacionados"></i>
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#tabPlantillas">
+                        <i class="fa fa-upload" data-toggle="tooltip" data-placement="top" title="Plantillas"></i>
+                    </a>
+                </li>
+
+            </ul>
+            <div class="tab-content">
+                <div id="tabRelacionados" class="tab-pane active" style="height: 600px;">
+
+                    <div class="panel-body full-height-scroll">
+
+
+                        <ul class="list-group elements-list">
+
+                            @{
+                                List<RadioWeb.Models.INFORMES> InformesAsociados = ViewBag.InformesPaciente;
+
+                                foreach (RadioWeb.Models.INFORMES informe in InformesAsociados)
+                                {
+
+                            <li class="list-group-item @( informe.OID == Model.OID ? "ACTIVA" : "")" style="padding:15px 0px;">
+                                <a href="/Informe/Details/@informe.OWNER">
+                                    <small class="pull-right text-muted">@informe.FECHA.Value.ToShortDateString()</small>
+                                    <strong>@informe.TITULO</strong>
+                                    <div class="small m-t-xs">
+                                        <p>
+                                            @Model.PACIENTE.PACIENTE1
+                                        </p>
+                                        <p class="m-b-none">
+                                            Med Rev:@informe.IOR_MEDREVISION - Patologico: @informe.PATOLOGICO
+                                        </p>
+                                    </div>
+                                </a>
+                            </li>
+                                }
+                            }
+
+
+
+
+                        </ul>
+
+
+
+
+                    </div>
+                </div>
+                <div id="tabPlantillas" class="tab-pane " style="height: 618px;">
+
+                    <div class="panel-body full-height-scroll">
+                        <div class="row ">
+
+                            <div class="form-group">
+                                <label class="font-noraml">Informe nuevo sobre plantilla</label>
+                                <select data-placeholder="Seleccione una Plantilla" class="chosen-select cargarPlantilla" tabindex="2">
+                                    @{
+                                        List<RadioWeb.Models.P_INFORMES> oListTemp = ((List<RadioWeb.Models.P_INFORMES>)Session["P_Informes"]);
+                                        var Group = "";
+
+
+                                        foreach (RadioWeb.Models.P_INFORMES informePlantilla in oListTemp)
+                                        {
+                                            if (Group != @informePlantilla.DESC_MEDICO)
+                                            {
+                                                <optgroup label="@informePlantilla.DESC_MEDICO" />
+                                                Group = @informePlantilla.DESC_MEDICO;
+                                            }
+
+                                            <option data-medico="@informePlantilla.DESC_MEDICO" data-titulo="@informePlantilla.TITULO" value="@informePlantilla.OID">@informePlantilla.TITULO  </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+
+
+
+                        </div>
+
+                        @*   <table class="footable table table-stripped table-hover clicable"  data-filter="#filter">
+                                <thead style="display:none;">
+                                    <tr>
+
+                                        <th>Titulo</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        List<RadioWeb.Models.P_INFORMES> oListTemp = ((List<RadioWeb.Models.P_INFORMES>)Session["P_Informes"]);
+
+                                        foreach (RadioWeb.Models.P_INFORMES informePlantilla in oListTemp)
+                                        {
+
+                                        <tr>
+
+                                            <td><a href="#" data-target="#modalPlantilla" data-medico="@informePlantilla.DESC_MEDICO" data-titulo="@informePlantilla.TITULO" data-oid="@informePlantilla.OID" class="cargarPlantilla">@informePlantilla.TITULO <br /> @informePlantilla.DESC_MEDICO</a></td>
+
+
+                                        </tr>
+
+                                        }
+
+                                    }
+
+                                </tbody>
+                            </table>*@
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal inmodal fade" id="modalPlantilla" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width: 900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title tituloInforme"></h4>
+                <small id="Medico" class="font-bold"></small>
+            </div>
+            <div class="modal-body " style="height: 300px;">
+                <div id="contenidoPlantilla" class="full-height-scroll">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="AplicarPlantilla">Aplicar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+@section scripts{
+    <script src="~/js/plugins/summernote/summernote.min.js"></script>
+    <script src="~/js/plugins/clockpicker/clockpicker.js"></script>
+
+    <script src="~/js/plugins/chosen/chosen.jquery.js"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Informe/Informe.js")"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('.full-height-scroll').slimScroll({
+                position: 'right',
+                height: '300px',
+                railVisible: true,
+                alwaysVisible: false
+            });
+
+            $('.footable').footable();
+            $("a[href='http://www.sautin.com/order.php#RTOHNET']").parent().remove();
+            $('.clockpicker').clockpicker();
+            $("li[data-view]").removeClass('active');
+            $("[data-view=Informe]").addClass("active");
+            $("[data-view=Informe]").parents("ul").removeClass("collapse");
+            var Actividad = {};
+            Actividad.DESCRIPCION = "@Model.PACIENTE.PACIENTE1 - @Model.FECHA.Value.ToShortDateString() @Model.TITULO";
+            Actividad.TIPO = "INFORME";
+            Actividad.OID = "@Model.OID";
+            saveActividad(Actividad);
+            if ($("#oidInforme").val() === "0") {
+                edit();
+            }
+
+
+
+            $('#FECHA').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                language: "es",
+                format: "dd-mm-yyyy"
+            });
+
+
+            $(".chosen-select").chosen({ no_results_text: "No se encuentra!", width: '90%' }).change(function () {
+                var oidPlantilla = $(this).val();
+                var titulo = $(this).data('titulo');
+                var medico = $(this).data('medico');
+                var oidMedico = $("#IOR_MEDINFORME").val();
+
+
+                var url = "/Informe/Plantilla/"; //The Url to the Action  Method of the Controller
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: "oid=" + oidPlantilla + "&" + "oidMedico=" + oidMedico,
+                    dataType: "html",
+                    success: function (evt) {
+                        $('#contenidoPlantilla').html(evt);
+                        $(".tituloInforme").html(titulo);
+                        $("#Medico").html(medico);
+                        $("#modalPlantilla").modal('show');
+
+                    },
+                });
+            });
+        });
+
+
+    </script>
+}
+
+

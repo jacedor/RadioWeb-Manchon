@@ -1,0 +1,147 @@
+﻿@model RadioWeb.ViewModels.Paciente.VMAddPaso2
+@{
+
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    ViewBag.Title = "Paciente";
+}
+
+@section estilos{
+    <!-- FooTable -->
+
+    <style>
+        input.error {
+            -moz-border-bottom-colors: none;
+            -moz-border-left-colors: none;
+            -moz-border-right-colors: none;
+            -moz-border-top-colors: none;
+            background-attachment: scroll;
+            background-clip: border-box;
+            background-color: rgb(251, 227, 228);
+            background-image: none;
+            background-origin: padding-box;
+            background-position: 0 0;
+            background-repeat: repeat;
+            background-size: auto auto;
+            border-bottom-color: #fbc2c4;
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-image-outset: 0 0 0 0;
+            border-image-repeat: stretch stretch;
+            border-image-slice: 100% 100% 100% 100%;
+            border-image-source: none;
+            border-image-width: 1 1 1 1;
+            border-left-color: #fbc2c4;
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: #fbc2c4;
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: #fbc2c4;
+            border-top-style: solid;
+            border-top-width: 1px;
+            color: #8a1f11;
+        }
+    </style>
+}
+@using RadioWeb.Models;
+@using (Html.BeginForm("AddPaso3", "AgendaMulti", routeValues: new
+{
+    oid = Model.PACIENTEALTA.OID
+
+}))
+{
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins" style="margin-bottom: 5px;">
+                <div class="ibox-content " style="padding-bottom: 10px;">
+                    <a href="/AgendaMulti/AddPaso1" id="btnAnterior" class="btn  btn-sm btn-warning" role="button">< Anterior</a>
+                    <button type="submit" id="btnSiguiente" class="btn btn-sm btn-primary pull-right">Siguiente ></button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins" style="margin-bottom: 5px;">
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        @Html.EditorFor(p => p.PACIENTEALTA)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+}
+
+
+
+@section scripts{
+
+    <!-- Jquery Validate -->
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+
+    <script src="~/js/custom/Exploracion/Alta.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $("#CID").select2();
+
+            var form_original_data = $("form").serialize();
+
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+
+
+            jQuery.extend(jQuery.validator.messages, {
+                required: "*",
+                remote: "Please fix this field.",
+                email: "Email inválido.",
+                url: "Please enter a valid URL.",
+                date: "Please enter a valid date.",
+                dateISO: "Please enter a valid date (ISO).",
+                number: "Please enter a valid number.",
+                digits: "Please enter only digits.",
+                creditcard: "Please enter a valid credit card number.",
+                equalTo: "Please enter the same value again.",
+                accept: "Please enter a value with a valid extension.",
+                maxlength: jQuery.validator.format("Please enter no more than {0} characters."),
+                minlength: jQuery.validator.format("Please enter at least {0} characters."),
+                rangelength: jQuery.validator.format("Please enter a value between {0} and {1} characters long."),
+                range: jQuery.validator.format("Please enter a value between {0} and {1}."),
+                max: jQuery.validator.format("Please enter a value less than or equal to {0}."),
+                min: jQuery.validator.format("Please enter a value greater than or equal to {0}.")
+            });
+
+            $("#btnSiguiente").click(function () {
+                if ($("form").serialize() != form_original_data) {
+                    $('#HAYCAMBIOS').val('true');
+                }
+
+                $("form").validate({
+                    errorPlacement: function (error, element) {
+                        element.before(error);
+                    }
+                });
+            });
+
+        });
+
+
+    </script>
+
+}
+
+
+
+
+
+
+
+
+

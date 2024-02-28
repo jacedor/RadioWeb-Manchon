@@ -1,0 +1,144 @@
+﻿@model  RadioWeb.ViewModels.VWColegiado
+@using RadioWeb.Models;
+@{
+     ViewBag.Title = Model.HEADING;
+    }
+<div class="row">
+  
+    
+    @using (Html.BeginForm(Model.ACTION, "Colegiado", new { @class = "form-horizontal" }))
+    {
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins" style="margin-bottom:5px;">
+                <div class="ibox-content">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.OID)
+                    @Html.HiddenFor(m => m.ACTION)
+                    @Html.HiddenFor(m => m.OIDEXPLORACION)
+                    <div class="row">
+                        <div class="m-t-md" style="margin-top: 0px;">
+                            <div class="pull-right">
+                                <button type="submit" id="GuardayVuelve" name="GuardayVuelve" title="Guardar y Volver" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-sign-in" title="Guardar y Volver"></i>
+                                </button>
+                                <button type="button" id="Cancelar" title="Cancelar" class="btn btn-sm btn-white  ">
+                                    <i class="fa fa-window-close" aria-hidden="true"></i> 
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+@if (Model.ACTION == "Create")
+{
+    <div class="alert alert-danger">
+        Alta de colegiado
+    </div>
+}
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.TRATA)
+                                @Html.DropDownListFor(m => Model.TRATA, new SelectList(Model.TRATAMIENTOS, "DESCRIPCION", "DESCRIPCION"), new { @class = "form-control " })
+                                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.TRATA)</p>
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.LabelFor(m => m.APELLIDOS)
+                                @Html.TextBoxFor(m => Model.APELLIDOS, new { @class = "form-control", autofocus = "autofocus", @style = "text-transform:uppercase", placeHolder = "Apellidos" })
+                                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.APELLIDOS)</p>
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.NOMBRE)
+                                @Html.TextBoxFor(m => Model.NOMBRE, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "Nombre" })
+                                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.NOMBRE)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top:10px;">
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.COD_MED)
+                                @Html.TextBoxFor(m => Model.COD_MED, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "Número Colegiado" })
+                                @Html.ValidationMessageFor(m => Model.COD_MED)
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.NIF)
+                                @Html.TextBoxFor(m => Model.NIF, new { @class = "form-control", placeHolder = "NIF" })
+                                @Html.ValidationMessageFor(m => Model.NIF)
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.LabelFor(m => m.IOR_ESPECIALIDAD)
+                                @Html.DropDownListFor(m => Model.IOR_ESPECIALIDAD, new SelectList(Model.ESPECIALIDADES, "OID", "DESCRIPCION"), new { @class = "form-control select2" })
+                                @Html.ValidationMessageFor(m => Model.IOR_ESPECIALIDAD)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <div class="form-group">
+                            @*esto es el comentario*@
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.ESPEC)
+                                @Html.TextBoxFor(m => Model.ESPEC, new { @class = "form-control", placeHolder = "Comentario" })
+                                @Html.ValidationMessageFor(m => Model.ESPEC)
+                            </div>
+                            <div class="col-sm-3">
+                                @Html.LabelFor(m => m.EMAIL)
+                                @Html.TextBoxFor(m => Model.EMAIL, new { @class = "form-control", autofocus = "autofocus", placeHolder = "Email" })
+                                <p class="help-block text-danger">  @Html.ValidationMessageFor(m => Model.EMAIL)</p>
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.LabelFor(m => m.IOR_CENTRO)
+                                @Html.DropDownListFor(m => Model.IOR_CENTRO, 
+                               new SelectList(Model.CENTROSEXTERNOS, "OID", "NOMBRE"), new { @class = "form-control select2" })
+                                @Html.ValidationMessageFor(m => Model.IOR_CENTRO)
+                            </div>
+                            <div class="col-lg-12">
+                                @Html.LabelFor(m => m.TEXTO)
+                                <div class="ibox-content " id="TEXTO" style="padding-bottom: 10px; max-height: 180px; overflow-y: scroll;">
+                                    @Html.Raw(@Model.TEXTO)
+                                
+                                </div>
+                                    
+                                    @Html.ValidationMessageFor(m => Model.TEXTO)
+                                </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6" style="padding-right: 3px">
+            @if (Model.DIRECCIONES.Count == 0)
+            {
+                Model.DIRECCIONES.Add(new DIRECCION() { POBLACION = "SIN DIRECCIÓN", OID = -1 });
+            }
+            @Html.Partial("~/Views/Direccion/_ListDirs.cshtml", Model.DIRECCIONES)
+        </div>
+
+        <div class="col-lg-6">
+            @if (Model.TELEFONOS.Count == 0)
+            {
+                Model.TELEFONOS.Add(new TELEFONO());
+            }
+            @Html.Partial("~/Views/Telefono/List.cshtml", Model.TELEFONOS)
+
+        </div>
+
+
+
+    }
+ </div>
+
+
+
+
+
+@section scripts
+    {
+@Scripts.Render("~/bundles/jqueryval")
+   
+ 
+    
+}

@@ -1,0 +1,4 @@
+﻿-- Creación de los campos que actuaran a modo de módulo en la tabla WEBCONFIG.
+
+INSERT INTO WEBCONFIG (OID, VERS, OWNER, CLAVE, VALOR, SECCION, DESCRIPCION) VALUES ( gen_id(GENUID,1), 0, NULL, 'LOPD_PACIENTE', 'F', 'LOPD', 'Modulo de LOPD. Si esta habilitado, se mostrará en la ficha de paciente las configuraciones de LOPD, modificables por usuarios privileviados, asi como validar en diversos formularios de envío de informes y SMS que los permisos actuales permiten el envío de esos documentos/notificaciones.');
+INSERT INTO WEBCONFIG (OID, VERS, OWNER, CLAVE, VALOR, SECCION, DESCRIPCION) VALUES ( gen_id(GENUID,1), 1, NULL, 'LOPD_PACIENTE', 'F', 'LOPD', 'Modulo de LOPD. Si esta habilitado, se mostrará en la ficha de paciente las configuraciones de LOPD, modificables por usuarios privileviados, asi como validar en diversos formularios de envío de informes y SMS que los permisos actuales permiten el envío de esos documentos/notificaciones.');

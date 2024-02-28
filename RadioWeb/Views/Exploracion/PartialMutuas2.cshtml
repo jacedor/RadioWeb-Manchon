@@ -1,0 +1,127 @@
+﻿@model RadioWeb.Models.EXPLORACION
+
+@using (Html.BeginForm("Update", "Exploracion", new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.OID)
+
+    @Html.HiddenFor(m => m.FECHA)
+    @Html.HiddenFor(m => m.IOR_EMPRESA)
+    @Html.HiddenFor(m => m.IOR_GPR)
+    @Html.HiddenFor(m => m.IOR_MONEDA)
+
+    <div class="row">
+        <div class="form-group col-xs-4 col-md-4">
+            <label for="IOR_ENTIDADPAGADORA" class=" control-label">Mutua</label>
+            @Html.EditorFor(m => m.IOR_ENTIDADPAGADORA)
+        </div>
+
+
+    </div>
+
+
+    <div class="row">
+        <div class="form-group col-xs-2 col-md-2">
+            @Html.BootstrapLabelFor(m => m.FECHA)
+            @Html.TextBoxFor(m => m.FECHA, new { @class = "form-control" })
+        </div>
+        <div class="form-group col-xs-2 col-md-2">
+            @Html.BootstrapLabelFor(m => m.HORA)
+            @Html.EditorFor(m => m.HORA)
+        </div>
+        <div class="form-group col-xs-4 col-md-4">
+            <label for="IOR_APARATO" class="control-label">APARATO</label>
+
+            @{
+                List<RadioWeb.Models.DAPARATOS> oListAparatos = (List<RadioWeb.Models.DAPARATOS>)System.Web.HttpContext.Current.Application["Daparatos"];
+
+                <select id="IOR_APARATO" name="IOR_APARATO" @(Model.INTOCABLE == "T" ? "readonly = \"true\" disabled=\"disabled\"" : "") class="select2 form-control ddlAparatosMutua">
+                    @foreach (RadioWeb.Models.DAPARATOS item in oListAparatos)
+                    {
+                        if (item.COD_FIL == Model.DAPARATO.COD_FIL)
+                        {
+                            //SI EL ITEM ESTA OBSOLETO LO PONEMOS EN ROJO
+                            if (item.COD_FIL.Contains("OBSOLETO"))
+                            {
+                                <option selected="selected" style="color:red;font-weight:bold;" data-cod="@item.COD_FIL" data-text-value="@item.DES_FIL" value="@item.OID">@item.COD_FIL-@item.DES_FIL </option>
+                            }
+                            else
+                            {
+                                <option selected="selected" data-cod="@item.COD_FIL" data-text-value="@item.DES_FIL" value="@item.OID">@item.COD_FIL-@item.DES_FIL </option>
+                            }
+
+
+                        }
+                        else
+                        {
+                            <option data-cod="@item.COD_FIL" data-text-value="@item.DES_FIL" value="@item.OID">@item.COD_FIL-@item.DES_FIL </option>
+                        }
+
+                    }
+                </select>
+            }
+        </div>
+        <div class="form-group col-xs-4 col-md-4">
+            <label for="IOR_TIPOEXPLORACION" class="control-label">Explo.</label>
+
+            @{
+                <select id="IOR_TIPOEXPLORACION" name="IOR_TIPOEXPLORACION" @(Model.INTOCABLE == "T" ? "readonly = \"true\" disabled=\"disabled\"" : "") class="select2 form-control" data-live-search="true">
+                    @foreach (RadioWeb.Models.APARATOS item in Model.EXPLORACIONESCONTARIFA)
+                    {
+                        if (Model.APARATO != null && (item.OID == Model.IOR_TIPOEXPLORACION))
+                        {
+                            <option selected="selected" data-text-value="@item.FIL" value="@item.OID">@item.FIL-@item.DES_FIL </option>
+                        }
+                        else
+                        {
+                            <option data-text-value="@item.FIL" value="@(item.OID == -1 ? "-1" : item.OID.ToString())">@item.FIL - @item.DES_FIL </option>
+                        }
+                    }
+                </select>
+            }
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="form-group col-xs-2 col-md-2">
+            @Html.BootstrapLabelFor(m => m.NHCAP)
+            @Html.TextBoxFor(m => m.NHCAP, new { @class = "form-control" })
+        </div>
+        <div class="form-group col-xs-2 col-md-2">
+            @Html.BootstrapLabelFor(m => m.Q_ALFA)
+            @Html.DropDownListFor(m => Model.Q_ALFA,
+                                     new SelectList(Model.Q_ALFAS, "CODIGO", "DESCRIPCION"),
+                                     new { @class = "form-control select2" })
+        </div>
+
+
+        <div class="form-group col-xs-4 col-md-4">
+            @Html.BootstrapLabelFor(m => m.IDCITAONLINE)
+            @Html.TextBoxFor(m => m.IDCITAONLINE, new
+            {
+                @class = "form-control",
+                disabled = (String.IsNullOrEmpty(Model.IDCITAONLINE) ? true : false)
+            })
+
+
+
+        </div>
+
+    </div>
+
+    @*<div class="row">
+
+
+            <div class="form-group col-xs-4 col-md-4">
+                @Html.LabelFor(m => m.NOMBRE, new { @class = "control-label" })
+                @Html.TextBoxFor(m => Model.NOMBRE, new { @class = "form-control", @style = "text-transform:uppercase" })
+            </div>
+            <div class="form-group col-xs-4 col-md-4">
+                @Html.LabelFor(m => m.DNI, new { @class = "control-label" })
+                @Html.TextBoxFor(m => Model.DNI, "{0:dd/MM/yyyy}", new { @class = "form-control " })
+                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.DNI)</p>
+            </div>
+        </div>*@
+
+}
+

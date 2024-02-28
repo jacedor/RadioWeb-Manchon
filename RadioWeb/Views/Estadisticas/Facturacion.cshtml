@@ -1,0 +1,405 @@
+﻿@{
+    ViewBag.Title = "Facturacion";
+}
+<div class="row">
+    <div class="col-lg-3">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-success pull-right">Anual</span>
+                <h5>Exploraciones</h5>
+            </div>
+            <div class="ibox-content">
+                <h1 class="no-margins">@ViewBag.ExploracionesAnualesCobradas</h1>
+                <div class="stat-percent font-bold text-success"><i class="fa fa-bolt"></i></div>
+                <small>Total Ventas</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-info pull-right">Anual</span>
+                <h5>Exploraciones</h5>
+            </div>
+            <div class="ibox-content">
+                <h1 class="no-margins">@ViewBag.ExploracionesPendientesAnualesCobrar</h1>
+                <div class="stat-percent font-bold text-info"><i class="fa fa-level-up"></i></div>
+                <small>Pendientes de Cobrar</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-primary pull-right">Diario</span>
+                <h5>Ventas</h5>
+            </div>
+            <div class="ibox-content">
+                <h1 class="no-margins" id="MediaFacturacion"></h1>
+                <div class="stat-percent font-bold text-navy"><i class="fa fa-level-up"></i></div>
+                <small>Facturado hoy</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-danger pull-right">Total</span>
+                <h5>Facturación Anual</h5>
+            </div>
+            <div class="ibox-content">
+                <h1 class="no-margins">
+                
+                @ViewBag.FacturacionAnual</h1>
+                <small>Facturación Anual</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title" style="padding-top: 4px;">
+                @* <h5 style="margin-top: 6px;">Facturación diaria</h5>*@
+                <div class="col-sm-3">
+                    <div class="btn-group">
+                        <button type="button" id="facturacionDiariaAnyoAnterior" class="btn btn-white"><i class="fa fa-chevron-left"></i></button>
+                        <button type="button" id="facturacionDiariaAnyoSiguiente" class="btn btn-white"><i class="fa fa-chevron-right"></i> </button>
+                    </div>
+                </div>
+                <div class="col-sm-6" id="mesSelect">
+                    <div class="form-group" id="data_5" style="margin: 0; padding: 0;">
+                        <div class="input-daterange input-group" id="datepicker">
+                            <input type="text" class="input-sm form-control" name="start" id="start" value="@DateTime.Now.AddDays(-7).ToString("dd/MM/yyyy")" />
+                            <span class="input-group-addon">-</span>
+                            <input type="text" class="input-sm form-control" name="end" id="end" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-primary btn-xs" type="button">Buscar</button>
+
+                </div>
+
+            </div>
+            <div class="ibox-content">
+                <div class="spiner-example hide" id="spiner-facturacionMensualDiaria">
+                    <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                </div>
+                <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="row">
+        <div class="col-lg-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> Grafico</a></li>
+                    <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">Datos</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="spiner-example hide" id="spiner-facturacionSemanal">
+                                <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div id="facturacionSemanal" style="height: 250px; width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div id="tab-2" class="tab-pane">
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="footable table clicable table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+
+                                            <th >Grupo </th>
+                                            <th >Mes </th>
+                                            <th data-type="numeric">Suma Actual</th>
+                                            <th data-type="numeric">Suma Anterior</th>
+                                            <th data-type="numeric">Cuenta Actual</th>
+                                            <th data-type="numeric">Cuenta Anterior</th>
+                                            <th data-type="numeric">Porcentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listaFacturacionSemanal">
+                                        @{ List<RadioWeb.Models.Estadistica.ItemEstadisticoVentas> oLista = (List<RadioWeb.Models.Estadistica.ItemEstadisticoVentas>)ViewBag.FacturacionSemanas;
+                                            for (int i = 0; i < oLista.Count - 1; i++)
+                                            {
+                                                double porcentage = Math.Round((oLista[i].Ventas - @oLista[i].Venta2) / oLista[i].Ventas * 100, 2);
+                                                <tr>
+
+                                                    <td>@oLista[i].Grupo</td>
+                                                    <td>@oLista[i].Mes</td>
+                                                    <td align="right"> @string.Format("{0:C}", oLista[i].Ventas) </td>
+                                                    <td align="right" > @string.Format("{0:C}", oLista[i].Venta2) </td>
+                                                    <td align="right">@oLista[i].Cuenta</td>
+                                                    <td align="right">@oLista[i].Cuenta2</td>
+                                                    <td>
+                                                        @if (porcentage > 0)
+                                                        {
+
+                                                            <div class="stat-percent font-bold text-navy">
+                                                                + @porcentage
+                                                                % <i class="fa fa-level-up"></i>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="stat-percent font-bold text-danger"> @porcentage% <i class="fa fa-level-down"></i></div>
+                                                        }
+                                                    </td>
+
+                                                </tr>
+
+                                            }
+                                        }
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4">
+                                                <ul class="pagination pull-right"></ul>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </div>*@
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>
+                    Facturación Anual
+
+                </h5>
+                <div class="ibox-tools">
+
+                    <div class="form-group">
+
+                        <div class="col-sm-12">
+                            <label class="checkbox-inline">
+                                <input type="radio" name="CuentaoBorra" id="CuentaFacturacionMensual" value="cuenta">
+                                Cuenta
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="radio" name="CuentaoBorra" id="SumaFacturacionMensual" value="suma" checked>
+                                Suma
+                            </label>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="ibox-content">
+
+                <div>
+                    <div class="spiner-example hide" id="spiner-facturacionMensual">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="DivChartContainer">
+                        <canvas id="facturacionPorMeses" height="70"></canvas>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="row">
+
+
+    <div class="col-lg-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Grupos de Exploración </h5>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div class="spiner-example hide" id="spiner-facturacionMensualGrupo">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <canvas id="listaEsperaGrupo" height="140"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-info pull-right">Anual</span>
+                <h5>Tipo de Entidad</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="spiner-example hide" id="spiner-facturacioTipoEntidad">
+                    <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                </div>
+                <div>
+                    <canvas id="donutPorTipoRegimenExploracion" style="height: 178px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+@section scripts{
+    <!-- Flot -->
+    <script src="~/js/plugins/flot/jquery.flot.js"></script>
+    <script src="~/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="~/js/plugins/flot/jquery.flot.resize.js"></script>
+    <script src="~/js/plugins/flot/jquery.flot.pie.js"></script>
+    <script src="~/js/plugins/flot/jquery.flot.time.js"></script>
+    <script src="~/js/plugins/flot/jquery.flot.categories.js"></script>
+
+
+    <!-- ChartJS-->
+    <script src="~/js/plugins/chartJs/Chart.js"></script>
+    <script src="~/js/plugins/canvasjs/canvasjs.min.js"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/estadisticas/facturacion.js")"></script>
+
+
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+          //  $(".footable").footable();
+
+            var startDate = new Date();
+            var FromEndDate = new Date();
+            var ToEndDate = new Date();
+
+            //$('#data_5 .input-daterange').datepicker({
+            //    keyboardNavigation: false,
+            //    forceParse: true,
+            //    autoclose: true,
+            //    todayHighlight: true,
+            //    language: "es",
+            //    format: "dd-mm-yyyy"
+            //});
+
+            ToEndDate.setDate(ToEndDate.getDate() + 7);
+
+            $('#start').datepicker({
+                language: "es",
+                format: "dd/mm/yyyy",
+                autoclose: true
+            }).on('changeDate', function (selected) {
+                startDate = new Date(selected.date.valueOf());
+                startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+                $('#end').datepicker('setStartDate', startDate);
+            });
+
+            $('#end').datepicker({
+                format: "dd/mm/yyyy",
+                startDate: startDate,
+                language: "es",
+                format: "dd/mm/yyyy",
+                endDate: ToEndDate,
+                autoclose: true
+            }).on('changeDate', function (selected) {
+                FromEndDate = new Date(selected.date.valueOf());
+                FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+                $('#start').datepicker('setEndDate', FromEndDate);
+            });
+        });
+
+    </script>
+
+}

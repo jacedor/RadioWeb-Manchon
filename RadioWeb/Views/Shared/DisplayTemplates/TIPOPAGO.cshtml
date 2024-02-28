@@ -1,0 +1,36 @@
+﻿@model string
+
+
+@try
+{
+    switch (Model.ToString())
+    {
+        case "C":
+            @:<span class="label label-warning" style="background-color:black;">EFECTIVO</span>
+            break;
+        case "V":
+            @:<span class="label label-warning" style="background-color:deepskyblue;">VISA</span>
+            break;
+        case "T":
+            @:<span class="label label-primary" style="background-color:greenyellow;">TALON</span>
+            break;
+
+        default:
+            @:<span class="label label-primary" style="background-color:red;">SIN ESPECIFICAR</span>
+
+
+
+
+
+
+            break;
+
+    }
+
+
+}
+catch (Exception)
+{
+    @:<span class="label label-primary" style="background-color:red;">SIN ESPECIFICAR</span>
+}
+

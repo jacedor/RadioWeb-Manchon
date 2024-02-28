@@ -1,0 +1,166 @@
+﻿@model RadioWeb.Models.EXPLORACION
+
+@{
+
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+}
+
+<div class="row form-horizontal">
+
+    <div class="col-md-3">
+        <div class="form-group">
+            <div class="col-sm-12 ">
+                <input type="hidden" id="FECHA" name="FECHA" value="@Model.FECHA" />
+                <label for="HORA" class=" control-label">HORA</label>
+                @Html.EditorFor(e => e.HORA, new
+                {
+                    htmlAttributes = new { data_mask = "99:99", @class = "time text-center" },
+
+                })
+                @Html.ValidationMessageFor(m => Model.HORA)
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-12 text-center">
+                <label>
+                    <input type="radio" value="PRI" name="radio1" class="TipoExploracion i-checks " checked="checked">
+                    PRIVADO
+                </label>
+
+                <label>
+                    <input type="radio" value="MUT" class="TipoExploracion i-checks " name="radio1">
+                    MUTUA
+                </label>
+
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12" style="text-align: center; margin-top: 10px;">
+                @Html.DisplayFor(e => e.ESTADODESCRIPCION)
+
+                @*<h3 style="color:@color">@Model.ESTADODESCRIPCION </h3>*@
+                @if (Model.INTOCABLE == "T")
+                {
+                    <span class="label label-danger">INTOCABLE</span>
+
+                }
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="form-group">
+            <label for="inputEmail" class="col-sm-1 control-label">Mutua</label>
+            <div class="col-sm-4 ">
+                <label for="IOR_ENTIDADPAGADORA" class=" control-label">Mutua</label>
+                @{
+                    bool deshabilitar = false;
+                    if (Model.FACTURADA == "T" || Model.INTOCABLE == "T")
+                    {
+                        deshabilitar = true;
+                    }
+                    @Html.EditorFor(e => e.IOR_ENTIDADPAGADORA, new { disabled = deshabilitar })
+                    @Html.ValidationMessageFor(m => Model.IOR_ENTIDADPAGADORA)
+
+                }
+            </div>
+            <div class="col-sm-3">
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="pagado" name="PAGADO" id="PAGADO" @( Model.PAGADO == "T" ? "checked" : "")>
+                    <strong>Pagado</strong>
+                </label>
+
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="permiso" id="PERMISO" name="PERMISO" @( Model.PERMISO == "T" ? "checked" : "")>
+                    <strong>Permiso</strong>
+                </label>
+
+
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label for="ddlAparatosExplo" class="col-sm-1 control-label">Aparato</label>
+            <div class="col-sm-4 ">
+                @Html.EditorFor(e => e.IOR_APARATO, new { disabled = deshabilitar })
+            </div>
+            <label for="autoriza" class="col-sm-1 control-label">Autoriza</label>
+            <div class="col-sm-4">
+                <input type="text" name="NHCAP" id="NHCAP" value="@Model.NHCAP" class="form-control ">
+            </div>
+            <div class="col-sm-2">
+                <label class="checkbox-inline">
+                    <strong>@Model.IDCITAONLINE</strong>
+
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputEmail" class="col-sm-1 control-label">Explo.</label>
+            <div class="col-sm-4 ">
+
+                @{
+                    <select id="IOR_TIPOEXPLORACION" name="IOR_TIPOEXPLORACION" @(Model.INTOCABLE == "T" ? "readonly = \"true\" disabled=\"disabled\"" : "") class="select2 form-control" data-live-search="true">
+                        @foreach (RadioWeb.Models.APARATOS item in Model.EXPLORACIONESCONTARIFA)
+                        {
+                            if (Model.APARATO != null && (item.FIL.Trim() == Model.APARATO.FIL.Trim()))
+                            {
+                                <option selected="selected" data-text-value="@item.FIL" value="@item.OID">@item.FIL-@item.DES_FIL </option>
+                            }
+                            else
+                            {
+                                <option data-text-value="@item.FIL" value="@(item.OID == -1 ? "" : item.OID.ToString()) ">@item.FIL - @item.DES_FIL </option>
+                            }
+
+                        }
+                    </select>
+                }
+
+
+            </div>
+            <label for="NUMEROS" class="col-sm-1 control-label">Núm</label>
+            <div class="col-sm-2">
+
+                <div class="input-group m-b">
+                    <span class="input-group-addon">
+                        <input type="checkbox" class="Q_ALFA" name="Q_ALFA" id="Q_ALFA" @( Model.Q_ALFA == "T" ? "checked" : "")>
+                    </span>
+                    <input type="text" name="NUMEROS" id="NUMEROS" value="@Model.NUMEROS" class="form-control">
+                </div>
+
+            </div>
+            <label for="RECOGIDO" class="col-sm-1 control-label">Recogido</label>
+            <div class="col-sm-3">
+                <div class="input-group m-b">
+                    <span class="input-group-addon">
+                        <input type="checkbox" class="recogido" name="RECOGIDO" id="RECOGIDO" @( Model.RECOGIDO == "T" ? "checked" : "")>
+                    </span>
+                    <input type="text" name="FECHADERIVACION" id="FECHADERIVACION" value="@( Model.FECHADERIVACION.HasValue ? Model.FECHADERIVACION.Value.ToShortDateString() : "")" class="form-control fecha-picker ">
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+
+            <label for="CANTIDAD" class="col-sm-1 control-label">Precio</label>
+            <div class="col-sm-2">
+                <input id="CANTIDAD" name="CANTIDAD" type="text" class="form-control money" value="@Model.CANTIDAD" @(Model.INTOCABLE == "T" ? "readonly = \"true\" disabled=\"disabled\"" : "") />
+            </div>
+            <label for="inputMoneda" class="col-sm-1 control-label" style="text-align: left; padding-left: 0px;">@Model.MONEDA.SIMBOLO</label>
+
+
+
+            <label for="PESO" class="col-sm-1 control-label col-lg-offset-1 ">Peso</label>
+            <div class="col-sm-2">
+                <input type="text" name="PESO" id="PESO" value="@Model.PESO" class="form-control ">
+            </div>
+            <div class="col-sm-3 ">
+                <input id="REGISTRE" name="REGISTRE" placeholder="Nº REGISTRE" type="text" class="form-control" value="@Model.REGISTRE" />
+            </div>
+        </div>
+    </div>
+
+</div>

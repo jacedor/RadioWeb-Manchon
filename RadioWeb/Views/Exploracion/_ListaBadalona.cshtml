@@ -1,0 +1,138 @@
+﻿@model IEnumerable<RadioWeb.Models.LISTADIA>
+
+
+<div id="modal-form-vincular" class="modal fade " aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Cerrar</span>
+                </button>
+                <h4 class="modal-title">Vincular @ViewBag.header</h4>
+
+            </div>
+
+
+            <div class="modal-body" style="height:600px;overflow-y:scroll;">
+
+                <table class="table table-bordered" id="ExploracionesVinculablesHL7"
+                       data-pagination="true" data-search="true" data-page-size="8" data-page-list="[8,16,32,64]">
+                    <thead>
+                        <tr>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.PACIENTE)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FECHA)
+                            </th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.HORA)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.MUTUA)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TEXTO)
+                            </th>
+
+                            <th>
+                                ...
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr data-oidPaciente="@item.IOR_PACIENTE" data-oidExploracion="@item.OID">
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PACIENTE)
+                                </td>
+                                <td data-type="date" data-format-string="dd/MM/YYYY">
+                                    @Html.DisplayFor(modelItem => item.FECHA)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.HORA)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.MUTUA)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TEXTO)
+                                </td>
+
+
+                                <td class="text-right">
+
+                                    @Html.ActionLink(
+                                            linkText: "Vincular",
+                                            actionName: "vincularHL7",
+                                            controllerName: "Exploracion",
+                                            routeValues: new
+                                            {
+                                                oidOrigen = @item.OID,
+                                                oidDestino = ViewBag.oidDestino
+
+                                            },
+                                            htmlAttributes: new
+                                            {
+                                                @class = "btn btn-warning btn-xs pull-right vincularHL7"
+                                            }
+
+                                            )
+
+                                </td>
+
+                            </tr>
+                        }
+
+
+
+
+                    </tbody>
+                </table>
+
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+    {
+
+    <script type="text/javascript">
+
+
+
+
+
+        $(document).on('click', '#explosNoInformadas tbody tr', function () {
+            $(this).siblings().removeClass('ACTIVA');
+            $(this).addClass('ACTIVA');
+            $("#OID").val($(this).data('oidexploracion'));
+            $("#myForm").submit();
+        });
+
+
+
+
+        $(document).ready(function () {
+            makeBootstrapTable('explosNoInformadas');
+
+        });
+
+    </script>
+}

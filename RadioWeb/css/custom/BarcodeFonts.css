@@ -1,0 +1,14 @@
+﻿/* libre-barcode-39-regular - latin */
+@font-face {
+  font-family: 'Libre Barcode 39';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../../fonts/libre-barcode-39-v5-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Libre Barcode 39 Regular'), local('LibreBarcode39-Regular'),
+       url('../../fonts/libre-barcode-39-v5-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../../fonts/libre-barcode-39-v5-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../../fonts/libre-barcode-39-v5-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../../fonts/libre-barcode-39-v5-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../../fonts/libre-barcode-39-v5-latin-regular.svg#LibreBarcode39') format('svg'); /* Legacy iOS */
+}
+

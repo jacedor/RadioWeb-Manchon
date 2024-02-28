@@ -1,0 +1,129 @@
+﻿//var filtrosBusqueda;
+
+//function OnFiltersLoaded(data) {
+
+//    filtrosBusqueda = data;
+//    //filtrosBusqueda.Nombre = $("#paciente_nombre").val();
+//    //filtrosBusqueda.Dni = $("#dni").val();
+//    alert('hola');
+//    $.ajax({
+//        type: 'POST',
+//        url: '/Paciente/Index',
+//        data: JSON.stringify(filtrosBusqueda),
+//        contentType: 'application/json; charset=utf-8',
+//        success: function (data) {
+//            $('#PacienteList tbody').html(data).trigger('footable_redraw');
+//            $('.footable').footable();
+
+//        },
+//    });
+
+//}
+
+//function LoadFiltersPacientes() {
+
+//    $.post('/Settings/LoadFiltrosPaciente', OnFiltersLoaded);
+
+//}
+
+//function SaveFiltersPacientes() {
+//    filtrosBusqueda = {};
+//    filtrosBusqueda.Nombre = $("#paciente_nombre").val();
+//    filtrosBusqueda.Dni = $("#dni").val();
+//    filtrosBusqueda.Status = $("#status").val();
+//    $.post('/Settings/SaveFiltrosPaciente', filtrosBusqueda, OnFiltersLoaded(filtrosBusqueda));
+
+//}
+
+//$(document).on('click', '#PacienteList tbody tr', function () {
+//    $(this).siblings().removeClass('ACTIVA');
+//        if ($(this).hasClass('ACTIVA')) {
+//            $(this).removeClass('ACTIVA');
+//        } else {
+//            $(this).addClass('ACTIVA');
+//        }
+  
+
+//});
+
+
+
+////Al escribir sobre la caja de texto del modal popup de pacintes
+//$(document).on('keyup', '#paciente_nombre', $.debounce(500, function () {
+//    if ($("#paciente_nombre").val().length > 3 && $("#paciente_nombre").val() != "") {
+       
+//        SaveFiltersPacientes();
+        
+
+//    }
+//}));
+
+////Al escribir sobre la caja de texto del modal popup de pacintes
+//$(document).on('keyup', '#wizardAlta', $.debounce(500, function () {
+//    if ($("#paciente_nombre").val().length > 3 && $("#paciente_nombre").val() != "") {
+
+//        SaveFiltersPacientes();
+
+
+//    }
+//}));
+
+//$("#wizardAlta").on('keyup', '#paciente_nombre', $.debounce(500, function () {
+//    if ($("#paciente_nombre").val().length > 3 && $("#paciente_nombre").val() != "") {
+
+//        SaveFiltersPacientes();
+
+//        $("#PacienteList").find('tfoot').addClass('hide');
+//    }
+//}));
+
+//$("#wizardAlta").on('keyup', '#dni', $.debounce(500, function () {
+//    if ($("#paciente_nombre").val().length > 3 && $("#paciente_nombre").val() != "") {
+
+//        SaveFiltersPacientes();
+//        $("#PacienteList").find('tfoot').addClass('hide');
+//    }
+//}));
+
+////Al escribir sobre la caja de texto del modal popup de pacintes
+//$(document).on('keyup', '#dni', $.debounce(500, function () {
+    
+//    SaveFiltersPacientes();
+//    $("#PacienteList").find('tfoot').addClass('hide');
+//}));
+
+//$(document).on('click', '#dni', function () {
+//    $("#paciente_nombre").val('');
+//});
+
+//$(document).on('click', '#paciente_nombre', function () {
+//    $("#dni").val('');
+//});
+
+//$(function () {
+//    if (filtrosBusqueda == undefined) {
+//        LoadFiltersPacientes();
+//    }
+//});
+
+function SuccessFiltros(data) {
+
+}
+function CompleteFiltros() {
+    $("#spiner-cargando-pacientes").addClass('hide');
+}
+function BeginFiltros() {
+    $("#spiner-cargando-pacientes").removeClass('hide');
+
+}
+function FailureFiltro() {
+    alert('fallo');
+}
+
+$(document).on('keyup', '#pacienteFilter,#dniFilter', $.debounce(500, function () {
+
+    var busquedaPorDni = $("#dniFilter").val().length > 3 && $("#dniFilter").val() !== "";
+    if (busquedaPorDni || $("#pacienteFilter").val().length > 3 && $("#pacienteFilter").val() !== "") {
+        $("#BuscarPaciente").trigger("click");
+    }
+}));

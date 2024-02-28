@@ -1,0 +1,368 @@
+﻿@model RadioWeb.Models.BOLSA_PRUEBAS
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_LayoutPeticiones.cshtml";
+    USUARIO usuario = RadioWeb.Models.Repos.UsuariosRepositorio.Obtener(User.Identity.Name);
+}
+
+@section barraTop{
+    <div class="row border-bottom white-bg">
+        <nav class="navbar navbar-expand-lg  " role="navigation">
+            <!--</div>-->
+            <div class="text-center" id="navbar">
+                <ul class="nav navbar-nav mr-auto">
+                    <li class="active">
+                        <a aria-expanded="false" role="button">
+                            <h3></h3>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="/Peticiones/Create"> Nueva Petición</a>
+
+                    </li>
+                    <li>
+                        <a href="/Peticiones/List"> Lista Peticiones</a>
+
+                    </li>
+                    <li class="">
+                        <a href="/Peticiones/ListExploraciones"> Lista Exploraciones</a>
+
+                        @* <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Lista Exploraciones</a>*@
+
+                    </li>
+                    @if (usuario.CITACIONONLINE == "T")
+                    {
+                        <li>
+                            <a href="/Peticiones/CitaOnline">Citación Directa</a>
+
+                        </li>
+                    }
+
+
+                </ul>
+                <ul class="nav navbar-right">
+                    <li>
+
+                        <input type="hidden" id="UserLogged" data-oidPersonal="@usuario.PERSONAL.OID" data-login="@usuario.LOGIN" data-perfil="@usuario.DESCPERFILWEB" />
+
+                        Bienvenido @usuario.LOGIN
+                        <a href="/Users/LogOut" style="min-height:5px;padding:0px;">  <i class="fa fa-sign-out"></i> Salir</a>
+
+                        @if (usuario.IOR_ENTIDADPAGADORA.HasValue && usuario.IOR_ENTIDADPAGADORA.Value > 0)
+                        {
+                            <p><b>Mutua: @Model.PETICIONESANOMBREDEMUTUA</b></p>
+                        }
+                        @if (usuario.IOR_COLEGIADO.HasValue && usuario.IOR_COLEGIADO.Value > 0)
+                        {
+                            <p>Referidor: @Model.PETICIONESANOMBREDECOLEGIADO</p>
+                        }
+                        @if (usuario.IOR_CENTROEXTERNO.HasValue && usuario.IOR_CENTROEXTERNO.Value > 0)
+                        {
+                            <p>Centro Externo: @Model.PETICIONESANOMBREDECENTROEXTERNO</p>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+}
+
+<div class="ibox">
+    <div class="ibox-title">
+        <h5> <i class="fa fa-user-circle-o"></i> Datos paciente y prueba solicitada </h5>
+        <div class="ibox-tools">
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+        </div>
+    </div>
+    <div class="ibox-content">
+
+
+        @using (Html.BeginForm(Model.ACTION, "Peticiones", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.HiddenFor(model => model.OID)
+            @*@Html.HiddenFor(model => model.IOR_ENTIDADPAGADORA)*@
+            @Html.HiddenFor(model => model.USERNAME)
+            @Html.HiddenFor(model => model.IOR_COLEGIADO)
+            @*@Html.HiddenFor(model => model.IOR_CENTROEXTERNO)*@
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.NOMBRE, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.NOMBRE, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.NOMBRE, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.APELLIDOS, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.APELLIDOS, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.APELLIDOS, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.TELEFONO1, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.TELEFONO1, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.TELEFONO1, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.MAIL, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.MAIL, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.MAIL, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.FECHANACIMIENTO, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.FECHANACIMIENTO, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.FECHANACIMIENTO, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.SEXO, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.SEXO, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.SEXO, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.PRIORIDAD, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.PRIORIDAD, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.PRIORIDAD, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.IOR_CENTROEXTERNO, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.IOR_CENTROEXTERNO, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.IOR_CENTROEXTERNO, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.IOR_ENTIDADPAGADORA, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.IOR_ENTIDADPAGADORA, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.IOR_ENTIDADPAGADORA, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.IOR_CENTRO, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.IOR_CENTRO, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.IOR_CENTRO, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.IOR_GAPARATO, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                  
+                    @{var aparatosDef = RadioWeb.Models.Repos.GAparatoRepositorio.Lista().Where(u => u.CID == 1).Select(u => new SelectListItem
+                        {
+                            Text = u.COD_GRUP + " - " + u.DES_GRUP,
+                            Value = u.OID.ToString(),
+                            Selected = u.OID == Model.IOR_GAPARATO
+                        }).ToArray();
+                    }
+
+
+
+
+                    @Html.DropDownList("IOR_GAPARATO", aparatosDef, new { @class = "form-control select2", autocomplete = "off" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.IOR_TIPOEXPLORACION, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.IOR_TIPOEXPLORACION,
+                                                                           new
+                                                                           {
+                                                                               IOR_APARATO = -1,
+                                                                               IOR_MUTUA = -1,
+                                                                               NOMENCLATOR = true
+                                                                           })
+                    @Html.ValidationMessageFor(model => model.IOR_TIPOEXPLORACION, "", new { @class = "text-danger" })
+                </div>
+            </div>
+           
+                     <div class="form-group  row">
+                         @Html.LabelFor(model => model.DOCUMENTO, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                         <div class="col-sm-10">
+                                <label class="sr-only" for="file">Asociar Fichero:</label>
+                                <input type="file" name="DOCUMENTO" id="DOCUMENTO" class="form-control" />
+                                @if (Model.IOR_DOCUMENTO > 0)
+                                {
+                                    <a href="#" onclick="javascript: window.open('/Imagenes/Imprimir/@Model.IOR_DOCUMENTO', 'Documento', 'width=900,height=500');">Ver archivo adjunto</a>
+                                <input type="hidden" name="IOR_DOCUMENTO" id="IOR_DOCUMENTO" value="@Model.IOR_DOCUMENTO" />
+                               
+                                    }
+                                @Html.ValidationMessageFor(model => model.DOCUMENTO, "", new { @class = "text-danger" })
+                         </div>
+                     </div>
+           
+                     <div id="TipoDeDocumento" class="form-group row hide">
+                        @Html.LabelFor(model => model.IOR_TIPODOC, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                         <div class="col-sm-10">
+
+                             @{var tiposDeDocumento = RadioWeb.Models.Repos.RefractometrosRepositorio.Lista().Where(u => u.CID == 6)
+                                     .Select(u => new SelectListItem
+                                 {
+                                     Text = u.NOMBRE,
+                                     Value = u.OID.ToString(),
+                                     Selected = u.OID == Model.IOR_TIPODOC
+                                 }).ToArray();
+                             }
+
+                             @Html.DropDownList("IOR_TIPODOC", tiposDeDocumento, new { @class = "form-control select2", autocomplete = "off" })
+                         </div>
+                    </div>
+                       
+
+            <div class="form-group  row">
+                @Html.LabelFor(model => model.COMENTARIO, htmlAttributes: new { @class = "col-sm-2 col-form-label" })
+                <div class="col-sm-10">
+                    @Html.EditorFor(model => model.COMENTARIO, new { htmlAttributes = new { @class = "form-control ", autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.COMENTARIO, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+            <div class="form-group row">
+                <div class="col-sm-12 text-right ">
+                    <input class="btn btn-primary " type="submit" value="@(Model.OID > 0 ? "Guardar Petición" : "Enviar Petición")" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+ 
+@section scripts
+    {
+
+    <script src="~/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/plugins/bootstrap-table/extensions/cookie/bootstrap-table-cookie.js"></script>
+
+
+    <script type="text/javascript">
+
+
+        function getParameterByName(name) {
+            var regexS = "[\\?&]" + name + "=([^&#]*)",
+                regex = new RegExp(regexS),
+                results = regex.exec(window.location.search);
+            if (results == null) {
+                return "";
+            } else {
+                return decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+        }
+
+        function fechaStringFormat(value) {
+            if (value === null || moment(value).format("DD/MM/YYYY") === "31/12/0000") {
+                return '-'
+            } else {
+                return moment(value).format("DD/MM/YYYY");
+            }
+        }
+  
+        $(document).on('change', '#IOR_GAPARATO', function () {
+          
+        $.ajax({
+                    type: 'POST',
+                    url: '/Peticiones/GetAparatosPorGrupo',
+                    data: { oidGrupo: $(this).val(), mutua: $('select#IOR_ENTIDADPAGADORA').val() },
+                    async: 'false',
+                    beforeSend: function () {
+
+                    },
+                    success: function (data) {
+                        var sel = $('#IOR_TIPOEXPLORACION');
+                        $('#IOR_TIPOEXPLORACION').empty();
+                        var markup = '<option value="-1"> </option>';
+                        for (var x = 0; x < data.length; x++) {
+                            markup += '<option value="' + data[x].OID + '">' + data[x].FIL + ' - ' + data[x].DES_FIL + '</option>';
+                        }
+
+                        sel.html(markup).show();
+                        $('select[name=IOR_TIPOEXPLORACION]').val(-1);
+                    }
+                });
+    
+        });
+
+        const selectDocument = document.querySelector('#DOCUMENTO');
+    var readerAux;
+    selectDocument.addEventListener('change', (event) => {
+      
+        file = document.getElementById("DOCUMENTO").files[0];
+
+        if (file!=null) {
+            $("#TipoDeDocumento").removeClass('hide');
+
+        } else {
+                       $("#TipoDeDocumento").addClass('hide');
+
+        }
+       
+         
+        
+     
+    });
+
+        $(document).ready(function () {
+            setTimeout(function () {
+                if ($('#NOMBRE').val() == "") {
+                    $('#FECHANACIMIENTO').val("");
+                }
+            }, 1000);//tiempo de espera en milisegundos.
+
+            $('input[data-val-required]').each(function () {
+                var req = $(this).attr('data-val-required');
+                if (undefined != req) {
+                    var label = $('label[for="' + $(this).attr('id') + '"]');
+                    var text = label.text();
+                    if (text.length > 0) {
+                        label.append('<span style="color:red"> *</span>');
+                    }
+                }
+            });
+            $(".select2").select2({
+                width: '100%',
+                theme: "bootstrap"
+            }
+            );
+
+           // $('#IOR_TIPOEXPLORACION').empty();
+
+            if (getParameterByName('oid') === "") {
+              
+                $("#IOR_GAPARATO").trigger('change');
+            }
+
+            if ($('select#IOR_ENTIDADPAGADORA').val() > 0) {
+                $('select#IOR_ENTIDADPAGADORA').prop('disabled', true);
+            }
+
+            if ($('select#IOR_CENTROEXTERNO').val() > 0) {
+                $('select#IOR_CENTROEXTERNO').prop('disabled', true);
+            }
+
+            $('form').bind('submit', function () {
+                $(this).find(':disabled').removeAttr('disabled');
+            });
+
+
+        });
+    </script>
+
+
+}

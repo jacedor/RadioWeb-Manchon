@@ -1,0 +1,199 @@
+﻿@model IEnumerable<RadioWeb.Models.GAPARATOS>
+
+@{
+    ViewBag.Title = "Mantenimiento Grupos - Aparatos - Consumibles - Tipo de exploración";
+}
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Grupos</h5>
+                    <div class="ibox-tools">
+                        <a href="/Grupos/Create" class="btn btn-primary btn-xs">Crear Nuevo</a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div>
+                        <table class="table table-hover table-bordered" id="tblGrupos" data-height="250" data-pagination="false" data-search="false" data-page-size="50" data-page-list="[15,30,50,100,200,1000]">
+                            <thead>
+                                <tr>
+                                    <th data-sortable="false">
+                                        @Html.DisplayNameFor(model => model.COD_GRUP)
+                                    </th>
+                                    <th data-sortable="false">
+                                        @Html.DisplayNameFor(model => model.DES_GRUP)
+                                    </th>
+
+                                    <th>....</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="clickable-row" data-oid="@Html.DisplayFor(modelItem => item.OID)">
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.COD_GRUP)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DES_GRUP)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Editar", "Edit", new { id = item.OID }) |
+                                            @Html.ActionLink("Borrar", "Delete", new { id = item.OID })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a data-toggle="tab" id="tabAparatos" href="#aparatos">Aparatos</a>
+            </li>
+            <li>
+                <a data-toggle="tab" id="tabConsumibles" href="#consumibles">Consumibles</a>
+            </li>
+            <li>
+                <a data-toggle="tab" id="tabTexploracion" href="#texploracion">Tipos de exploración</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            <div id="aparatos" class="tab-pane active">
+
+                <div class="panel-body" id="tablaAparatos">
+                    <div class="spiner-aparatos hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="placeholderAparatos"></div>
+                </div>
+            </div>
+
+            <div id="consumibles" class="tab-pane">
+                <div class="panel-body" id="tablaConsumibles">
+                    <div class="spiner-consumibles hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="placeholderConsumibles"></div>
+                </div>
+            </div>
+
+            <div id="texploracion" class="tab-pane">
+                <div class="panel-body" id="tablaExploracion">
+                    <div class="spiner-texploracion hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="placeholderTexploracion"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    @section scripts{
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                makeBootstrapTable("tblGrupos");
+                $("li[data-view]").removeClass('active');
+                $("[data-view=viewGrupos]").addClass("active");
+                $("[data-view=viewGrupos]").parents("ul").removeClass("collapse");
+
+                $('#tblGrupos').on('click', '.clickable-row', function (event) {
+                    $(this).addClass('bg-info').siblings().removeClass('bg-info');
+                    var oid = $(this).data("oid");
+                    LoadAparatosPorGrupo(oid);
+                    LoadConsumiblesPorGrupo(oid);
+                    LoadTiposExploracionesPorGurpo(oid);
+                });
+
+                //Si hay algun id de grupo seleccionado. Al volver al indice lo volvemos a marcar.
+                var oidSelected = GetURLParameter("id");
+                var returningTab = GetURLParameter("tab");
+
+                //Si no hay oid
+                if (typeof oidSelected === 'undefined') {
+                    $(".clickable-row[data-index='0']").trigger('click');
+                }
+
+                //Si hay algun grupo Id
+                else {
+                    $(".clickable-row[data-oid='" + oidSelected + "']").trigger('click');
+                }
+
+                if (typeof returningTab !== 'undefined') {
+                    console.log(returningTab);
+                    $("#"+returningTab).trigger('click');
+                }
+
+            });
+                                
+             function GetURLParameter(sParam) {
+                    var sPageURL = window.location.search.substring(1);
+                    var sURLVariables = sPageURL.split('&');
+                    for (var i = 0; i < sURLVariables.length; i++) {
+                        var sParameterName = sURLVariables[i].split('=');
+                        if (sParameterName[0] == sParam) {
+                            return sParameterName[1];
+                        }
+                    }
+               }
+
+        </script>
+        <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Grupos/Aparatos.js")"></script>
+        <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Grupos/Consumibles.js")"></script>
+        <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Grupos/TiposExploracion.js")"></script>
+
+    }

@@ -1,0 +1,37 @@
+﻿@model String
+
+
+@try
+{
+    switch (Model.ToUpper())
+    {
+        case "FIRMADO":
+            @:<span id="@ViewData["id"]" class="badge badge-success status-label">FIRMADO</span>
+            break;
+        case "ENVIADO":
+            @:<span id="@ViewData["id"]" class="badge badge-info status-label">ENVIADO</span>
+            break;
+        case "PENDIENTE":
+            @:<button id="@ViewData["id"]" class="btn btn-primary status-label firmable" data-style="expand-right" data-size="xs"><span class="ladda-label">Pendiente</span><span class="ladda-spinner"></span></button>
+            break;
+        case "NO FIRMADO":
+            @:<button id="@ViewData["id"]" class="btn btn-danger status-label firmable" data-style="expand-right" data-size="xs"><span class="ladda-label">No Firmado</span><span class="ladda-spinner"></span></button>
+            break;
+        case "FIRMADO EN PAPEL":
+            @:<span id="@ViewData["id"]" class="badge badge-danger status-label">FIRMADO EN PAPEL</span>
+            break;
+
+        default:
+            @:<span id="@ViewData["id"]" class="badge badge-warning status-label">ESTADO DESCONOCIDO</span>
+            break;
+
+    }
+
+
+}
+catch (Exception)
+{
+
+    @:<button id="@ViewData["id"]" class="btn btn-danger status-label firmable" data-style="expand-right" data-size="xs"><span class="ladda-label">No Firmado</span><span class="ladda-spinner"></span></button>
+}
+

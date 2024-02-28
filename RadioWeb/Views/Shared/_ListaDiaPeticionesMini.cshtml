@@ -1,0 +1,172 @@
+﻿@model IEnumerable<RadioWeb.Models.LISTADIA>
+
+<button data-dismiss="popover" class="close" id="cerrarCarrito" type="button">
+    <span aria-hidden="true">×</span><span class="sr-only">Cerrar</span>
+</button>
+
+
+<table id="PeticionesMiniTable" class="table table-stripped " data-height="300" style="font-size: 12px;"
+       data-sortable="true" data-search="true">
+    <thead>
+        <tr>
+            <th data-field="CENTRONAME" data-sortable="true">Centro</th>
+            <th data-field="FECHAENTRADA" data-sortable="true">F.Petición</th>
+            <th data-field="HORA" data-sortable="true">Hora</th>
+            <th data-field="PACIENTE" data-sortable="true">Paciente</th>
+            <th data-field="MEDICO" data-sortable="true">Referidor</th>
+            <th data-field="PRIORIDAD" data-sortable="true">Prioridad</th>
+            <th data-field="TELEFONO" data-sortable="true">Teléfono</th>
+            <th data-field="MUTUA" data-sortable="true">Mutua</th>
+            <th data-field="EXPLO" data-sortable="true">Exploración</th>
+            <th data-field="URLDOCUMENT" data-sortable="true">Documento</th>
+            <th data-field="COMENT" data-sortable="true">Texto</th>
+            <th data-field="OID">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+
+            var esHueco = "huecoOcupado";
+
+        <tr class="@esHueco" data-ior_paciente="@item.IOR_PACIENTE" data-oid="@item.OID" data-facturada="@item.FACTURADA"
+            data-hora="@( item.HORA != null ? @item.HORA.Substring(0, 2) : "")" data-pagado="@item.PAGADO"
+            data-owner="@item.IOR_PACIENTE" data-estado="@item.ESTADO" data-style="color: @item.COLOR">
+
+            <td>
+                <span style="color:@item.COLOR">   @item.CENTRONAME</span>
+
+            </td>
+            <td>
+                <span style="color:@item.COLOR">   @item.FECHA.ToShortDateString()</span>
+
+            </td>
+            <td>
+                <span class="hora">@item.HORA</span>
+            </td>
+            <td>
+                @if (esHueco == "huecoLibre")
+                {
+                    <span style="color:@item.COLOR">@item.PACIENTE</span>
+                }
+                else
+                {
+                    if (item.OID > 0)
+                    {
+                        @Html.ActionLink(
+                                                                                                        linkText: @item.PACIENTE,
+                                                                                                        actionName: "Details",
+                                                                                                        controllerName: "Exploracion",
+                                                                                                        routeValues: new
+                                                                                                        {
+                                                                                                            oid = @item.OID
+                                                                                                        },
+                                                                                                        htmlAttributes: new { @style = "color:" + @item.COLOR })
+                    }
+                    else
+                    {
+                        <span style="color:@item.COLOR"><b>@item.PACIENTE</b></span>
+                    }
+                }
+            </td>
+            <td>
+                <span style="color:@item.COLOR">@item.MEDICO</span>
+            </td>
+            <td>
+                <span style="color:@item.COLOR">@item.PRIORIDAD</span>
+            </td>
+            <td>
+                @if (item.OID < 0)
+                {
+                    <span style="color:@item.COLOR">@item.TELEFONOPETICION</span>
+                }else {
+                    <span style="color:@item.COLOR">-</span>
+                
+                }
+
+
+            </td>
+            <td>
+                @if (ViewBag.CampoMutua == "NOMBRE")
+                {
+                    <span title="Mutua" style="color:@item.COLOR">@item.MUTUA</span>
+                }
+                else
+                {
+                    <span title="Mutua" style="color:@item.COLOR">@item.COD_MUT</span>
+                }
+            </td>
+            <td>
+                @if (item.OID < 0)
+                {
+                    <span title="exploracion" style="color:@item.COLOR">@item.EXPLO</span>
+                }
+                else
+                {
+                    if (ViewBag.CampoMutua == "NOMBRE")
+                    {
+                        <a style="color:@item.COLOR" href="#" class="filtroAparatoCarrito" data-aparato="@item.COD_FIL">@item.EXPLO</a>
+                    }
+                    else
+                    {
+                        <a style="color:@item.COLOR" href="#" class="filtroAparatoCarrito" data-aparato="@item.COD_FIL">@item.COD_FIL</a>
+                    }
+                }
+
+            </td>
+            <td style="text-align:center" align="center">
+                @if (item.URLDOCUMENT.Length > 0)
+                {
+                    <a href="#" onclick="javascript: window.open('@item.URLDOCUMENT', 'Documento', 'width=900,height=500');"><i class="fa fa-2x fa-paperclip" title="Fichero Adjunto"></i></a>
+
+                }
+                else
+                {
+                    <span title="adjunto" style="color:@item.COLOR">-</span>
+
+                }
+            </td>
+            <td>
+                <a href="#" id="@item.OID" data-url="/Peticiones/EditarTexto" data-type="textarea" data-pk="@item.IOR_BOLSAPETICIONES" data-placeholder="@item.COMENT" data-title="Texto"
+                   class="editable editable-pre-wrapped editable-click textobolsa" style="display: inline;color:@item.COLOR">@item.COMENT</a>
+
+
+            </td>
+
+
+            <td>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                @if (item.OID < 0)
+                                {
+                                    <a data-oid="@item.OID" data-iorgrupoaparato="@item.GRUPOAPA" data-iorBolsa="@item.IOR_BOLSAPETICIONES" class="btn btn-warning btn-facebook  btn-xs agendarPeticion" data-iorpaciente="@item.IOR_PACIENTE" href="#">
+                                        <i class="fa  fa-calendar" style="color: black;" title="Agendar Exploracion"></i>&nbsp;Citar
+                                    </a>
+                                }
+
+                            </td>
+
+
+                            <td>
+                                @if (item.OID > 0)
+                                {
+                                    <a data-oid="@item.OID" class="eliminarDePeticiones" href="#"><i class="fa fa-times" style="color: red;" title="Eliminar"></i></a>
+
+                                }
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </td>
+
+
+        </tr>
+        }
+    </tbody>
+</table>

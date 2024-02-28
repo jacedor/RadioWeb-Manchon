@@ -1,0 +1,59 @@
+﻿@model List<RadioWeb.Models.PACIENTE>
+
+@foreach (var paciente in Model)
+{
+    
+<tr data-oid="@paciente.OID">
+      
+        <td class="project-title">
+            @Html.ActionLink(
+                            linkText: paciente.PACIENTE1,
+                            actionName: "AddPaso2",
+                            controllerName: "AgendaMulti",
+                            routeValues: new
+                            {
+                                oid = paciente.OID
+                               
+                            },
+                            htmlAttributes: new { @style = "color:" + "font-weight:bold;" }
+                        )
+
+            <br>
+            <small>Nacido: ( paciente.FECHAN.HasValue ? paciente.FECHAN.Value.ToShortDateString() : "")</small>
+        </td>
+    <td class="project-people">
+       
+                @if (ViewBag.CampoMutua == "NOMBRE")
+                {
+                    @paciente.DESCMUTUA
+                }
+                else
+                {
+                    @paciente.CODMUTUA
+                }
+    </td>
+        <td class="project-completion">
+            <small>@paciente.EDAD</small>
+
+        </td>
+ 
+        <td class="project-people">
+            @paciente.DNI
+        </td>
+        <td class="project-actions">
+
+                @Html.ActionLink(
+                            linkText: "Seleccionar",
+                            actionName: "AddPaso2",
+                            controllerName: "AgendaMulti",
+                            routeValues: new
+                            {
+                                oid = paciente.OID
+                               
+                            },
+                            htmlAttributes: new {@class="btn btn-white btn-sm" }
+                        )
+            
+        </td>
+</tr>
+}

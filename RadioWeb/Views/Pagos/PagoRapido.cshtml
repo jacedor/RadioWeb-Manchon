@@ -1,0 +1,293 @@
+﻿@model IEnumerable<RadioWeb.Models.LISTADIA>
+
+@{
+    ViewBag.Title = "Pago Rápido";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@section estilos{
+    <link href="~/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+
+}
+
+
+@section barraTop{
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-8">
+            <h2>
+                @Model.First().FECHA.ToShortDateString() - @Model.First().PACIENTE
+                <span class="pull-right"><i class="fa fa-briefcase"></i> @ViewBag.Saldo €</span>
+            </h2>
+
+        </div>
+        <div class="col-lg-4">
+            <div style="margin-top:20px;margin-bottom:10px;">
+                <a class="btn btn-danger pull-right btn-outline pagoRapido" href="#">Pagar todo con fecha de hoy</a>
+
+                @Html.ActionLink(
+                            linkText: "Crear Factura",
+                            actionName: "Create",
+                            controllerName: "Facturas",
+                            routeValues: new
+                            {
+                                oid = 0,
+                                oidExploracion = @Model.First().OID
+                            },
+                            htmlAttributes: new { @class = "btn btn-default pull-right btn-outline" }
+                        )
+
+            </div>
+        </div>
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Exploraciones y Consumibles</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="fullscreen-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <table class="footable table table-stripped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th data-sort-ignore="true">Tipo</th>
+                            <th data-sort-ignore="true">Mutua</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th data-sort-ignore="true">Aparato</th>
+                            <th data-sort-ignore="true">Exploración</th>
+                            <th data-sort-ignore="true">Cantidad</th>
+                            <th data-sort-ignore="true">Pagado</th>
+                            <th data-sort-ignore="true">Aplazado</th>
+                            <th data-sort-ignore="true">Facturado</th>
+                            <th data-sort-ignore="true">No Facturable</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var explo in Model)
+                        {
+                               <tr data-oid="@explo.OID">
+                            <td>
+                                <input name="ENLACE" id="ENLACE" type="checkbox" class="i-checks" />
+                            </td>
+                            <td width="120">
+                                <span class="label label-primary">Exploración</span>
+                            </td>
+                            <td>@explo.COD_MUT  </td>
+                            <td>@explo.FECHA.ToShortDateString()  </td>
+                            <td>@explo.HORA  </td>
+                            <td>@explo.COD_FIL</td>
+                            <td>@explo.FIL</td>
+                            <td align="right">@explo.CANTIDAD @explo.SIMBOLO</td>
+                            <td align="center">
+                                @if (@explo.PAGADO)
+                                    {
+                                    <i style="color: green; font-size: 1.2em;" title="Pagado" class="fa fa-check"></i>
+                                    }
+                                    else
+                                    {
+                                    <i style="color: red; font-size: 1.2em;" title="No Pagado" class="fa fa-times"></i>
+                                    }
+                            </td>
+
+                            <td align="center">
+                                @if (@explo.APLAZADO)
+                                    {
+                                    <i style="color: #f70000; font-size: 1.2em;" title="Aplazado" class="fa fa-clock"></i>
+                                    }
+                            </td>
+                            <td align="center">
+                                @if (@explo.FACTURADA)
+                                    {
+                                    <i style="color: black;" title="Facturada" class="fa fa-dollar"></i>
+                                    }
+                            </td>
+                            <td align="center">
+                                @if (@explo.NOFACTURAB)
+                                    {
+                                    <i style="color: black;" title="No Facturable" class="fa fa-thumbs-down"></i>
+                                    }
+                            </td>
+                        </tr>
+                            foreach (RadioWeb.Models.EXP_CONSUM consum in explo.CONSUMIBLES)
+                            {
+                             <tr>
+                            <td>
+                                <input name="ENLACE" id="ENLACE" type="checkbox" class="i-checks" />
+                            </td>
+                            <td>
+                                <span class="label label-danger">Consumible</span>
+                            </td>
+                            <td>@consum.CODMUT  </td>
+                            <td>@explo.FECHA.ToShortDateString()</td>
+                            <td>@explo.HORA</td>
+                            <td>@consum.CONSUMIBLE.COD_CONSUM  </td>
+                            <td>@consum.CONSUMIBLE.DES_CONSUM  </td>
+                            <td align="right">@consum.PRECIO €</td>
+                            <td align="center">
+                                @if (consum.PAGADO == "T")
+                                        {
+                                        <i style="color: green; font-size: 1.2em;" title="Pagado" class="fa fa-check"></i>
+                                        }
+                                        else
+                                        {
+                                        <i style="color: red; font-size: 1.2em;" title="No Pagado" class="fa fa-times"></i>
+                                        }
+                            </td>
+
+                            <td align="center">
+                                @if (consum.APLAZADO == "T")
+                                        {
+
+                                        <i style="color: #f70000; font-size: 1.2em;" title="Aplazado" class="fa fa-clock"></i>
+                                        }
+
+                            </td>
+
+
+                            <td align="center">
+                                @if (consum.FACTURADO == "T")
+                                        {
+                                        <i style="color: black;" title="Facturada" class="fa fa-dollar"></i>
+                                        }
+
+                            </td>
+                            <td align="center"></td>
+                        </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Pagos Exploraciones y Consumibles</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="fullscreen-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <table class="footable table table-stripped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Precio</th>
+                            <th>Apl.</th>
+                            <th>F.Pago</th>
+                            <th>Abonado</th>
+                            <th>...</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var explo in Model)
+                        {
+                            if (explo.PAGOS.Count > 0)
+                            {
+                                foreach (var pago in explo.PAGOS)
+                                {
+                                    <tr>
+                                        <td>@pago.FECHA.Value.ToShortDateString()</td>
+                                        <td align="right">
+                                            @pago.DEUDA_CANTIDAD @pago.SIMBOLO
+                                        </td>
+                                        <td>
+                                            @if (@pago.APLAZADO == "T")
+                                            {
+                                                <i style="color: #f70000; font-size: 1.2em;" title="Aplazado" class="fa fa-clock-o"></i>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (explo.PAGADO)
+                                            {
+                                                if (@pago.TIPOPAGO == "C")
+                                                {
+                                                    @Html.Raw("Contado");
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw("Efectivo");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <select id="@string.Concat("ddlTipoPago", @pago.OID)" class="selectpicker form-control input-sm" style="padding: 4px;">
+                                                    @if (@pago.TIPOPAGO == "C" || @pago.TIPOPAGO == null)
+                                                    {
+                                                        <option selected="selected" value="C">Contado</option>
+                                                        <option value="V">Visa</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="C">Contado</option>
+                                                        <option selected="selected" value="V">Visa</option>
+                                                    }
+                                                </select>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (explo.PAGADO)
+                                            {
+                                                @pago.CANTIDAD @pago.SIMBOLO
+                                            }
+                                            else
+                                            {
+                                               
+                                                    <input type="text" id="@pago.OID.ToString()" class="form-control" value="@pago.CANTIDAD">
+                                              
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!@explo.PAGADO)
+                                            {
+                                                <button data-iorpaciente="@explo.IOR_PACIENTE" data-fecha="@pago.FECHA" data-idexploracion="@explo.OID" data-idpago="@pago.OID.ToString()" class="btn btn-info btn-circle pagarExploracion " type="button">
+                                                    <i class="fa fa-check"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <i style="color: green; font-size: 1.2em;" title="Pagado" class="fa fa-check"></i>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+
+
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Pagos/Rapido.js")"></script>
+
+}

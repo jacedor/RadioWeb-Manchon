@@ -1,0 +1,104 @@
+﻿@model RadioWeb.Models.PRECIOS
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="row">
+    <div class="form-group">
+        @*<div class="col-sm-1">
+            @Html.ActionLink("Crear Nueva", "CreateOrEdit", new { ior_factura = 0 }, new { @class = "btn btn-primary btn-large" })
+
+        </div>*@
+        <div class="col-sm-3 col-md-3">
+            @Html.BootstrapLabelFor(m => m.IOR_ENTIDADPAGADORA)
+            @Html.EditorFor(model => model.IOR_ENTIDADPAGADORA, new
+            {
+                htmlAttributes = new { data_filter_calendar = "true" }
+            })
+        </div>
+        <div class="col-sm-3 col-md-3">
+
+            @Html.BootstrapLabelFor(m => m.IOR_GAPARATO)
+            @Html.EditorFor(model => model.IOR_GAPARATO, new
+            {
+                htmlAttributes = new { data_filter_calendar = "true" }
+            })
+        </div>
+    </div>
+
+</div>
+<hr class="hr-line-solid" />
+<div class="row">
+
+    <div class="col-lg-12 animated fadeInRight">
+        <table id="tblPrecios" class="table table-hover table-bordered table-striped"
+               data-search="true" data-height="700" data-url="/Precios/Buscar?ior_entidadPagadora=1&ior_gaparato=1" data-toggle="table">
+            <thead>
+                <tr>
+
+
+                    <th data-field="Descripcion" data-sortable="true">Exploracion</th>
+                    <th data-field="Precio" data-sortable="true" data-formatter="precioFormatter">Cantidad</th>
+                    @*<th data-field="Oid" data-formatter="ActionFormatter">Detalles</th>*@
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+
+
+</div>
+
+
+
+
+@section scripts
+    {
+
+
+
+    <script type="text/javascript">
+
+        $(document).on('load-success.bs.table', '#tblPrecios', function () {
+
+            $('.textoXeditable').editable({
+                container: 'body',
+                inputclass: 'anchoTexto'
+            });
+        });
+        function precioFormatter(value, row) {
+            return '<a href="#" data-type="text" class="textoXeditable" data-url="/Precios/EditarCampo" id="Precio" data-pk="' + row.Oid + '" data-value="' + row.Precio + '" >' + row.Precio + '</a>';
+        }
+
+        $(document).on('change', '#IOR_ENTIDADPAGADORA', function () {
+
+            $("#tblPrecios").bootstrapTable("refresh", {
+                url: "/Precios/Buscar?ior_entidadPagadora=" + $("#IOR_ENTIDADPAGADORA").val() + "&ior_gaparato=" + $("#IOR_GAPARATO").val()
+
+            });
+
+
+        });
+
+        $(document).on('change', '#IOR_GAPARATO', function () {
+
+            $("#tblPrecios").bootstrapTable("refresh", {
+                url: "/Precios/Buscar?ior_entidadPagadora=" + $("#IOR_ENTIDADPAGADORA").val() + "&ior_gaparato=" + $("#IOR_GAPARATO").val()
+            });
+
+        });
+        $(document).ready(function () {
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewTarifas]").addClass("active");
+
+            $("[data-view=ViewTarifas]").parents("ul").removeClass("collapse");
+
+        });
+    </script>
+
+
+}
+

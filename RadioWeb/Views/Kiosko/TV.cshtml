@@ -1,0 +1,78 @@
+﻿@model IEnumerable<RadioWeb.Models.KIOSKO_TV>
+
+@{
+    ViewBag.Title = "Mantenimiento de TVs";
+}
+
+<div class="ibox-title">
+    <h5>
+        <strong>
+            Mantenimiento de TVs
+        </strong>
+    </h5>
+    <div class="ibox-tools">
+        <a href="/kiosko/tv/0" class="btn btn-primary btn-xs">Crear Nueva</a>
+    </div>
+</div>
+<div class="ibox-content ">
+
+    <table class="table table-hover  table-bordered" id="tblKioskoTVs" data-height="700"
+           data-pagination="true" data-search="true" data-page-size="15" data-page-list="[15,30,50,100,200,1000]">
+        <thead>
+            <tr>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.ID)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.NOMBRE)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.DESCRIPCION)
+                </th>
+                <th data-sortable="true">
+                    @Html.DisplayNameFor(model => model.DESHABILITADA)
+                </th>
+                <th>....</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NOMBRE)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DESCRIPCION)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DESHABILITADA)
+                    </td>
+
+                    <td>
+                        @Html.ActionLink("Editar", "tv", new { oid = item.OID }) |
+                        @Html.ActionLink("Borrar", "tvdelete", new { oid = item.OID }, new { onclick = "return confirm('¿Está seguro que desea eliminar la TV?');" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            makeBootstrapTable("tblKioskoTVs");
+            $("li[data-view]").removeClass('active');
+            $("[data-view=viewTVs]").addClass("active");
+            $("[data-view=viewTVs]").parents("ul").removeClass("collapse");
+        });
+
+    </script>
+
+}

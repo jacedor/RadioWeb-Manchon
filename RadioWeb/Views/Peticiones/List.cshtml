@@ -1,0 +1,458 @@
+﻿
+@{
+    ViewBag.Title = "Lista de peticiones";
+    Layout = "~/Views/Shared/_LayoutPeticiones.cshtml";
+    RadioWeb.Models.USUARIO usuario = (RadioWeb.Models.USUARIO)Session["Usuario"];
+}
+
+@section barraTop{
+    <div class="row border-bottom white-bg">
+        <nav class="navbar navbar-expand-lg  " role="navigation">
+
+
+            <!--</div>-->
+            <div class="text-center" id="navbar">
+                <ul class="nav navbar-nav mr-auto">
+                    <li class="">
+                        <a aria-expanded="false" role="button">
+                            <h3></h3>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Peticiones/Create"> Nueva Petición</a>
+
+                    </li>
+                    <li class="active">
+                        <a href="/Peticiones/List"> Lista Peticiones</a>
+
+                    </li>
+                    <li>
+                        <a href="/Peticiones/ListExploraciones"> Lista Exploraciones</a>
+
+                    </li>
+
+                    @if (usuario.CITACIONONLINE == "T")
+                    {
+                        <li>
+                            <a href="/Peticiones/CitaOnline">Citación Directa</a>
+
+                        </li>
+                    }
+                </ul>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+
+                        <input type="hidden" id="UserLogged" data-oidPersonal="@usuario.PERSONAL.OID" data-login="@usuario.LOGIN" data-perfil="@usuario.DESCPERFILWEB" />
+
+                        Bienvenido @usuario.LOGIN
+                        <a href="/Users/LogOut" style="min-height:5px;padding:0px;">  <i class="fa fa-sign-out"></i> Salir</a>
+                        @if (usuario.IOR_ENTIDADPAGADORA.HasValue && usuario.IOR_ENTIDADPAGADORA.Value > 0)
+                        {
+                            <p><b>Mutua: @Model.PETICIONESANOMBREDEMUTUA</b></p>
+                        }
+                        @if (usuario.IOR_COLEGIADO.HasValue && usuario.IOR_COLEGIADO.Value > 0)
+                        {
+                            <p>Referidor: @Model.PETICIONESANOMBREDECOLEGIADO</p>
+                        }
+                        @if (usuario.IOR_CENTROEXTERNO.HasValue && usuario.IOR_CENTROEXTERNO.Value > 0)
+                        {
+                            <p>Centro Externo: @Model.PETICIONESANOMBREDECENTROEXTERNO</p>
+                        }
+
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Listado Solicitudes @usuario.LOGIN</h5>
+            </div>
+            <div class="ibox-content">
+
+                <table id="tblSolicitudes" data-class="table-stripped" class="table table-stripped " data-url="/Peticiones/Index"
+                       data-sortable="true" data-search="true" data-row-attributes="rowAttr" data-pagination="true"
+                       data-side-pagination="server" data-cookie="true"
+                       data-cookie-id-table="saveId" data-sort-name="OID" data-sort-order="desc"
+                       data-page-list="[5, 10, 20, 50,100, Todos]">
+                    <thead>
+                        <tr>
+
+
+                            <th data-sortable="true" data-field="CENTRONAME" data-formatter="fechaStringConHoraFormat">F.SOLICITADO</th>
+                            <th data-sortable="true" data-field="FECHAENTRADA" data-formatter="fechaStringConHoraFormat">F.SOLICITADO</th>
+                            <th data-sortable="true" data-field="EXPLORACIONAGENDADA" data-formatter="fechaStringConHoraExploFormat">F.VISITA</th>
+
+                            <th data-field="MUTUA">MUTUA</th>
+                            <th data-field="CENTROEXTERNO">CENTRO EXTERNO </th>
+                            <th data-sortable="true" data-field="PACIENTE" data-formatter="pacienteFormatter">NOMBRE</th>
+                            <th data-sortable="true" data-field="PRIORIDAD">PRIORIDAD</th>
+                            <th data-sortable="true" data-field="IOR_EXPLORACION" data-formatter="statusExploracion">ESTADO</th>
+                            <th data-sortable="true" data-field="EXPLORACION">EXPLORACION</th>
+                            <th data-field="TELEFONO1">TELEFONO</th>
+                            <th data-field="IOR_DOCUMENTO" data-formatter="documentoFormatter">ADJUNTO</th>
+
+                            <th class="text-right" data-formatter="ActionFormatter">ACCIONES</th>
+
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal fade" id="modalRecuperarMotivoAnulacion" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Motivo anulación</h4>
+            </div>
+            <div class="modal-body">
+
+                <span>El motivo de anulación es: </span> <strong><span id="textMotivoAnulacion"></span></strong>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalPdf" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Selecciona el informe a descargar</h4>
+            </div>
+            <div class="modal-body">
+                <ul style="list-style-type:none;" id="listPdfInforme">
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts
+    {
+
+    <script src="~/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/plugins/bootstrap-table/extensions/cookie/bootstrap-table-cookie.js"></script>
+
+
+    <script type="text/javascript">
+
+        $(document).on("click", ".generarPDFSinClave", function () {
+            var oidExploracion = $(this).data('oid');
+            var url = "/Informe/ObtenerPdfInforme?oid=" + oidExploracion;
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    if (data.success) {
+                        var arrayInformes = Object.values(data.message);
+                        if (arrayInformes.length > 1) {
+                            $("#listPdfInforme").empty();
+                            $.each(arrayInformes, function (i, item) {
+                                $("#listPdfInforme").append('<li>' + item.NOMBRE + ' <a href="/Informe/ImprimirPdf?nombre=' + item.NOMBRE + '&oidInforme=' + item.IOR_INFORME + '&tipo=' + item.TIPO + '" class="btn btn-info btn-xs" target="_blank">Descargar</a></li><li><p></p></li>');
+                            });
+
+                            $('#modalPdf').modal('show');
+                        }
+                        else {
+                            var nombre = arrayInformes[0]['NOMBRE'];
+                            var tipo = arrayInformes[0]['TIPO'];
+                            var oidInforme = arrayInformes[0]['IOR_INFORME'];
+                            window.open("/Informe/ImprimirPdf?nombre=" + nombre + "&oidInforme=" + oidInforme + "&tipo=" + tipo);
+                        }
+                    }
+                    else {
+                        toastr.error(data.message, 'Informe', { timeOut: 5000 });
+                    }
+                },
+                error: function (x, y, z) {
+                    //toastr.error('Imposible obtener el pdf del informe', 'Informe', { timeOut: 5000 });
+                }
+            });
+            return false;
+        });
+
+        function rowAttr(row, index) {
+
+            var claseActiva = "";
+            var oidExploracionAgendada = "";
+            if (row.OID === +getParameterByName('oid')) {
+                claseActiva = "ACTIVA";
+            }
+            if (row.EXPLORACIONAGENDADA!==null) {
+                oidExploracionAgendada = row.EXPLORACIONAGENDADA.OID;
+            }
+            return {
+                "class": claseActiva,
+                "data-oid": row.OID,
+                "data-oidExploracion":oidExploracionAgendada
+            };
+        }
+
+
+        function getParameterByName(name) {
+            var regexS = "[\\?&]" + name + "=([^&#]*)",
+                regex = new RegExp(regexS),
+                results = regex.exec(window.location.search);
+            if (results == null) {
+                return "";
+            } else {
+                return decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+        }
+        
+        function ActionFormatter(value, row) {
+            if (row.IOR_EXPLORACION < 0) {
+                return '<div class="btn-group"><a class="btn-white btn btn-xs editarpeticion" href="/Peticiones/Edit?oid=' + row.OID + '">Editar</a><button data-oid=' + row.OID +' class="btn-warning btn btn-xs eliminarPeticion ">Borrar</button></div >';
+            } else {
+               var botones = '';
+                botones = '<div class="btn-group">';
+                        botones = botones + '<a data-oid="' + row.EXPLORACIONAGENDADA.OID + '"  class="btn-info btn btn-xs  " onclick="imprimirExploracion(' + row.EXPLORACIONAGENDADA.OID + ')" href="#"><i class="fa fa-print" title="Imprimir"></i></a>';
+
+                if (row.EXPLORACIONAGENDADA.ESTADO === "3" || row.EXPLORACIONAGENDADA.ESTADO === "2") {
+                   
+                    if (row.EXPLORACIONAGENDADA.INFORMADA === "T") {
+                        
+                        botones = botones + '<a data-oid="' + row.EXPLORACIONAGENDADA.OID + '"  class="btn-primary btn btn-xs generarPDFSinClave" href = "#" >Informe</a > ';
+                        botones = botones + '<a data-oid="' + row.EXPLORACIONAGENDADA.OID + '"  class="btn-info btn btn-xs  " onclick="comprobarEstadoQreport(' + row.EXPLORACIONAGENDADA.OID + ')" href="#">Visor Qreport</a>';
+                        //botones = botones + '<a data-oid="' + row.EXPLORACIONAGENDADA.OID + '"  class="btn-primary btn btn-xs hide archivarPeticion" href="#">Archivar</a>';
+                 
+                      
+
+                    }
+                   
+
+                }
+                botones = botones + '</div>'
+                 return botones;
+                 
+            }
+        }
+
+          function documentoFormatter(value, row) {
+              if (row.IOR_DOCUMENTO > 0) {
+
+                                    //<a href="#" onclick="javascript: window.open('/Imagenes/Imprimir/@Model.IOR_DOCUMENTO', 'Documento', 'width=900,height=500');">Ver archivo adjunto</a>
+                    var url= "'/Imagenes/Imprimir/" + row.IOR_DOCUMENTO + "','Documento','widht=900,heigth=500'" ;
+                    return '<a href="#" onclick="javascript:window.open(' + url + ')"><i class="fa fa-2x fa-paperclip" title="Fichero Adjunto"></i></a>';
+            } 
+
+            
+        }
+        function pacienteFormatter(value, row) {
+            if (row.EXPLORACIONAGENDADA != null) {
+                if (row.EXPLORACIONAGENDADA.PACIENTE != null) {
+                    return '<span style="font-weight:bold;font-size:12px;">' + row.EXPLORACIONAGENDADA.PACIENTE.PACIENTE1 + '</span>';
+                } else {
+                    return '<span style="font-weight:bold;font-size:12px;"></span>';
+                }
+            } else {
+                return '<span style="font-weight:bold;font-size:12px;">' + row.PACIENTE + '</span>'
+
+            }
+        }
+
+        //Evento que recupera el motivo de anulación de la exploracion
+        $(document).on('click', 'span.exploAnulada', function () {
+            var oidExploracionSeleccionada = $(this).data("oid")
+            $('#textMotivoAnulacion').html('');
+            $.ajax({
+                url: '/Home/RecuperaMotivoAnulacion',
+                data: {
+                    'oid': oidExploracionSeleccionada,
+                    'exploracion': false
+                },
+                type: 'GET',
+                success: function (data) {
+                    if (data.success) {
+                        $('#textMotivoAnulacion').html(data.message);
+                        $('#modalRecuperarMotivoAnulacion').modal('show');
+                    } else {
+                        toastr.error(data.message, 'Motivo anulación', { timeOut: 5000 });
+                    }
+                },
+                error: function (data) {
+                    toastr.error('Error al recuperar el motivo de anulación', 'Motivo anulación', { timeOut: 5000 });
+                }
+            });
+        });
+
+        function statusExploracion(value, row) {
+            switch (value) {
+                case -1:
+                    if (row.IOR_MOTDESPROG != null) {
+                        return '<span class="label exploAnulada badge-danger float-right" data-oid="' + row.OID +'" style="cursor: pointer;">Anulada</span>';
+                    } else {
+                        return '<span class="label badge-borrado  float-right">No Agendado</span>';
+                    }
+                default:
+
+                    if (row.EXPLORACIONAGENDADA != null) {
+                        if (row.EXPLORACIONAGENDADA.IOR_MOTDESPROG != null && row.EXPLORACIONAGENDADA.IOR_MOTDESPROG != -1) {
+                            return '<span class="label exploAnulada badge-danger float-right" data-oid="' + row.OID +'" style="cursor: pointer;">Anulada</span>';
+                        }
+                    }
+
+                    switch (row.EXPLORACIONAGENDADA.ESTADO) {
+                        case "0":
+                            return '<span class="label badge-PENDIENTE  float-right">Pendiente Realizar</span>';
+                            break;
+                        case "1":
+                            return '<span class="label badge-borrado float-right">Borrada</span>';
+                            break;
+                        case "2":
+                            return '<span class="label badge-presencia float-right">En Proceso</span>';
+                            break;
+                        case "3":
+                            if (row.EXPLORACIONAGENDADA.INFORMADA === "T") {
+                                return '<span class="label badge-confirmado float-right">Realizada</span>';
+                            } else {
+                                return '<span class="label badge-info float-right">Realizada (No informada)</span>';
+                            }
+
+                            break;
+                        case 4:
+                            return '<span class="label panel-NoPresentado float-right">No Presentado</span>';
+                            break;
+                        case 5:
+                            return '<span class="label panel-NoPresentado float-right">Llama Anulando</span>';
+                            break;
+                        default:
+                            if (row.ANULADA) {
+                                return '<span class="label badge-danger  float-right">Anulada</span>';
+                            }
+                            if (row.OID < 0) {
+                                return '<span class="label badge-info  float-right">Libre</span>';
+
+                            }
+
+                    }
+            }
+        }
+
+        function fechaStringConHoraFormat(value) {
+
+            if (value === null || moment(value).format("DD/MM/YYYY") === "31/12/0000") {
+                return '-'
+            } else {
+                return moment(value).format("DD/MM/YYYY HH:mm");
+            }
+
+        }
+
+          function fechaStringConHoraExploFormat(value,row) {
+
+            if (row.EXPLORACIONAGENDADA===null) {
+                return ''
+            } else {
+             //  
+                if (row.EXPLORACIONAGENDADA.FECHA != null) {
+                    return moment(row.EXPLORACIONAGENDADA.FECHA).format("DD/MM/YYYY") + ' ' + row.EXPLORACIONAGENDADA.HORA;
+                } else {
+                    return '';
+                }
+            }
+          }
+
+       
+
+        function fechaStringFormat(value) {
+
+            if (value === null || moment(value).format("DD/MM/YYYY") === "31/12/0000") {
+                return '-'
+            } else {
+                return moment(value).format("DD/MM/YYYY");
+            }
+
+        }
+        function Failure() {
+            alert('fallo');
+        }
+
+        function Success(data) {
+
+            toastr.success('Actualización!', 'Petición Realizada Correctamente !', { timeOut: 5000 });
+            //$("#OID").val(data.OID);
+            $("#tblSolicitudes").bootstrapTable("refresh");
+        }
+
+        $(document).on('click', '.eliminarPeticion', function () {
+
+    var botonPresionado = $(this);
+    var oidDocumento = botonPresionado.data('oid');
+    var filaActivaDocumento = botonPresionado.closest('tr');
+  
+    swal({
+        title: "Esta seguro de eliminar la petición? ",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Si",
+        cancelButtonText: "No",
+        closeOnConfirm: true
+    }, function (isConfirm) {
+        if (isConfirm) {
+
+            $.ajax({
+                type: "DELETE",
+                url: '/Peticiones/Delete?id=' + oidDocumento,
+                success: function (data) {
+                    filaActivaDocumento.fadeOut("normal", function () {
+                        $(this).remove();
+                    });
+                }
+            });
+
+        }
+    });
+
+
+});
+
+
+        $(document).on('load-success.bs.table', '#tblSolicitudes', function () {
+            var idPeticion=window.location.pathname.split('/')[3];
+            if (idPeticion) {
+                $("#tblSolicitudes>tbody>tr[data-oid='" + idPeticion + "']").addClass('ACTIVA');
+            }
+        });
+
+        $(document).on('click', '#tblSolicitudes tbody tr', function () {
+            $(this).siblings().removeClass('ACTIVA');
+            $(this).addClass('ACTIVA');
+        });
+   
+        $(document).ready(function () {
+           
+           $("#tblSolicitudes").bootstrapTable( );  
+            //makeBootstrapTable("tblSolicitudes");
+
+        });
+    </script>
+
+
+}

@@ -1,0 +1,15 @@
+﻿
+
+@{
+    ViewBag.Title = "Report";
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+    FastReport.Web.WebReport report = ViewBag.WebReport;
+}
+
+
+<input type="hidden" value="@report.ReportGuid" id="idReport" />
+
+
+
+
+@report.GetHtml()

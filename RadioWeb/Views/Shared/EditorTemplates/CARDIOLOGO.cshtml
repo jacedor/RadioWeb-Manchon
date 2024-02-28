@@ -1,0 +1,28 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+@{
+    /**/
+
+    var ior_cardiologo = Model.HasValue ? Model : -1;
+
+
+    var cardiologo = PersonalRepositorio.ObtenerCardiologos().Select(u => new SelectListItem
+    {
+        Text = u.NOMBRE,
+        Value = u.OID.ToString(),
+        Selected = u.OID == ior_cardiologo
+    }).ToArray();
+
+
+}
+@if ((bool)ViewData["disabled"])
+{
+    var cardiologoText = cardiologo.SingleOrDefault(t => t.Value == @ViewData.TemplateInfo.FormattedModelValue.ToString());
+    @Html.Label("",(cardiologoText!=null? cardiologoText.Text : "-"), new { @class = "form-control form-control-static" })
+}
+else
+{
+    @Html.DropDownList("", cardiologo, new { @class = "form-control select2" })
+}
+
+

@@ -1,0 +1,23 @@
+﻿@using RadioWeb.Models.Repos
+@model double?
+
+@{
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control" };
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+<div class="input-group">
+    @Html.Label("", ViewData.TemplateInfo.FormattedModelValue.ToString(), htmlAttributes)
+    @if (ViewData["SIMBOLO"] != null)
+    {
+        var moneda = MonedaRepositorio.Obtener((int)ViewData["SIMBOLO"]);
+
+<span class="input-group-addon">@moneda.SIMBOLO</span>
+            }
+            else
+            {
+                <span class="input-group-addon">€</span>
+            }
+</div>
+

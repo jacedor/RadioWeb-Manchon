@@ -1,0 +1,273 @@
+﻿@model RadioWeb.ViewModels.VWFiltros
+
+@{
+    var estadoPanel = "in";
+    var containerObject = "HOME";
+
+    if (ViewData["controlador"] != null)
+    {
+        containerObject = (string)ViewData["controlador"];
+    }
+
+    var icon = "fa-chevron-up";
+    if (ViewData[containerObject + ".FILTROS"] != null && ViewData[containerObject + ".FILTROS"].ToString() == "0")
+    {
+        estadoPanel = "";
+        icon = "fa-chevron-down";
+    }
+
+}
+
+
+<div class="panel panel-info ">
+    <div class="panel-heading">
+        <h5 class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFiltros">
+            <b>FILTROS DE BÚSQUEDA</b>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFiltros">
+                <i class="fa @icon collapse-link-accordion"></i>
+            </a>
+        </h5>
+    </div>
+    <div id="collapseFiltros" class="panel-collapse collapse @estadoPanel" data-controlador="@containerObject" data-objeto="filtros">
+        @Html.HiddenFor(m => m.OIDACTIVA)
+        <div class="panel-body">
+
+            <div class="form-group">
+                <div class="col-sm-3 col-md-3">
+                    @{
+                        var classeFechaPicker = "fecha-picker";
+                        if (ViewData["fechaPicker"] != null)
+                        {
+                            classeFechaPicker = ViewData["fechaPicker"].ToString();
+                        }
+                    }
+
+                    @Html.BootstrapLabelFor(m => m.FECHA)
+                    @Html.EditorFor(model => model.FECHA, new
+                    {
+                        htmlAttributes = new { autocomplete = "off", @class = classeFechaPicker, onkeydown = "return false" }
+                    })
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.BootstrapLabelFor(m => m.IOR_GRUPO)
+                    @Html.EditorFor(model => model.IOR_GRUPO, new
+                    {
+                        htmlAttributes = new { data_filter_calendar = "true" }
+                    })
+                </div>
+
+                <div class="col-sm-3 col-md-3 ">
+                    @Html.BootstrapLabelFor(m => m.IOR_APARATO)
+                    @{
+                        var deshabilitar = ViewData["estadoExploracion"] != null && ViewData["estadoExploracion"].ToString() == "false";
+                        var ior_centro = Model.IOR_CENTRO;
+                        if (deshabilitar)
+                        {
+                            @Html.EditorFor(model => model.IOR_APARATO, new
+                            {
+                                htmlAttributes = new
+                                {
+                                    data_filter_calendar = "true",
+                                    @disabled = deshabilitar,
+                                    @IOR_CENTRO = ior_centro
+                                }
+                            })
+                        }
+                        else
+                        {
+                            @Html.EditorFor(model => model.IOR_APARATO, new
+                            {
+                                htmlAttributes = new
+                                {
+                                    data_filter_calendar = "true",
+                                    @IOR_CENTRO = ior_centro
+                                }
+                            })
+
+                        }
+                    }
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.BootstrapLabelFor(m => m.IOR_TIPO)
+                    @Html.EditorFor(model => model.IOR_TIPO, new
+                    {
+                        htmlAttributes = new { data_filter_calendar = "true" }
+                    })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-3 col-md-3">
+                    @Html.BootstrapLabelFor(m => m.IOR_CENTRO)
+                    @Html.EditorFor(model => model.IOR_CENTRO, new
+                    {
+                        htmlAttributes = new { data_filter_calendar = "true" }
+                    })
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.BootstrapLabelFor(m => m.IOR_ENTIDADPAGADORA)
+                    @{
+
+                        if (ViewData["seleccionMutuasMultiple"] != null)
+                        {
+
+                            @Html.EditorFor(model => model.IOR_ENTIDADPAGADORA, new
+                            {
+                                htmlAttributes = new
+                                {
+                                    data_filter_calendar = "true",
+                                    multiple = "multiple",
+                                    name = "MUTUALIST[]"
+                                }
+                            })
+                        }
+                        else
+                        {
+                            @Html.EditorFor(model => model.IOR_ENTIDADPAGADORA, new
+                            {
+                                htmlAttributes = new { data_filter_calendar = "true" }
+                            })
+                        }
+                    }
+
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.BootstrapLabelFor(m => m.IOR_MEDICO)
+                    <div class="input-group">
+                        @Html.EditorFor(model => model.IOR_MEDICO, new
+                        {
+                            htmlAttributes = new { autocomplete = "off", data_filter_calendar = "true" }
+
+                        })
+                        <span class="input-group-addon">
+                            @Html.CheckBoxFor(m => m.BUSQUEDATOTALPORMEDICO, new
+                            {
+                                title = "Busqueda total de informes por médico"
+
+                            })
+
+                        </span>
+                    </div>
+
+
+
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.BootstrapLabelFor(m => m.IOR_COLEGIADO)
+                    @Html.EditorFor(model => model.IOR_COLEGIADO, new
+                    {
+                        htmlAttributes = new { data_filter_calendar = "true" }
+                    })
+                </div>
+
+
+            </div>
+
+            <div class="form-group">
+                @* Si le hemos pasado al editor template la popiedad filtropaciente en false, nolo pintamos *@
+                @if (!(ViewData["filtroPaciente"] != null && ViewData["filtroPaciente"].ToString() == "false"))
+                {
+                    <div class="col-sm-3 col-md-3">
+                        @Html.BootstrapLabelFor(m => m.PACIENTE)
+                        <div class="input-group">
+                            @Html.EditorFor(model => model.PACIENTE, new
+                            {
+                                htmlAttributes = new { autofocus = "autofocus", data_filter_calendar = "true", @class = "typeahead", autocomplete = "off" }
+
+                            })
+                            <span class="input-group-addon">
+                                @Html.CheckBoxFor(m => m.BUSQUEDATOTAL, new
+                                {
+                                    title = "Busqueda total de paciente sin filtros"
+
+                                })
+                                @Html.HiddenFor(m => m.IOR_PACIENTE)
+                            </span>
+                        </div>
+                    </div>
+                }
+                @if (ViewData["anyoComparativa"] != null && ViewData["anyoComparativa"].ToString() == "true")
+                {
+                    <div class="col-sm-3 col-md-3">
+                        <label class="control-label">AÑO COMPARATIVA</label>
+                        <select id="ddlAnyo" class="select2 form-control " data-filter-calendar="true" data-live-search="true">
+                            <option value="1">@(DateTime.Now.Year - 1)</option>
+                            <option value="2">@(DateTime.Now.Year - 2)</option>
+                            <option value="3">@(DateTime.Now.Year - 3)</option>
+                            <option value="4">@(DateTime.Now.Year - 4)</option>
+                            <option value="5">@(DateTime.Now.Year - 5)</option>
+                            <option value="6">@(DateTime.Now.Year - 6)</option>
+
+                        </select>
+                    </div>
+                }
+                @if (ViewData["anyoComparativa"] != null && ViewData["anyoComparativa"].ToString() == "true")
+                {
+                    <div class="col-sm-3 col-md-3">
+                        <label class="control-label">TIPO GRAFICO </label>
+                        <select id="ddlCuentaOSuma" class="select2 form-control ">
+                            <option value="SUM">SUMA</option>
+                            <option value="COUNT">CUENTA</option>
+
+
+
+                        </select>
+
+
+                    </div>
+
+                }
+                <div class="col-sm-2 col-md-2">
+                    @Html.BootstrapLabelFor(m => m.INFORMADA)
+                    @Html.EditorFor(model => model.INFORMADA, new
+                    {
+                        htmlAttributes = new { data_filter_calendar = "true" }
+                    })
+                </div>
+                <div class="col-sm-2 col-md-2">
+                    @Html.BootstrapLabelFor(m => m.PAGADO)
+                    @Html.EditorFor(model => model.PAGADO, new
+                    {
+                        htmlAttributes = new { data_filter_calendar = "true" }
+                    })
+                </div>
+                <div class="col-sm-2 col-md-2 @( ViewData["facturadoExploracion"] != null && ViewData["facturadoExploracion"].ToString() == "false"?"hide":"")">
+                    @Html.BootstrapLabelFor(m => m.FACTURADA)
+                    @Html.EditorFor(model => model.FACTURADA, new
+                    {
+                        htmlAttributes = new { data_filter_calendar = "true" }
+                    })
+                </div>
+
+
+                <div class="col-sm-2 col-md-2 @( ViewData["estadoExploracion"] != null && ViewData["estadoExploracion"].ToString() == "false"?"hide":"")">
+                    @Html.BootstrapLabelFor(m => m.ESTADO)
+                    @Html.EditorFor(model => model.ESTADO, new
+                    {
+                        htmlAttributes = new { data_filter_calendar = "true" }
+                    })
+                </div>
+
+
+                @if (ViewData["botonBusqueda"] != null && ViewData["botonBusqueda"].ToString() == "true")
+                {
+                    <div class="col-sm-1" style="margin-top:7px;">
+                        <br />
+
+                        <button id="EnviarFiltros" class="btn btn-primary col-sm-9 col-lg-9 " type="submit"><i class="fa fa-search"></i></button>
+
+
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-1 hide">
+
+                        <button id="EnviarFiltros" class="btn btn-primary btn-block" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,26 @@
+﻿@model RadioWeb.Models.CENTROSEXTERNOS
+
+
+  <div id="modal-info-centro-Externo" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+
+                    <h4 class="modal-title">@Model.NOMBRE</h4>
+                </div>
+
+                <div class="modal-body">
+                   <div class="ibox-content " style="padding-bottom: 10px; max-height: 180px; overflow-y: scroll;">
+                    @Html.Raw(@Model.INFOMUTUA.TEXTO)
+                </div>
+                </div>
+                <div class="modal-footer">
+                                            <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                                          
+                                        </div>
+
+              
+            </div>
+        </div>
+    </div>

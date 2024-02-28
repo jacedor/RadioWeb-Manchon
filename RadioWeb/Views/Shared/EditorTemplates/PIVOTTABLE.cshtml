@@ -1,0 +1,15 @@
+﻿@using RadioWeb.Utils
+@model int?
+@{
+
+    var modelValue = Model.HasValue ? Model : -1;
+    var pivotTbles = DataBase.pivotTables().Select(u => new SelectListItem
+    {
+        Text = u.NOMBRE,
+        Value = u.OID.ToString(),
+        Selected = u.OID == modelValue
+    }).ToArray();
+}
+
+@Html.DropDownList("", pivotTbles, new { @class = "form-control select2" })
+

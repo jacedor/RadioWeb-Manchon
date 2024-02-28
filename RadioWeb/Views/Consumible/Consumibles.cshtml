@@ -1,0 +1,76 @@
+﻿@model RadioWeb.Models.CONSUMIBLES
+
+@{
+    ViewBag.Title = "Mantenimiento de Consumibles";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.OID)
+    @Html.HiddenFor(model => model.BORRADO)
+    @Html.HiddenFor(model => model.IOR_EMPRESA)
+    @Html.HiddenFor(model => model.OWNER)
+    @Html.HiddenFor(model => model.CANAL)
+    @Html.HiddenFor(model => model.MODIF)
+
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a data-toggle="tab" href="#general">Consumible</a>
+            </li>
+        </ul>
+
+        <div class="tab-content form-horizontal">
+            <div id="general" class="tab-pane active">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.COD_CONSUM)
+                            @Html.EditorFor(model => model.COD_CONSUM)
+                            @Html.ValidationMessageFor(model => model.COD_CONSUM, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.BootstrapLabelFor(m => m.DES_CONSUM)
+                            @Html.EditorFor(model => model.DES_CONSUM)
+                            @Html.ValidationMessageFor(model => model.DES_CONSUM, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    @Html.ListBoxFor(model => model.SELECTED_GROUPS, (MultiSelectList)ViewBag.Grupos,  new { multiple = "multiple", @class = "dual_select" })
+                </div>
+            </div>
+        </div>
+
+
+        <div class="user-button ibox-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <i class="btn btn-default btn-sm btn-block">@Html.ActionLink("Volver a Lista de Grupos", "Index", "Grupos", new { id = Model.OWNER, tab = "tabConsumibles" }, null)</i>
+
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">
+                        <i class="fa fa-save"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script src="~/js/plugins/dualListbox/jquery.bootstrap-duallistbox.js"></script>
+    <script type="text/javascript">
+        $('.dual_select').bootstrapDualListbox({
+            selectorMinimalHeight: 160,
+            selectedListLabel: 'GRUPOS ASIGNADOS',
+            nonSelectedListLabel: 'GRUPOS NO ASIGNADOS',
+            infoText: 'Total {0}',
+            infoTextFiltered: '<span class="label label-warning">Accesos a</span> {0} from {1}'
+        });
+    </script>
+}

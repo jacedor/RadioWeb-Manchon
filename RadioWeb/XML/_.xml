@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Config>
+  <CitaOnline>
+    <smtpServer>smtp.adpm.es</smtpServer>
+    <smtpPort>25</smtpPort>
+    <smtpUser>citaonline@adpm.es</smtpUser>
+    <smtpPass>Encaixarla0</smtpPass>
+    <direccionCDPI>Avenida Tibidabo, 9, 08022 Barcelona</direccionCDPI>
+    <direccionBALMES> Calle de Balmes, 125</direccionBALMES>
+    <direccionMERIDIANA>Avenida Meridiana 327</direccionMERIDIANA>
+    <direccionCUGAT> C/ Sant Jordi 37 08172 Sant Cugat</direccionCUGAT>
+    <mailCallCenter>acedo@adpm.es;massana@adpm.es</mailCallCenter>
+    <feedBackPruebaEspecial>
+      Debido a la complejidad de la prueba solicitada y para mejorar la calidad del servicio contactaremos directamente con usted para la reserva de cita.
+    </feedBackPruebaEspecial>
+    <mailPruebaEspecial>El Paciente: @PACIENTE@  ha realizado una solicitud de prueba compleja <![CDATA[<br/> <b>Exploración:</b> @EXPLORACION@. <br/> <b>Teléfono:</b> @TELEFONO@   <br/> ]]> </mailPruebaEspecial>
+    <mailPruebaNoCubierta>@PACIENTE@ Ha solicitado una prueba no cubierta por su mutua: @MUTUA@ -------- @EXPLORACION@. @TELEFONO@ - @FECHA@ - @HORA@  </mailPruebaNoCubierta>
+   
+  </CitaOnline>
+</Config>

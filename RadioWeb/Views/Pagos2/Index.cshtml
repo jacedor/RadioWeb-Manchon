@@ -1,0 +1,715 @@
+﻿@model IEnumerable<RadioWeb.Models.PAGO_PACIENTE>
+
+@{
+
+    ViewBag.Title = "Pagos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-8">
+        <h2 style="font-weight:bold;"> @Model.First().PACIENTE.PACIENTE1 / @Model.First().FECHA.Value.ToLongDateString()</h2>
+        @if (Decimal.Parse(ViewData["TotalPendientePrivado"].ToString()) > 0)
+        {
+            <h2 class="label-danger float-right p-sm no-margins text-center">
+                DEUDA ACTUAL:
+                @Html.CurrencyWithCulture(Decimal.Parse(ViewData["TotalPendientePrivado"].ToString()))
+
+            </h2>
+        }
+        else
+        {
+            <h2 class="label-primary float-right p-sm no-margins text-center">
+                DEUDA ACTUAL:
+                @Html.CurrencyWithCulture(Decimal.Parse(ViewData["TotalPendientePrivado"].ToString()))
+
+            </h2>
+        }
+
+    </div>
+    <div class="col-lg-4 m-t-lg">
+        <div class="title-action">
+            @*<a href="#" class="btn btn-white"><i class="fa fa-pencil"></i> Edit </a>*@
+            <a href="#" class="btn btn-white facturar"><i class="fa fa-dollar "></i> Facturar </a>
+            @if (Decimal.Parse(ViewData["TotalPendientePrivado"].ToString()) > 0)
+            {
+                @Html.ActionLink(
+                                   linkText: "Pagar Todo",
+                                   actionName: "PagarTodo",
+                                   controllerName: "Pagos2",
+                                   routeValues: new
+                                   {
+                                       FECHA = @Model.First().FECHA.Value.ToString("dd/MM/yyyy"),
+                                       IOR_PACIENTE = @Model.First().IOR_PACIENTE
+                                   },
+                                   htmlAttributes: new { @class = "btn btn-primary pagarTodo", data_fecha = Model.First().FECHA.Value.ToString("dd/MM/yyyy") }
+                               )
+            }
+
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+
+
+    <div class="ibox-content col-md-12 ">
+
+
+
+        @foreach (var item in Model)
+        {
+            <table class="table   table-bordered" id="tblExploracionesPagar" data-height="700"
+                   data-pagination="true" data-search="true" data-page-size="15" data-page-list="[15,30,50,100,200,1000]">
+                <thead>
+                    <tr>
+
+                        @*<th style="background-color:#0094ff">
+                                CONCEPTO
+                            </th>*@
+                        <th data-sortable="true">
+                            @Html.DisplayNameFor(model => model.FECHA)
+                        </th>
+                        <th width="500" data-sortable="true">
+                            @Html.DisplayNameFor(model => model.EXPLORACION)
+                        </th>
+
+                        <th data-sortable="true">
+                            @Html.DisplayNameFor(model => model.MUTUA)
+                        </th>
+                        <th data-sortable="true">
+                            @Html.DisplayNameFor(model => model.APARATO)
+                        </th>
+                        <th data-sortable="true">
+                            PRECIO
+                        </th>
+                        <th data-sortable="true">
+                            PAGADO?
+                        </th>
+                        <th data-sortable="true">
+                            @Html.DisplayNameFor(model => model.FACTURADA)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PAGAR)
+                        </th>
+
+                        <th>...</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FECHA)
+                        </td>
+                        <td>
+                            <h2 style="font-weight:bold;">@item.EXPLORACION</h2>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MUTUA)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.APARATO)
+                        </td>
+                        <td align="right">
+                           
+                                @if (item.PAGADO == "F")
+                                {
+                                    <span style="color:red;font-weight:bold;font-size:medium;">
+                                        @Html.CurrencyWithCulture(Decimal.Parse(item.PRECIO))
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="color:green;font-weight:bold;font-size:medium;">
+                                        @Html.CurrencyWithCulture(Decimal.Parse(item.PRECIO))
+                                    </span>
+                                }
+
+                            
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PAGADO)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FACTURADA)
+                        </td>
+                        <td>
+                            @if (item.TIPO == "P" && item.FACTURADA == "F")
+                            {
+                                @Html.EditorFor(modelItem => item.PAGAR, new
+                                {
+                                    htmlAttributes =
+                               new
+                                    {
+                                        data_facturado = item.FACTURADA,
+                                   data_pagado = item.PAGADO,
+                                   data_orden = item.ORDEN,
+                                   data_oid = item.OID,
+                                   @class = "incluirEnFactura"
+                                    }
+                                })
+
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.PAGAR)
+
+                            }
+                        </td>
+                        <td>
+                            @if (item.PAGADO == "F" && item.TIPO == "P")
+                            {
+                                <a href="" class="btn  btn-primary añadirPago" data-oidpaciente="@Model.First().PACIENTE.OID" data-precio="@item.PRECIO"
+                                   data-oidpago="@item.OIDPAGO">
+                                    <i class="fa fa-plus-circle"></i> Añadir Pago
+                                </a>
+                            }
+                           
+                            else
+                            {
+                                if (item.FACTURADA == "T")
+                                {
+                                    <a class="btn  btn-danger" href="/Facturas/CreateOrEdit?ior_factura=@item.IOR_FACTURA">
+                                        <i class="fa fa-dollar"></i> Ver Factura (@item.SERIEYNUMEROFACTURA)
+                                    </a>
+                                }
+                            }
+                        </td>
+                    </tr>
+                    @if (int.Parse(item.PRECIO) > 0 || item.TIPO=="P")
+                    {
+                        <tr>
+                            <td colspan="4"></td>
+                            <td colspan="6" style="border:3px solid black;">
+                                <!--<h2 class="text-navy text-right" style="text-decoration:underline;">PAGOS de @item.EXPLORACION</h2>-->
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Fecha Pago</th>
+                                            @*<th>Aplazado</th>*@
+                                            <th style="text-align:right;" align="right">Cantidad Pagada</th>
+                                            <th>Forma pago</th>
+                                            <th>...</th>
+                                        </tr>
+                                    </thead>
+                                    @foreach (var pago in item.PagosExploracion)
+                                    {
+                                        <tr>
+
+                                            <td> @Html.DisplayFor(modelItem => pago.FECHAPAGO)</td>
+
+                                            <td align="right">
+                                                <strong>   @Html.CurrencyWithCulture(Decimal.Parse(pago.PAGO))</strong>
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => pago.TIPOPAGO)
+                                            </td>
+                                            <td>
+                                                @if (pago.TIPO == "P" && pago.FACTURADA == "F" && pago.PAGADO == "F")
+                                                {
+                                                    <a href="" class="btn  btn-primary pagar"
+                                                       data-oidpaciente="@Model.First().PACIENTE.OID"
+                                                       data-precio="@pago.PRECIO" data-oidpago="@pago.OIDPAGO">
+                                                        <i class="fa fa-credit-card"></i>Pagar
+                                                    </a>
+                                                    <a href="" class="btn  btn-danger borrar"
+                                                       data-oidpaciente="@Model.First().PACIENTE.OID"
+                                                       data-precio="@pago.PRECIO" data-oidpago="@pago.OIDPAGO">
+                                                        <i class="fa fa-remove"></i>Borrar
+                                                    </a>
+                                                }
+                                                else if (pago.TIPO == "P" && pago.FACTURADA == "F")
+                                                {
+                                                    <a href="" class="btn  btn-primary pagar"
+                                                       data-oidpaciente="@Model.First().PACIENTE.OID"
+                                                       data-precio="@pago.PRECIO" data-oidpago="@pago.OIDPAGO">
+                                                        <i class="fa fa-credit-card"></i> Editar
+                                                    </a>
+                                                    <a href="" class="btn  btn-danger borrar"
+                                                       data-oidpaciente="@Model.First().PACIENTE.OID"
+                                                       data-precio="@pago.PRECIO" data-oidpago="@pago.OIDPAGO">
+                                                        <i class="fa fa-remove"></i> Borrar
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    if (pago.TIPO == "P")
+                                                    {
+                                                        if (pago.PAGADO == "T" && pago.FACTURADA == "F")
+                                                        {
+                                                            <span class="label label-danger">PAGADO PENDIENTE FACTURAR</span>
+                                                        }
+                                                        if (pago.PAGADO == "T" && pago.FACTURADA == "T")
+                                                        {
+                                                            <span class="label label-info">PAGADO Y FACTURADO</span>
+
+                                                        }
+
+                                                    }
+                                                 
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    }
+
+
+
+
+                    @foreach (var consumible in item.ConsumiblesExploracion)
+                    {
+                        <tr>
+                       
+                            <td>
+                                @Html.DisplayFor(modelItem => consumible.FECHA)
+                            </td>
+                            <td>
+                                <h2 style="font-weight:bold;">@consumible.EXPLORACION <i class="fa  fa-eyedropper"></i></h2>
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => consumible.MUTUA)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => consumible.APARATO)
+                            </td>
+                            <td align="right">
+                                @if (consumible.PAGADO == "F")
+                                {
+                                <span style="color:red;font-weight:bold;font-size:medium;">
+                                    @Html.CurrencyWithCulture(Decimal.Parse(consumible.PRECIO))
+                                </span>
+                                }
+                                else
+                                {
+                                <span style="color:green;font-weight:bold;font-size:medium;">
+                                    @Html.CurrencyWithCulture(Decimal.Parse(consumible.PRECIO))
+                                </span>
+                                }
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => consumible.PAGADO)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => consumible.FACTURADA)
+                            </td>
+                            <td>
+                           
+
+
+                                @if (consumible.TIPO == "P" && consumible.FACTURADA == "F")
+                                {
+                                    @Html.EditorFor(modelItem => consumible.PAGAR, new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                            data_facturado = consumible.FACTURADA,
+                                                                                        data_pagado = consumible.PAGADO,
+                                                                                        data_iorconsum = consumible.OWNER,
+                                                                                         data_orden = consumible.ORDEN,
+                                                                                        data_oid = consumible.OID,
+                                                                                        @class = "incluirEnFactura"
+                                        }
+                                    })
+
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => consumible.PAGAR)
+
+                                }
+                            </td>
+                            <td>
+                                @if (consumible.PAGADO == "F" && consumible.TIPO == "P")
+                                {
+                                    <a href="" class="btn  btn-primary añadirPago" data-oidpaciente="@Model.First().PACIENTE.OID" data-precio="@consumible.PRECIO" data-oidpago="@consumible.OIDPAGO" data-orden="@consumible.ORDEN">
+                                        <i class="fa fa-plus-circle"></i> Añadir Pago
+                                    </a>
+                                }
+                             
+                                else
+                                {
+                                    if (consumible.FACTURADA == "T")
+                                    {
+                            <a class="btn  btn-danger" href="/Facturas/CreateOrEdit?ior_factura=@consumible.IOR_FACTURA">
+                                <i class="fa fa-dollar"></i> Ver Factura (@consumible.SERIEYNUMEROFACTURA)
+                            </a>
+                                    }
+                                }
+
+                            
+                            </td>
+                        </tr>
+                        if (int.Parse(consumible.PRECIO) > 0)
+                        {
+                <tr>
+                    <td colspan="4"></td>
+                    <td colspan="6" style="border:3px solid black;">
+                       @* <h2 class="text-navy text-center" style="text-decoration:underline;">PAGOS de @consumible.EXPLORACION</h2>*@
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Fecha Pago</th>
+                                    <th style="text-align:right;" align="right">Cantidad Pagada</th>
+                                    <th>Forma pago</th>
+                                    <th>...</th>
+                                </tr>
+                            </thead>
+                            @foreach (var pago in consumible.ConsumiblesPagos)
+                            {
+                                <tr>
+                                   
+                                    <td> @Html.DisplayFor(modelItem => pago.FECHAPAGO)</td>
+                                    <td align="right">
+                                        <strong>   @Html.CurrencyWithCulture(Decimal.Parse(pago.PAGO))</strong>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => pago.TIPOPAGO)
+                                    </td>
+                                    <td>
+
+                                        @if (pago.TIPO == "P" && pago.FACTURADA == "F" && pago.PAGADO == "F")
+                                        {
+                                            <a href="" class="btn  btn-primary pagar"
+                                               data-oidpaciente="@Model.First().PACIENTE.OID"
+                                               data-precio="@pago.PRECIO" data-oidpago="@pago.OIDPAGO">
+                                                <i class="fa fa-credit-card"></i> Pagar
+                                            </a>
+                                            <a href="" class="btn  btn-danger borrar"
+                                               data-oidpaciente="@Model.First().PACIENTE.OID"
+                                               data-precio="@pago.PRECIO" data-oidpago="@pago.OIDPAGO">
+                                                <i class="fa fa-remove"></i> Borrar
+                                            </a>
+                                        }
+                                        else if (pago.TIPO == "P" && pago.FACTURADA == "F")
+                                        {
+                                            <a href="" class="btn  btn-primary pagar"
+                                               data-oidpaciente="@Model.First().PACIENTE.OID"
+                                               data-precio="@pago.PRECIO" data-oidpago="@pago.OIDPAGO">
+                                                <i class="fa fa-credit-card"></i> Editar
+                                            </a>
+                                            <a href="" class="btn  btn-danger borrar"
+                                               data-oidpaciente="@Model.First().PACIENTE.OID"
+                                               data-precio="@pago.PRECIO" data-oidpago="@pago.OIDPAGO">
+                                                <i class="fa fa-remove"></i> Borrar
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            if (pago.TIPO == "P")
+                                            {
+                                                if (pago.PAGADO == "T" && pago.FACTURADA == "F")
+                                                {
+                                                    <span class="label label-danger">PAGADO PENDIENTE FACTURAR</span>
+                                                }
+                                                if (pago.PAGADO == "T" && pago.FACTURADA == "T")
+                                                {
+                                                    <span class="label label-info">PAGADO Y FACTURADO</span>
+
+                                                }
+
+                                            }
+                                         
+                                        }
+
+
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                </tr>
+                        }
+
+                    }
+                </tbody>
+
+            </table>
+
+
+        }
+        <p>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class="right col-md-12">
+                    </div>
+                </div>
+            </div>
+        </p>
+
+
+    </div>
+
+</div>
+
+
+@section scripts{
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+         $("body").toggleClass("mini-navbar");
+        });
+
+        $(document).on('click', '.bool-itemPAGAR, .bool-consumiblePAGAR', function () {
+            var botonpresionado = $(this);
+            var oidValue = $(botonpresionado).siblings('.incluirEnFactura').data('oid');
+
+            var valor = $(botonpresionado).siblings('.incluirEnFactura').val();
+            var pagado = $(botonpresionado).siblings('.incluirEnFactura').data('pagado');
+            var facturado = $(botonpresionado).siblings('.incluirEnFactura').data('facturado');
+            //el orden nos dice si es un consumible o una exploracion
+            var order = $(botonpresionado).siblings('.incluirEnFactura').data('orden');
+            var ior_consum = $(botonpresionado).siblings('.incluirEnFactura').data('iorconsum');
+            if (ior_consum === null) {
+                ior_consum = -1;
+            }
+            if (pagado === "F" && valor === "T") {
+                swal("No se puede incluir en factura sino está pagado", "Facturar", "error");
+                botonpresionado.siblings('[type="button"]').trigger('click');
+                return false;
+            }
+            else if (facturado === "T") {
+                swal("Esta exploración ya está facturada", "Facturar", "error");
+                botonpresionado.siblings('[type="button"]').trigger('click');
+
+                return false;
+            } else {
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/Pagos2/ActualizarPagado',
+                    data: {
+                        oid: oidValue,
+                        valor: valor,
+                        orden: order,
+                        ior_consum: ior_consum
+                    },
+                    success: function (data) {
+
+
+                    }
+                });
+            }
+
+        });
+
+
+
+        $(document).on('click', '.verfactura', function () {
+
+            var exploracionesAFacturar = $(".incluirEnFactura[value='T']").length;
+            var fecha = GetURLParameter("fecha");
+            var oidExploracion = GetURLParameter("ior_paciente");
+
+            if (exploracionesAFacturar === 0) {
+                swal("No hay exploraciones ni consumibiles pendientes de Facturar", "Facturar", "error");
+            }
+            else {
+
+                //var listaExploraciones = $("#ExploracionesList tbody tr[data-facturado='F']").find('.fa-check');
+                swal({
+                    title: "Existen exploracion y/o consumibles marcados sin facturar. Confirme crear una factura nueva con la lineas indicadas",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Aceptar",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location = '/Facturas/CreateOrEdit?ior_factura=0&ior_exploracion=' + $($(".incluirEnFactura[value='T']")[0]).data('oid')
+                    }
+                });
+
+            }
+            //
+            return false;
+        });
+
+        $(document).on('click', '.facturar', function () {
+
+            var exploracionesAFacturar = $(".incluirEnFactura[value='T']").length;
+            var fecha = GetURLParameter("fecha");
+            var ior_paciente = GetURLParameter("ior_paciente");
+
+            if (exploracionesAFacturar === 0) {
+                swal("No hay exploraciones ni consumibiles pendientes de Facturar", "Facturar", "error");
+            }
+            else {
+
+                //var listaExploraciones = $("#ExploracionesList tbody tr[data-facturado='F']").find('.fa-check');
+                swal({
+                    title: "Existen exploracion y/o consumibles marcados sin facturar. Confirme crear una factura nueva con la lineas indicadas",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Aceptar",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location = '/Facturas/CreateOrEdit?ior_factura=0&ior_exploracion=' + $($(".incluirEnFactura[value='T']")[0]).data('oid')
+                    }
+                });
+
+            }
+            //
+            return false;
+        });
+        function GetURLParameter(sParam) {
+            var sPageURL = window.location.search.substring(1);
+            var sURLVariables = sPageURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++) {
+                var sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] == sParam) {
+                    return sParameterName[1];
+                }
+            }
+        }
+
+
+        //$(document).on('click', '.confirmarPagoSimple', function () {
+        //    var l = $('.confirmarPagoSimple').addClass('btn-info').ladda();
+        //    l.ladda('start');
+        //    return true;
+        //});
+
+        //$(document).on('click', '.pagarTotal', function () {
+        //    var total = $(this).data('total');
+        //    $("#PAGO").val(total);
+        //    $(".confirmarPagoSimple").trigger('click');
+        //});
+
+        $(document).on('click', '.borrar', function (e) {
+            e.preventDefault();
+            var oidpago = $(this).data('oidpago');
+            var url = "/Pagos2/Delete/" + oidpago  //"?ior_paciente=" + ior_paciente + '&crearNuevoPago=' + esNuevoPago; //The Url to the Action  Method of the Controller
+            swal({
+                title: 'Confirma que desea borrar un pago?',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        success: function (evt) {
+
+                        },
+                        complete: function () {
+                            location.reload();
+                        }
+                    });
+                }
+
+            });
+
+        });
+
+
+     
+        $('.pagar,.añadirPago,.nuevopagoPrivado').click(function (e) {
+            e.preventDefault();
+            var esNuevoPago = $(this).hasClass('añadirPago');
+            var precio = $(this).data('precio');
+            var oidpago = $(this).data('oidpago');
+            var orden = $(this).data('orden');
+            $("#OIDPAGO").val(oidpago);
+            var ior_paciente = GetURLParameter("ior_paciente");
+
+            var url = "/Pagos2/PagoSimple/" + oidpago + "?ior_paciente=" + ior_paciente + '&crearNuevoPago=' + esNuevoPago; //The Url to the Action  Method of the Controller
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                dataType: "html",
+                success: function (evt) {
+                    $('#modal-form-pagoSimple').remove();
+                    $("body").append(evt);
+                    $('#modal-form-pagoSimple').modal('show');
+                },
+                complete: function () {
+                       jQuery.validator.setDefaults({
+        highlight: function (element, errorClass, validClass) {
+            if (element.type === "radio") {
+                this.findByName(element.name).addClass(errorClass).removeClass(validClass);
+            } else {
+
+                $(element).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback');
+                $(element).closest('.form-group').find('i.fa').remove();
+                $(element).closest('.form-group').append('<i  style="top:33px" class="fa fa-exclamation fa-lg form-control-feedback"></i>');
+            }
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            if (element.type === "radio") {
+                this.findByName(element.name).removeClass(errorClass).addClass(validClass);
+            } else {
+                $(element).closest('.form-group').removeClass('has-error has-feedback').addClass('has-success has-feedback');
+                $(element).closest('.form-group').find('i.fa').remove();
+                $(element).closest('.form-group').append('<i style="top:33px" class="fa fa-check fa-lg form-control-feedback"></i>');
+            }
+        }
+    });
+                }
+            });
+        });
+
+        $('.pagarTodo').click(function (e) {
+            e.preventDefault();
+
+            var ior_paciente = GetURLParameter("ior_paciente");
+            var fecha = $(this).data("fecha");// GetURLParameter("fecha");
+
+            var url = "/Pagos2/PagarTodo?fecha=" + fecha
+                + "&ior_paciente="
+                + ior_paciente; //The Url to the Action  Method of the Controller
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                dataType: "html",
+                success: function (evt) {
+                    $('#modal-form-pagoTotal').remove();
+                    $("body").append(evt);
+                    $('#modal-form-pagoTotal').modal('show');
+                },
+                complete: function () {
+                    var date = new Date();
+                    var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+                    $("#FECHAPAGO").datepicker({
+
+                        format: "dd/mm/yyyy",
+                        todayBtn: true,
+                        language: "es",
+                        autoclose: true,
+                        todayHighlight: true
+
+                    });
+                     $( "#FECHAPAGO" ).datepicker("option", "minDate", $fecha); 
+                    $('#FECHAPAGO').datepicker('setDate', today);
+                }
+            });
+
+        });  
+
+
+
+
+    </script>
+}
+

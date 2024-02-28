@@ -1,0 +1,195 @@
+﻿@model  RadioWeb.ViewModels.Pagos.VMPago
+
+@section estilos{
+    <link href="~/css/plugins/dualListbox/bootstrap-duallistbox.min.css" rel="stylesheet">
+} @*
+    @section barraTop{
+
+
+       <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-lg-8">
+                <h2>
+
+                    <span class="pull-right" id="cantidadPendienteTotal">
+                        <i class="fa fa-briefcase"></i>
+                        @Model.CANTIDADPENDIENTE  @Model.MONEDA.SIMBOLO
+                    </span>
+                </h2>
+
+            </div>
+            <div class="col-lg-4">
+                <div style="margin-top:20px;margin-bottom:10px;" class="pull-right">
+                    <a class="btn btn-danger pull-right btn-outline pagoRapido" href="/Pagos/PagoRapido/@Model.EXPLORACIONES.First().OID">Pagar con fecha de hoy</a>
+                    <a class="btn btn-danger pull-right btn-outline pagoRapido" href="/Pagos/PagoRapido/@Model.EXPLORACIONES.First().OID">Pagar con fecha de hoy</a>
+                    <a class="btn btn-info pull-right btn-outline facturar" href="#">Facturar</a>
+                </div>
+            </div>
+
+        </div>
+
+    }*@
+
+        <div class="col-lg-12" style="min-height:500px;">
+            <input type="hidden" id="OID" name="OID" value="@Model.EXPLORACIONES.First().OID" />
+            <input type="hidden" id="SIMBOLO" name="SIMBOLO" value="@Model.MONEDA.SIMBOLO" />
+            <div class="row">
+                <div class="col-lg-12" style="padding-right: 3px;">
+                    <div class="ibox float-e-margins" style="margin-bottom: 5px;">
+                        <div class="ibox-title">
+                            <h3>EXPLORACIONES REALIZADAS POR @Model.EXPLORACIONES.First().PACIENTE.PACIENTE1 el día @Model.EXPLORACIONES.First().FECHA.Value.ToShortDateString()</h3>
+
+                        </div>
+                        <div class="ibox-content exploracionContainer" style="margin-bottom: 5px; padding: 5px;">
+                            <div class="exploracionContainer">
+                                @Html.Partial("~/Views/Pagos/_ListaDiaPagos.cshtml", Model.EXPLORACIONES)
+
+                            </div>
+                            <div class="pagosContainer"></div>
+                        </div>
+                        
+                    </div>
+                </div>
+        
+
+        </div>
+<div class="row">
+    <div class="col-lg-12" style="padding-right: 3px;">
+        <div class="ibox float-e-margins" style="min-height: 100px; margin-bottom: 5px;">
+            <div class="ibox-title">
+                <h5>Consumibles</h5>
+
+            </div>
+            <div class="ibox-content  consumiblesEmpty hide">
+                <h3><i class="fa fa-eyedropper"></i>No hay consumibles asociados</h3>
+            </div>
+            <div class="ibox-content consumiblesContainer" style="margin-bottom: 5px;">
+
+            </div>
+            <div class="pagosConsumiblesContainer"></div>
+        </div>
+    </div>
+    @*<div class="col-lg-4" style="padding-left: 3px;">
+        <div class="ibox float-e-margins" style="min-height: 80px; margin-bottom: 5px;">
+            <div class="ibox-title">
+                <h5>Pagos Consumibles</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a href="@Url.Action("Add", "Pagos")" class="add-pago consumibles">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content pagosConsumiblesContainer" style="margin-bottom: 5px;">
+            </div>
+        </div>
+    </div>*@
+
+</div>
+
+
+    </div>
+
+@*Ventana Modal para agregar consumible*@
+<div id="modal-form-Consumible" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Cerrar</span></button>
+                <h4 class="modal-title">Añadir consumible @Model.GRUPO </h4>
+            </div>
+            @using (Ajax.BeginForm("Add", "Consumible", new AjaxOptions
+            {
+                HttpMethod = "POST",
+                OnSuccess = "OnSuccess",
+                OnFailure = "OnFailure"
+            }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(p => p.IOR_GAPARATO)
+
+
+                <div class="modal-body">
+                    <div class="row">
+
+
+                        <input type="hidden" name="OIDEXPLORACION" id="OIDEXPLORACION" value="" />
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IOR_MUTUACONSUMIBLE)
+                                @Html.DropDownListFor(m => Model.IOR_MUTUACONSUMIBLE,
+                                 new SelectList(Model.MUTUAS, "OID", "NOMBRE"),
+                                 new { @class = "form-control select2", data_width = "100%" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IOR_ADDCONSUMIBLE)
+
+                                <select id="IOR_ADDCONSUMIBLE" name="IOR_ADDCONSUMIBLE" class="form-control select2" data-width="100%">
+
+
+                                    @foreach (RadioWeb.Models.PRECIOS_CONSUM item in Model.CONSUMIBLESASIGNABLES)
+                                    {
+                                        if (item.IOR_CONSUM == Model.IOR_ADDCONSUMIBLE)
+                                        {
+                                            <option selected="selected" value="@item.IOR_CONSUM">@item.CONSUMIBLE.DES_CONSUM</option>
+
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.IOR_CONSUM">@item.CONSUMIBLE.DES_CONSUM</option>
+
+                                        }
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="precio">Precio</label>
+                                <input type="text" id="PRECIO" name="PRECIO" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                    <button type="submit" class="btn btn-primary btn-sm ">Guardar</button>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+@section scripts{
+    <!-- Dual Listbox -->
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Pagos/Details.js")"></script>
+    <script type="text/javascript">
+        function OnSuccess() {
+            $("#modal-form-Consumible").modal('hide');
+
+            LoadConsumibles($("#OID").val());
+            toastr.success('Consumible agregado correctamente', 'Consumible', {
+                timeOut: 3000,
+                positionClass: 'toast-bottom-right'
+            });
+
+        }
+        function OnFailure(xhr, status) {
+            toastr.error('Consumible agregado erroneamente', 'Consumible', {
+                timeOut: 3000,
+                positionClass: 'toast-bottom-right'
+            });
+        }
+
+
+    </script>
+}

@@ -1,0 +1,79 @@
+﻿@model ICollection<RadioWeb.Models.DIRECCION>
+
+<div class="ibox float-e-margins" style="margin-bottom:5px;">
+ 
+    <div class="ibox-content" style="padding: 0px;" >
+        @{ 
+            int j = 0;
+            foreach (var item in Model)
+            {
+
+            <div id="@item.OID" data-owner="@item.OWNER" class="direccion   fade  in">
+                <input type="hidden" id="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].OID" })" name="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].OID" })"  value="@item.OID" />
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-sm-9">
+                          
+                            @Html.LabelFor(m => item.DIRECCION1)
+                            @Html.TextBoxFor(m => item.DIRECCION1,
+                           new { @class = "form-control",
+                               @style = "text-transform:uppercase;",
+                               placeHolder = "Nombre de la calle",
+                               id = String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].DIRECCION1" }),
+                               Name = String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].DIRECCION1" })
+                           })                        
+                            @Html.ValidationMessageFor(m => item.DIRECCION1)
+                            
+                        </div>
+                        <div class="col-sm-3">
+                            @Html.LabelFor(m => item.CP)
+                            @Html.TextBoxFor(m => item.CP,
+                           new
+                           {
+                               @class = "form-control codigoPostal",
+                               @style = "text-transform:uppercase;",
+                               placeHolder = "Código Postal",
+                               id = String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].CP" }),
+                               Name = String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].CP" })
+                           })
+                            @Html.ValidationMessageFor(m => item.CP)
+                            
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+                        <div class="col-sm-5">
+                            <label class="control-label" for="POBLACION">Población</label>
+                            @if (!String.IsNullOrEmpty( item.POBLACION) && !item.POBLACION.ToUpper().Equals("SIN DIRECCIÓN"))
+                            { 
+                                <input class="form-control" 
+                                       id="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].POBLACION" })" 
+                                       name="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].POBLACION" })" 
+                                       maxlength="30"  type="text" value="@item.POBLACION" />
+                            }
+                            else
+                            {
+                                <input class="form-control" id="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].POBLACION" })" name="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].POBLACION" })" maxlength="23"  type="text"  />
+                        
+                            }
+
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label" for="Provincia">Provincia</label>
+                            <input class="form-control" id="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].PROVINCIA" })" name="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].PROVINCIA" })" maxlength="15"  type="text" value="@item.PROVINCIA" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="control-label" for="Pais">Pais</label>
+                            <input class="form-control" id="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].PAIS" })" name="@String.Concat(new string[] { "DIRECCIONES[", @j.ToString(), "].PAIS" })" maxlength="15"  type="text" value="@item.PAIS" />
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+                j = j + 1;
+            }
+        }
+    </div>
+</div>

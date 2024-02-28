@@ -1,0 +1,73 @@
+﻿@model IEnumerable<RadioWeb.ViewModels.Informes.VMInformesNoRevisados>
+
+<table id="InformesRevisar" class="table clicable  table-stripped footable"  data-filter-position="left" data-filtering="true" data-paging="true"  data-paging-size="8"
+                                       data-sorting="true" data-paging-count-format="{CP} de {TP}"
+                                       data-filter-placeholder="Buscar">
+    <thead>
+        <tr>
+            <th data-type="date" data-format-string="dd/MM/YYYY" class="clicable">Fecha</th>
+            <th><span title="Paciente">Paciente</span></th>
+            <th><span title="Centro">Centro</span></th>
+            <th><span title="Informante">Informante</span></th>
+            <th><span title="Titulo">Título</span></th>
+            <th align="right">...</th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var color = "";
+
+            if (item.BORRADO)
+            {
+                color = "red";
+            }
+
+
+            <tr data-oid="@item.OID" style="color:@color;">
+                <td data-type="date"><span>@item.FECHA.Value.ToString("dd/MM/yyyy") - @item.HORA</span></td>
+                <td><span>@item.PACIENTE</span></td>
+                <td><span>@item.CENTRO</span></td>
+                <td><span>@item.MEDINFO</span></td>
+                <td><span>@item.TITULO</span></td>
+                <td class="text-right">
+                    @{
+                        var accion = "Editar";
+                        var clase = "btn-warning";
+                        if (item.VALIDACION == "T")
+                        {
+                            accion = "Leer";
+                            clase = "btn-primary";
+                        }
+
+                    }
+                    @Html.ActionLink(
+                                                linkText: @accion,
+                                                actionName: "Edit",
+                                                controllerName: "Informe",
+                                                routeValues: new
+                                                {
+                                                    OID = @item.OID
+                                                },
+                                                htmlAttributes: new
+                                                {
+                                                    @class = "btn btn-warning btn-xs pull-right",
+                                                    data_oidexploracion = item.IOR_EXPLORACION
+                                                }
+
+                                                )
+                </td>
+            </tr>
+                        }
+
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="10">
+                <ul class="pagination pull-right"></ul>
+            </td>
+        </tr>
+    </tfoot>
+</table>

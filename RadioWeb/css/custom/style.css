@@ -1,0 +1,216 @@
+﻿
+    fieldset {
+        border: 1px solid #ddd !important;
+        margin-top: 5px;
+        min-width: 0;
+        padding: 10px;
+        position: relative;
+        border-radius: 4px;
+        padding-left: 10px !important;
+    }
+
+    legend {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 0px;
+        width: 15%;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px 5px 5px 10px;
+        background-color: #ffffff;
+    }
+
+    .filtroAplicado {
+        color: red !important;
+        font-weight: bold;
+    }
+
+    #ExploracionesList, #PagosList, #ConsumiblesList, .ConsumiblesList > tbody > tr:hover {
+        background-color: none;
+        cursor: pointer;
+    }
+
+    .clicable > tbody > tr:hover {
+        background-color: none;
+        cursor: pointer;
+    }
+
+
+    #PacienteList, #ExploracionesTable > tbody > tr:hover {
+        background-color: none;
+        cursor: pointer;
+    }
+
+.dropdown-divider {
+    height: 0;
+    margin: .5rem 0;
+    overflow: hidden;
+    border-top: 1px solid #e9ecef;
+} 
+
+    #PacienteList, #ExploracionesTable > thead > tr > th {
+    }
+
+    #PacienteList, #ExploracionesTable > tbody > tr:hover td {
+    }
+
+    #PacienteList, #ExploracionesTable > tbody > tr > td {
+        padding: 3px 4px;
+    }
+
+    #DetailsPaciente > .form-group {
+        margin-bottom: 0px;
+    }
+
+    #DetailInforme > .form-group {
+        margin-bottom: 0px;
+    }
+
+    .modal-icon {
+        color: #e2e3e3;
+        font-size: 84px;
+    }
+
+    .modal-body {
+        background-attachment: scroll;
+        background-clip: border-box;
+        background-color: #f8fafb;
+        background-image: none;
+        background-origin: padding-box;
+        background-position: 0 0;
+        background-repeat: repeat;
+        background-size: auto auto;
+    }
+
+    .modal-header {
+        padding-bottom: 30px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 30px;
+        text-align: center;
+    }
+
+    .animated.modal.fade .modal-dialog {
+        transform: none;
+    }
+
+    .modal-title {
+        font-size: 26px;
+    }
+
+    .modal-footer {
+        margin-top: 0;
+    }
+
+    table.seleccionable tbody tr:hover {
+        background-color: none;
+        cursor: pointer;
+    }
+
+    .intocable {
+        margin: 0;
+    }
+
+    /*circulo con el color CID de cadaExploracion*/
+    .circlecID {
+        width: 1%;
+        padding: 8px inherit;
+        margin: 2PX auto;
+        border-radius: 25px;
+    }
+
+    .ACTIVA {
+        background-color: rgba(0, 255, 33, 0.86) !important;
+        color: black;
+        font-weight: bold;
+    }
+
+
+
+    .ANULACONSENTIMIENTO {
+        background-color: rgba(255, 0, 0, 0.35);
+        color: white;
+        font-weight: bold;
+    }
+
+tr.huecoLibre.ACTIVA {
+    background-color: rgba(0, 255, 33, 0.86) !important;
+    color: black;
+    font-weight: bold;
+}
+    
+
+    tr.huecoLibre {
+        background-color: rgba(238, 236, 143, 0.54) !important;
+    }
+
+        tr.huecoLibre td {
+            font-size: 13px;
+            font-style: normal;
+        }
+
+            tr.huecoLibre td span {
+                font-size: 13px;
+                font-style: normal;
+            }
+
+
+
+
+
+    .ACTIVAALTA {
+        background-color: rgba(255, 0, 0, 0.66);
+        color: black;
+        font-weight: bold;
+    }
+
+
+
+
+    #ExploracionDetailsPacienteContainer div.form-group {
+        padding: 0px;
+    }
+
+    #ColorPicker li a {
+        border: 1px solid black;
+        border-radius: 0px;
+        height: 20px;
+        margin-bottom: 2px;
+    }
+
+        #ColorPicker li a:hover {
+            background-color: none;
+            background-image: none;
+        }
+
+    .progress-label {
+        float: left;
+        margin-right: 1em;
+    }
+
+    .totalStats > td {
+        background-color: #28228a;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .totalResumen {
+        background-color: rgba(79, 126, 249, 0.66);
+        font-weight: bold;
+        color: white;
+        font-size: 16px;
+        text-align: right;
+    }
+
+input[data-val-required]:invalid {
+    box-shadow: 0 0 3px 1px red
+}
+
+
+select[[data-val-enteropositivo]]:invalid {
+    box-shadow: 0 0 3px 1px red
+}
+
+
+

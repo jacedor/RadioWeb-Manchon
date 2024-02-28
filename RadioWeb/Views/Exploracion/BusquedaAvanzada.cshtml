@@ -1,0 +1,238 @@
+﻿@model  RadioWeb.ViewModels.Exploracion.VWBusquedaAvanzada
+@{
+    ViewBag.Title = "Búsqueda Avanzada";
+
+}
+@section barraTop{
+
+
+}
+
+
+<div class="row animated fadeInDown">
+
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a data-toggle="tab" href="#Busqueda">Busqueda</a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#Resultados">
+                    Resultados
+                    <span class="label label-warning" id="cuentaResultados"></span>
+                </a>
+
+            </li>
+        </ul>
+        <div class="tab-content">
+
+            <div id="Busqueda" class="tab-pane active ">
+
+                <div class="panel-body">
+                    @using (Ajax.BeginForm("BusquedaAvanzada",
+          "Exploracion",
+          new AjaxOptions
+          {
+              HttpMethod = "POST",
+              UpdateTargetId = "tablaResultado",
+              OnSuccess = "OnSuccess",
+              OnFailure = "OnFailure"
+          }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="panel-info">
+                            <div class="panel-heading">
+                                <i class="fa fa-info-circle"></i> Condiciones de las exploraciones
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.FECHAINICIAL)
+                                        @Html.TextBoxFor(m => Model.FECHAINICIAL, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker" })
+
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.FECHAINICIAL)</p>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.FECHAFINAL)
+                                        @Html.TextBoxFor(m => Model.FECHAFINAL, "{0:dd/MM/yyyy}", new { @class = "form-control date-picker" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.FECHAFINAL)</p>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.LabelFor(m => m.CENTROS)
+                                        @Html.DropDownListFor(m => Model.IOR_CENTRO, new SelectList(Model.CENTROS, "OID", "NOMBRE"), new { @class = "form-control" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_CENTRO)</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.IOR_GAPARATO)
+                                        @Html.DropDownListFor(m => Model.IOR_GAPARATO, new SelectList(Model.GRUPOS, "OID", "DES_GRUP"), new { @class = "form-control " })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_GAPARATO)</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.IOR_DAPARATO)
+                                        @Html.DropDownListFor(m => Model.IOR_DAPARATO, new SelectList(Model.DAPARATOS, "OID", "COD_FIL"), new { @class = "form-control " })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_DAPARATO)</p>
+                                    </div>
+
+                                </div>
+
+
+
+
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        @Html.BootstrapLabelFor(m => m.IOR_ENTIDADPAGADORA)
+                                        @Html.EditorFor(model => model.IOR_ENTIDADPAGADORA, new
+                                        {
+                                            htmlAttributes = new { data_filter_calendar = "true" }
+                                        })
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.IOR_MEDICOINFORMANTE)
+                                        @Html.DropDownListFor(m => Model.IOR_MEDICOINFORMANTE, new SelectList(Model.MEDICOS, "OID", "NOMBRE"), new { @class = "form-control " })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_MEDICOINFORMANTE)</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        @Html.LabelFor(m => m.IOR_MEDICOREVISION)
+                                        @Html.DropDownListFor(m => Model.IOR_MEDICOREVISION, new SelectList(Model.MEDICOS, "OID", "NOMBRE"), new { @class = "form-control s" })
+                                        <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.IOR_MEDICOREVISION)</p>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Informada</label>
+
+                                        <select id="INFORMADA" name="INFORMADA" class="selectpicker form-control select2" style="padding: 4px;">
+                                            <option value="A">Indiferente</option>
+                                            <option value="P">Pendiente Revisar</option>
+                                            <option value="T">Sí</option>
+                                            <option value="F">No</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="user-button">
+                            <div class="row">
+
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary btn-sm btn-block pull-right @(!Model.PendienteRevisa? "":"disabled")" id="btnBuscar" @(!Model.PendienteRevisa ? "" : "disabled")>
+                                        <i class="fa fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+
+
+
+            </div>
+            <div id="Resultados" class="tab-pane">
+                <div class="panel-body" id="tablaResultado">
+                    @if (Model.Resultados.Count > 0)
+                    {
+
+                        @Html.Partial("~/Views/Exploracion/_ListaBusquedaAvanzada.cshtml", Model.Resultados)
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<div id="modal-form-documentos" class="modal  fade" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Close</span>
+                </button>
+
+                <h4 class="modal-title">Documentos Asociados</h4>
+            </div>
+
+            <div class="modal-body" id="DocumentosAsociados">
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $(".date-picker").datepicker({
+                format: "dd/mm/yyyy",
+                todayBtn: true,
+                language: "es",
+                autoclose: true,
+                todayHighlight: true
+            });
+
+            $("li[data-view]").removeClass('active');
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewBusquedaAvanzada]").addClass("active");
+            $("[data-view=ViewBusquedaAvanzada]").parents("ul").removeClass("collapse");
+
+
+
+
+
+            if ($("#explosNoInformadas").find('tr').length > 0) {
+                $('a[href="#Resultados"]').click();
+                $('#cuentaResultados').html($("#explosNoInformadas tbody tr").length);
+            }
+        });
+
+        $(document).on('click', '.btn-docs', function (e) {
+            var button = $(this);
+            var ContenedorListaDocumentos = $('#DocumentosAsociados');
+
+            $.ajax({
+                type: 'GET',
+                url: '/Documentos/List/' + button.data('oidexploracion'),
+                beforeSend: function () {
+
+                    ContenedorListaDocumentos.html('');
+                },
+                success: function (datosLista) {
+
+                    ContenedorListaDocumentos.html(datosLista);
+                },
+                complete: function () {
+                    $('#modal-form-documentos').modal('show');
+                }
+            });
+        });
+
+        function OnSuccess(data) {
+
+            $('.nav-tabs a[href="#Resultados"]').tab('show');
+            $('#cuentaResultados').html($("#explosNoInformadas tbody tr").length);
+            makeBootstrapTable('explosNoInformadas');
+        }
+        function OnFailure(xhr, status) {
+            alert('Error: ' + xhr.statusText);
+        }
+
+    </script>
+
+}
+

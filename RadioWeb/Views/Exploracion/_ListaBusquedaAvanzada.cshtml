@@ -1,0 +1,209 @@
+﻿@model IEnumerable<RadioWeb.ViewModels.Informes.VMExploNoInformadas>
+@{
+    ViewBag.Title = "Busqueda Avanzada";
+}
+
+
+@using (Html.BeginForm("Duplicar", "Informe", FormMethod.Post, new { @id = "myForm", @name = "myForm" }))
+{
+
+    <div class="row">
+        <input type="hidden" id="OID" name="OID" />
+
+        <table id="explosNoInformadas"  data-search="true"  class="table table-bordered ">
+              
+            <thead>
+                <tr>
+                   
+                    <th data-sortable="true">
+                        @Html.DisplayNameFor(model => model.CENTRO)
+                    </th>
+                    <th data-sortable="true">
+                        @Html.DisplayNameFor(model => model.FECHA)
+                    </th>
+                  
+                    <th data-sortable="true">
+                        @Html.DisplayNameFor(model => model.PACIENTE)
+                    </th>
+                    <th data-sortable="true">
+                        @Html.DisplayNameFor(model => model.INFORMADO)
+                    </th>
+                    <th data-sortable="true">
+                        @Html.DisplayNameFor(model => model.FECHAMAXIMA)
+                    </th>
+                    @*<th>
+                        @Html.DisplayNameFor(model => model.DIAS_ENTREGA)
+                    </th>*@
+                    <th>
+                        @Html.DisplayNameFor(model => model.MEDINFO)
+                    </th>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.MEDREV)
+                    </th>                   
+                    <th>
+                        @Html.DisplayNameFor(model => model.DES_MUT)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.COD_FIL)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FIL)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.HAYCONSUMIBLE)
+                    </th>
+                   
+                    <th>
+                        ...
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr data-oidPaciente="@item.IOR_PACIENTE" data-oidExploracion="@item.OID">
+                       
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CENTRO)
+                        </td>
+                        <td data-type="date" data-format-string="dd/MM/YYYY">
+                            @Html.DisplayFor(modelItem => item.FECHA)
+                            @Html.DisplayFor(modelItem => item.HORA)
+                        </td>
+                       
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PACIENTE)
+                        </td>
+                        <td width="10">
+
+                            @if (item.IOR_MASTER > 0)
+                            {
+                                <a href="/Informe/Duplicar/@item.IOR_MASTER">
+                                    <i class="fa fa-clipboard" style="font-size: 12px;   color:#ffb400;"
+                                       title="Ir a Informe exploración relacionada"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                if (item.INFORMADO)
+                                {
+                                    <a href="/Informe/Duplicar/@item.OID">
+                                        <i class="fa fa-clipboard" style="font-size: 12px; color: green;"
+                                           title="Informada"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="/Informe/Duplicar/@item.OID">
+                                        <i class="fa fa-clipboard" style="font-size: 12px; color: red;"
+                                           title="No Informada"></i>
+                                    </a>
+                                }
+
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FECHAMAXIMA)
+                        </td>                     
+
+
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MEDINFO)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MEDREV)
+                        </td>                     
+                        <td>
+                            @if (ViewBag.CampoMutua == "NOMBRE")
+                            {
+                                @Html.DisplayFor(modelItem => item.DES_MUT)
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.COD_MUT)
+                            }
+
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.COD_FIL)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FIL)
+                        </td>
+                        <td>
+                            @if (item.HAYCONSUMIBLE)
+                            {
+                                <i class="fa fa-eyedropper" style="font-size: 11px; color: blue;" title="Consumible"></i>
+                            }
+                        </td>
+                      
+                        <td class="text-right">
+                            <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false">Acciones <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+
+                                    <li><a class="btn-docs" data-oidExploracion="@item.OID" href="#">Documentos Asociados</a></li>
+                                    @if (item.IOR_INFORME > 0)
+                                    {
+                                        <li>
+                                            <a href="/Informe/Edit/@item.IOR_INFORME" data-exploracion="@item.OID" title="Editar Informe">
+                                                Ver Informe
+                                            </a>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </td>
+                 
+                    </tr>
+                }
+            </tbody>
+            @*<tfoot>
+                <tr>
+
+                    <td colspan="18">
+                        <ul class="pagination pull-right"></ul>
+                    </td>
+                </tr>
+            </tfoot>*@
+        </table>
+
+    </div>
+}
+
+
+
+@section scripts
+    {
+
+    <script type="text/javascript">
+
+
+
+
+
+        $(document).on('click', '#explosNoInformadas tbody tr', function () {
+            $(this).siblings().removeClass('ACTIVA');
+            $(this).addClass('ACTIVA');
+            $("#OID").val($(this).data('oidexploracion'));
+            $("#myForm").submit();
+        });
+
+
+
+
+        $(document).ready(function () {
+            $("li[data-view]").removeClass('active');
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewBusquedaAvanzada]").addClass("active");
+            $("[data-view=ViewBusquedaAvanzada]").parents("ul").removeClass("collapse");
+            makeBootstrapTable('explosNoInformadas');
+        });
+
+    </script>
+}

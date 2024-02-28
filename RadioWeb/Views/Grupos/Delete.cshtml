@@ -1,0 +1,64 @@
+﻿@model RadioWeb.Models.GAPARATOS
+
+@{
+    ViewBag.Title = "Eliminar";
+}
+
+<h2>Eliminar</h2>
+
+
+@* Si se puede borrar el registro porque no tiene dependencia de FK mostramos el mensaje. *@
+@if (ViewBag.fkBorrable)
+{
+    <h3>¿Está seguro que desea eliminar este grupo?</h3>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">Este registro no se puede eliminar por dependencias. </div>
+}
+
+
+<div>
+    <h4>APARATO</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.OID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.COD_GRUP)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.COD_GRUP)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DES_GRUP)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DES_GRUP)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+
+            @* Si el registro no se puede eliminar escondemos el boton. *@
+            @if (ViewBag.fkBorrable)
+            {
+                <input type="submit" value="Eliminar" class="btn btn-danger" /> <span>|</span>
+            }
+            @Html.ActionLink("Volver a la lista", "Index", new { id = Model.OWNER, tab = "tabAparatos" })
+        </div>
+    }
+</div>

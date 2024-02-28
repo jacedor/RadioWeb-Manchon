@@ -1,0 +1,322 @@
+﻿@model RadioWeb.Models.EXPLORACION
+@using RadioWeb.Models;
+@{
+
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    ViewBag.Title = "Exploración";
+}
+@section estilos{
+    <style>
+
+
+
+        #tblRecogidaMultiple tbody tr.ACTIVA:hover {
+            background-color: rgba(0, 255, 33, 0.86);
+            cursor: pointer;
+        }
+    </style>
+    <link href="~/css/plugins/jsTree/style.min.css" rel="stylesheet">
+    <link href="~/css/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+<div class="row">
+
+    <div class="col-lg-12" id="ExploracionDetailsPaciente">
+        @Html.Partial("~/Views/Shared/EditorTemplates/Paciente.cshtml",
+                                                             Model.PACIENTE,
+                                                             new ViewDataDictionary { { "EXPLORACION.DATOSPERSONALES", ViewBag.EstadoPanelPaciente },
+{ "controlador", "EXPLORACION" } })
+    </div>
+
+
+    <hr />
+    @if (Model.INFOMUTUA != null && !String.IsNullOrEmpty(Model.INFOMUTUA.TEXTO))
+    {
+        <div id="indicacionesMutua" class="col-lg-12 hide">
+            <div class="ibox float-e-margins" style="margin-bottom: 5px;">
+                <div class="ibox-title">
+                    <h5>@Model.ENTIDAD_PAGADORA.NOMBRE</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content " style="padding-bottom: 10px; max-height: 180px; overflow-y: scroll;">
+                    @if (Model.INFOMUTUA != null)
+                    {
+                        @Html.Raw(@Model.INFOMUTUA.TEXTO)
+
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    }
+
+
+
+    <input type="hidden" name="VOLVERTRASGUARDAREXPLORACION" id="VOLVERTRASGUARDAREXPLORACION" value="F" />
+
+
+
+
+    <div class="col-lg-12" id="PanelExploracionInner">
+        @{Html.RenderPartial("PartialMutuasNew"); }
+        @*@switch (@Model.IOR_GPR)
+    {
+        case 1:
+
+            break;
+        case 2:
+            Html.RenderPartial("PartialMutuasNew");
+            break;
+        case 3:
+            Html.RenderPartial("PartialICS");
+            break;
+        default:
+            break;
+    }*@
+    </div>
+
+
+
+
+
+
+
+</div>
+
+
+<div class="modal inmodal fade" id="modalSMS" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Enviar SMS</h4>
+            </div>
+            <div class="modal-body">
+                <div id="displayPermisoLOPDsms">
+
+                </div>
+                <p>
+                    <input type="hidden" value="GRUP MANCHON:  Se le ha enviado un informe de su estudio por mail. El código de acceso es CDPI . Si tiene alguna duda llame al 934450600. Gracias" id="textoSMSPlantilla" />
+                    <textarea class="form-control" id="textoSMS" name="textoSMS" rows="3">GRUP MANCHON:  Se le ha enviado un informe de su estudio por mail. El código de acceso es CDPI . Si tiene alguna duda llame al 934450600. Gracias</textarea>
+                </p>
+                <p>
+                    @if (Model.PACIENTE.TELEFONOS.Count > 0)
+                    {
+                        <input type="text" name="movil" id="movil" value="@Model.PACIENTE.TELEFONOS.First().NUMERO" />
+                    }
+                    else
+                    {
+                        <input type="text" name="movil" id="movil" value="" />
+                    }
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="EnviarSMS">Enviar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal fade" id="myModalEnvioInforme" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Enviar Informe por email</h4>
+                <small class="font-bold">@Model.PACIENTE.PACIENTE1</small>
+            </div>
+            <div class="modal-body" id="cargandoInforme">
+                <div class="spiner-cargando hide">
+                    <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" id="cuerpoModelEnvioMail">
+            </div>
+
+            <div class="modal-footer">
+                <a title="" data-placement="top" data-toggle="tooltip" class="btn btn-sm btn-primary" id="EnviarEmail" data-original-title="Send"><i class="fa fa-reply"></i>Enviar</a>
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal-form-imagenes" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+
+                <h4 class="modal-title">Imágenes</h4>
+            </div>
+
+            <div class="modal-body">
+                @if (Model.IMAGENES == null || Model.IMAGENES.Count() == 0)
+                {
+                    <h3>No hay imágenes asociadas a esta exploración.</h3>
+                }
+                else
+                {
+                    <div class="carousel slide" id="carousel1">
+                        <div class="carousel-inner">
+                            @{
+                                var activa = "active";
+                                foreach (IMAGENES item in Model.IMAGENES)
+                                {
+                                    <div class="item @activa">
+                                        <img src="@RadioWeb.Helpers.ImageHelper.PhotoBase64ImgSrc(item.PATH + item.NOMBRE + "." + item.EXT)" class="img-responsive" />
+
+                                    </div>
+                                    activa = "";
+                                }
+                            }
+                        </div>
+                        <a data-slide="prev" href="#carousel1" class="left carousel-control">
+                            <span class="icon-prev"></span>
+                        </a>
+                        <a data-slide="next" href="#carousel1" class="right carousel-control">
+                            <span class="icon-next"></span>
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contenedorModalVidSigner">
+    <div id="modal-form-VidSigner" class="modal " aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+
+                    <h4 class="modal-title">Enviar a VidSigner</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+
+                            <li class="active"><a data-toggle="tab" href="#tab-consentimientos">Consentimientos</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab-Lopd">Lopd</a></li>
+
+                        </ul>
+                        <div class="tab-content">
+
+                            <div id="tab-consentimientos" class="tab-pane active">
+                                <div class="panel-body">
+                                    <div id="contenedorVidSigner">
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div id="tab-Lopd" class="tab-pane">
+                                <div class="panel-body">
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+@section scripts{
+
+
+
+    <script src="~/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Exploracion/Details.js")"></script>
+    <script src="~/js/plugins/summernote/summernote.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote-es-ES.min.js"></script>
+    <script src="~/js/custom/Informe/enviarInformeShared.js"></script>
+
+    <script>
+
+
+
+        $(document).ready(function () {
+
+
+            $('.textoXeditable').editable({
+                container: 'body',
+                inputclass: 'anchoTexto'
+            });
+
+            //$('.footable').footable();
+        });
+    </script>
+
+}
+
+
+
+
+
+
+
+

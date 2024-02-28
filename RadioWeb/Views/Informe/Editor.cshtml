@@ -1,0 +1,538 @@
+﻿@model  RadioWeb.ViewModels.Informes.VMInforme
+@{
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+
+    bool deshabilitarInformadas = false;
+    if (Model.VALIDACION == "T")
+    {
+        deshabilitarInformadas = true;
+    }}
+
+@section estilos{
+
+
+    <link href="~/css/plugins/summernote/summernote.css" rel="stylesheet" />
+    <link href="~/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+    <link href="~/css/plugins/printpdf/print.min.css" rel="stylesheet" />
+    <style>
+
+        #AudiosAsociados button {
+            flex-grow: 1;
+            height: 2.5rem;
+            min-width: 2rem;
+            border: none;
+            border-radius: 0.15rem;
+            background: #ed341d;
+            margin-left: 2px;
+            box-shadow: inset 0 -0.15rem 0 rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+            #AudiosAsociados button:hover, button:focus {
+                outline: none;
+                background: #c72d1c;
+            }
+
+            #AudiosAsociados button::-moz-focus-inner {
+                border: 0;
+            }
+
+            #AudiosAsociados button:active {
+                box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.2);
+                line-height: 3rem;
+            }
+
+            #AudiosAsociados button:disabled {
+                pointer-events: none;
+                background: lightgray;
+            }
+
+            #AudiosAsociados button:first-child {
+                margin-left: 0;
+            }
+
+        audio {
+            display: block;
+            width: 100%;
+            margin-top: 0.2rem;
+        }
+
+        .panel {
+            margin-bottom: 0px;
+        }
+
+        ol {
+            padding: 20px;
+            list-style-type: decimal;
+        }
+
+            ol li {
+                list-style: none;
+                float: left;
+                margin: 0 2px;
+                padding: 0 5px;
+            }
+
+
+        #controls {
+            display: flex;
+            margin-top: 2rem;
+        }
+
+
+        .note-editable {
+            font-family: Verdana;
+            font-size: 14px !important;
+        }
+
+            .note-editable p {
+                font-size: 14px;
+                font-weight: normal;
+                font-family: Verdana;
+            }
+    </style>
+}
+
+
+
+@using (Html.BeginForm(Model.ACTION, "Informe", FormMethod.Post, new { @class = "form-horizontal", id = "formulario" }))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="OID" name="OID" value="@Model.OID" />
+
+    <input id="COD_PAC" name="COD_PAC" type="hidden" value="@Model.COD_PAC">
+    <input id="IOR_PAC" name="IOR_PAC" type="hidden" value="@Model.IOR_PAC">
+    <input id="OWNER" name="OWNER" type="hidden" value="@Model.OWNER">
+    <input id="USERNAME" name="USERNAME" type="hidden" value="@Model.USERNAME">
+    <input type="hidden" id="MOVILPACIENTE" name="MOVILPACIENTE" value="@Model.MOVILPACIENTE" />
+    <input type="hidden" id="VALIDACION" name="VALIDACION" value="@Model.VALIDACION" />
+    <input id="ALFAS" name="ALFAS" type="hidden" value="@Model.ALFAS">
+    <input id="MODULOGRABARAUDIO" name="MODULOGRABARAUDIO" type="hidden" value="@Model.MODULOGRABARAUDIO">
+    // @Html.HiddenFor(m => m.TEXTOSMS)
+    <input id="LOGINMEDICOINFORMANTE" name="LOGINMEDICOINFORMANTE" type="hidden" value="@Model.LOGINMEDICOINFORMANTE">
+    <input id="LOGINMEDICOREVISOR" name="LOGINMEDICOREVISOR" type="hidden" value="@Model.LOGINMEDICOREVISOR">
+    <input id="EMPRESA" name="EMPRESA" type="hidden" value="@Model.EXPLORACION.EMPRESA.NOMBRE">
+
+    <input id="UrlPrevia" name="UrlPrevia" type="hidden" value="@Model.URLPREVIA">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>@Model.PACIENTE.PACIENTE1 - @Model.EXPLORACION.APARATO.DES_FIL</h5>
+                    <div class="ibox-tools" style="margin-top:-8px;">
+                        <a href="" class="btn btn-primary btn-xs @(Model.EXPLORACION.RECOGIDO == "T" ? "label-success" : "label-warning") ">@Model.ENTREGADOSTATUS</a>
+                        <button type="button" id="btnDocs" class="btn btn-sm btn-white" data-toggle="modal" data-target="#modal-form-documentos" title="Documentos Asociados">
+                            <i class="fa fa-folder" title="Documentos"></i>
+                        </button>
+
+                        <button type="button" id="btnHistoriaClinica" class="btn btn-white btn-outline  btn-sm" title="Historia Clinica">
+                            <i class="fa fa-book" title="Historia Clinica"></i>
+                        </button>
+                        <a title="" data-toggle="modal" data-target="#modal-form-consumibles" class="btn btn-white btn-outline  btn-sm" href="#" data-original-title="Ver Consumibles">
+                            <i title="Consumibles" class="fa fa-eyedropper"></i>
+                        </a>
+                        <button type="button" id="btnExploracionesHijas" data-oidExploracion="@Model.OWNER" class="btn btn-white btn-outline  btn-sm" title="Exploraciones relacionadas">
+                            <i class="fa fa-thumbs-up" title="Exploraciones relacionadas"></i>
+                        </button>
+                        <a target="_blank" class="btn btn-white btn-outline  btn-sm" href="@Model.URL_PACS" data-original-title="Ver Pacs">
+                            <i title="Llamar al PACS" class="fa fa-external-link"></i>
+                        </a>
+
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+
+                    </div>
+                </div>
+                <div class="ibox-content m-b-none no-paddings">
+                    <div class="form-horizontal" id="DetailInforme">
+                        <div class="form-group ">
+                            <div class="col-sm-3">
+
+                                @Html.BootstrapLabelFor(m => m.TITULO)
+                                <input class="form-control" id="titulo" name="titulo" type="text" value="@Model.TITULO" />
+                                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.TITULO)</p>
+
+                            </div>
+
+
+                            <div class="col-sm-2">
+                                @Html.BootstrapLabelFor(m => m.FECHA)
+                                @Html.TextBoxFor(m => Model.FECHA, "{0:dd/MM/yyyy}",
+new Dictionary<string, object>() {{ "class", "form-control date-picker" },
+                                                                                                                                                                                                                                                                                                                                    {  "readonly " , "readonly " }
+                                                                                                              })
+
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="control-label" for="titulo">HORA</label>
+
+                                <input type="text" class="form-control" id="HORA" name="HORA" value="@Model.HORA" readonly>
+
+
+                            </div><div class="col-sm-2">
+                                @Html.BootstrapLabelFor(m => m.EXPLORACION.FECHAMAXENTREGA)
+                                @Html.TextBoxFor(m => Model.EXPLORACION.FECHAMAXENTREGA, "{0:dd/MM/yyyy}",
+                                                                                                                        new Dictionary<string, object>() {
+                                                                                                                                                                                                                                                                                                                                    { "class", "form-control date-picker" },
+                                                                                                                                                                                                                                                                                                                                    {  "readonly " , "readonly " }
+                                                                                                                       })
+
+                            </div>
+                            @*<div class="col-sm-1">
+                                    <label class="control-label" for="titulo">Hora</label>
+                                    <div class="input-group " >
+                                        <input type="text" class="form-control" id="HORA" name="HORA" value="@Model.HORA" readonly>
+
+                                    </div>
+                                </div>*@
+
+
+                            @if (Model.OID > 0)
+                            {
+                                {
+                                    <div class="col-sm-2">
+                                        <label class="control-label " for="validar">ESTADO ACTUAL</label>
+                                        @if (@Model.VALIDACION == "T")
+                                        {
+                                            <a href="#" id="validar" style="background-color: #1ab394;color:white;" class="btn btn-primary btn-sm pull-right form-control" data-toggle="tooltip" data-placement="top" title="Validado" data-validar="F" data-oid="@Model.OID"><i class="fa fa-thumbs-up"></i>Validado (@Model.USERNAME)</a>
+                                        }
+                                        else if (@Model.VALIDACION == "F")
+                                        {
+                                            <a href="#" id="validar" style="background-color: #ec4758;color:white;" class="btn btn-danger btn-sm pull-right form-control" data-toggle="tooltip" data-placement="top" title="No validado" data-validar="T" data-oid="@Model.OID"><i class="fa fa-times"></i>No validado (@Model.USERNAME)</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="#" id="validar" style="background-color: #f8ac59;color:white;" class="btn btn-warning btn-sm pull-right form-control" data-toggle="tooltip" data-placement="top" title="Anulado" data-validar="A" data-oid="@Model.OID"><i class="fa fa-times"></i>Anulado (@Model.USERNAME)</a>
+                                        }
+                                    </div>
+                                }
+                            }
+
+                            @if (Model.OID > 0)
+                            {
+                                {
+                                    <div class="col-sm-2">
+                                        <label class="control-label " style="visibility:hidden" for="validar">Valorar</label>
+                                        <a href="#" id="btnValorar" style="background-color: #23c6c8;color:white;"
+                                           class="btn btn-info btn-sm pull-right form-control"
+                                           data-target="#modal-form-valorar" data-toggle="modal" title="Valoraciones">
+                                            <i class="fa fa-certificate"></i>&nbsp;Valorar (@Model.VALORACIONIMAGENES)
+                                        </a>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <div class="form-group ">
+                            <div class="col-sm-3">
+                                <label for="IOR_MEDINFORME" class="control-label">MED INFORME</label>
+                                @Html.EditorFor(model => model.IOR_MEDINFORME, new { @disabled = deshabilitarInformadas })
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="IOR_MEDREVISION" class="control-label">MED REVISION</label>
+
+                                @Html.EditorFor(model => model.IOR_MEDREVISION)
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="IOR_TECNICO" class="control-label">TECNICO</label>
+                                @Html.EditorFor(model => model.IOR_TECNICO, new { disabled = true })
+
+                            </div>
+
+                            <div class="col-sm-2">
+                                @Html.BootstrapLabelFor(m => m.FECHAREVISION)
+                                @Html.TextBoxFor(m => Model.FECHAREVISION, "{0:dd/MM/yyyy}",
+                                                                                                                          new Dictionary<string, object>() {
+                                                                                                                                                                                                                                                                                                                                    { "class", "form-control date-picker" },
+                                                                                                                                                                                                                                                                                                                                    {  "readonly " , "readonly " }
+                                                                                                              })
+
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="control-label" for="titulo">HORA REVISIÓN</label>
+                                <div class="input-group clockpicker" data-autoclose="true">
+                                    <input type="text" class="form-control" id="HORAREV" name="HORAREV" value="@Model.HORAREV" readonly>
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-clock-o"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top:15px;">
+
+                            <div class="col-md-2">
+                                <label for="autoguardadoTime" class="control-label">Autoguardado</label>
+                                <input id="autoguardadoTime" class="touchspin3" type="text" value="" name="autoguardadoTime">
+                            </div>
+                            @{
+                                var mostrarDuracion = "hide";
+                                if (oUsuarioLogeado.PRIVILEGIADO == -1)
+                                {
+                                    mostrarDuracion = "";
+                                }
+
+                            }
+                            <div class="col-sm-2 @mostrarDuracion">
+                                @Html.LabelFor(m => m.DURACION)
+                                @Html.TextBoxFor(m => Model.DURACION, new { @readonly = "true", @class = "form-control", @style = "text-transform:uppercase" })
+                            </div>
+                            @if (oUsuarioLogeado.PERFIL == 10 || oUsuarioLogeado.PERFIL == 2)
+                            {
+                                <div class="col-sm-3">
+                                    <label class="control-label" for="PlantillaInforme">Plantilla</label>
+                                    @{
+
+                                        <select id="PLANTILLASINFORMES" name="PLANTILLASINFORMES" class="select2_demo_1 form-control">
+                                            @foreach (P_INFORMES item in Model.PLANTILLASINFORMES)
+                                            {
+
+                                                <option data-subtext="@item.TITULO" data-text-value="@item.TITULO" value="@item.OID">@item.TITULO</option>
+
+                                            }
+                                        </select>
+
+                                    }
+                                </div>
+                            }
+
+                            <div class="col-sm-2">
+                                @*<button type="button" onclick="printJS('pdf/RW_20516392_CABALLE GINER, LUIS.pdf')">
+                                        Print PDF
+                                    </button>*@
+                                <label class="control-label " style="visibility:hidden;" for="volveratras">Volver</label>
+                                <a href="@Model.URLPREVIA" id="volveratras" class="btn btn-sm btn-primary form-control pull-right" data-toggle="tooltip" data-placement="top" title="Volver">
+                                    <i class="fa fa-reply"></i> Volver
+                                </a>
+                            </div>
+                            @if (oUsuarioLogeado.PRIVILEGIADO == -1)
+                            {
+
+                                <div class="col-sm-2">
+                                    <label class="control-label " style="visibility:hidden" for="validar">Borrar</label>
+                                    <a href="#" id="btnBorrar" style="background-color: red;color:white;"
+                                       class="btn btn-info btn-sm pull-right form-control"
+                                       title="Borrar Informe">
+                                        <i class="fa fa-eraser"></i>&nbsp;Borrar
+                                    </a>
+                                </div>
+
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <textarea name="TEXTOHTML" id="TEXTOHTML" data-oid="@Model.OID">
+        @Model.TEXTOHTML
+    </textarea>
+    if (Model.MODULOGRABARAUDIO == "T")
+    {
+        <div class="col-lg-12" style="border:1px solid gray;background-color:white;">
+
+            <div class="form-group" id="AudiosAsociados">
+                <input type="hidden" id="OIDEXPLORACIONDOCS" name="OIDEXPLORACIONDOCS" value="@Model.OWNER" />
+                <div id="formats" class="hide">Format: start recording to see sample rate</div>
+                <ol id="recordingsList">
+                    @foreach (var item in Model.AUDIOSASOCIADOS)
+                    {
+                        <li>
+
+                            <audio style="width: 300px;" controls
+                                   src="/Imagenes/Imprimir/@item.OID">
+                                Your browser does not support the
+                                <code>audio</code> element.
+                            </audio>
+                            <p class="text-center" style="width:300px;">
+                                @string.Concat(item.OID, ".wav") (@item.USERNAME)
+                                <a class="btn btn-danger eliminarDocumento" href="#" data-fullName="@item.PATH" data-nombre="@item.NOMBRE" data-oid="@item.OID">
+                                    <i class="fa fa-trash-o"></i> 
+                                </a>
+                            </p>
+                        </li>
+
+                    }
+
+                </ol>
+
+            </div>
+
+        </div>
+    }
+
+}
+
+
+<div id="modal-form-valorar" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-picture-o modal-icon"></i>
+                <h4 class="modal-title">Valoración</h4>
+            </div>
+            <form action="/Informe/Valorar" method="post">
+                <input type="hidden" id="OID" name="OID" value="@Model.OID" />
+                <div class="modal-body" style="padding:0px;">
+
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            @if (oUsuarioLogeado.ESMEDICO || oUsuarioLogeado.PRIVILEGIADO == -1)
+                            {
+                                <li class="active"><a data-toggle="tab" href="#tab-imagenes">Imágenes</a></li>
+                            }
+
+                            @if ((oUsuarioLogeado.ESMEDICO && Model.LOGINMEDICOINFORMANTE != oUsuarioLogeado.LOGIN) || oUsuarioLogeado.PRIVILEGIADO == -1)
+                            {
+                                <li class=""><a data-toggle="tab" href="#tab-Informes">Informes</a></li>
+                            }
+
+                        </ul>
+                        <div class="tab-content">
+                            @if (oUsuarioLogeado.ESMEDICO || oUsuarioLogeado.PRIVILEGIADO == -1)
+                            {
+                                <div id="tab-imagenes" class="tab-pane active">
+                                    <div class="panel-body">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.VALORACIONIMAGENES)
+                                                @Html.DropDownListFor(m => Model.VALORACIONIMAGENES, new SelectList(Model.VALORACIONESIMAGEN, "ID", "DESCRIPCION"), new { @class = "form-control" })
+                                                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.VALORACIONIMAGENES)</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(m => m.VALORACIONIMAGENESTEXTO)
+                                            @Html.TextAreaFor(m => Model.VALORACIONIMAGENESTEXTO, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "TEXTO" })
+                                            <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.VALORACIONIMAGENESTEXTO)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if ((oUsuarioLogeado.ESMEDICO && Model.LOGINMEDICOINFORMANTE != oUsuarioLogeado.LOGIN) || oUsuarioLogeado.PRIVILEGIADO == -1)
+                            {
+                                <div id="tab-Informes" class="tab-pane">
+                                    <div class="panel-body">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.VALORACIONINFORME)
+                                                @Html.DropDownListFor(m => Model.VALORACIONINFORME, new SelectList(Model.VALORACIONESINFORME, "ID", "DESCRIPCION"), new { @class = "form-control" })
+                                                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.VALORACIONINFORME)</p>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            @Html.LabelFor(m => m.VALORACIONINFORMETEXTO)
+                                            @Html.TextAreaFor(m => Model.VALORACIONINFORMETEXTO, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "TEXTO" })
+                                            <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.VALORACIONINFORMETEXTO)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                    <button type="submit" id="ValorarInforme" class="btn btn-primary pull-right">Valorar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="modal-form-documentos" class="modal  fade" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Close</span>
+                </button>
+
+                <h4 class="modal-title">Documentos Asociados</h4>
+            </div>
+
+            <div class="modal-body" id="DocumentosAsociados">
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div id="modal-form-consumibles" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Close</span>
+                </button>
+
+                <h4 class="modal-title">Trazadores</h4>
+            </div>
+
+            <div class="modal-body">
+                @if (Model.EXPLORACION.CONSUMIBLES == null || Model.EXPLORACION.CONSUMIBLES.Count() == 0)
+                {
+                    <h3>No hay trazadores asociadas a esta exploración.</h3>
+                }
+                else
+                {
+
+                    @Html.Partial("~/Views/Consumible/ListaInyectables.cshtml", Model.EXPLORACION.CONSUMIBLES)
+                }
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+    {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var unsaved = false;
+            $(window).bind('beforeunload', function () {
+                if (unsaved) {
+                    return "Existen cambios pendientes en este informe, ¿está seguro de cerrar está página?";
+                }
+            });
+        });
+
+    </script>
+    <script src="~/js/plugins/printpdf/print.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote.js"></script>
+    <script src="~/js/plugins/summernote/summernote-es-ES.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote-save-button.js"></script>
+    @* <script src="~/js/plugins/summernote/summernote-cleaner.js"></script>*@
+    <!-- TouchSpin -->
+    <script src="~/js/plugins/recorderjs/recorder.js"></script>
+    @*   <script src="~/js/custom/Informe/recorderapp.js"></script>*@
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+    <script src="~/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/informe/editor.js")"></script>
+}

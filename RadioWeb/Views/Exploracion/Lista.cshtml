@@ -1,0 +1,133 @@
+﻿@model IEnumerable<RadioWeb.Models.LISTADIA>
+@{
+    RadioWeb.Models.Usuario oUsuarioLogeado = (RadioWeb.Models.Usuario)Session["Usuario"];
+}
+
+<table id="ExploracionesTable" class="table  table-bordered clicable table-condensed"  data-field="EXPLORACION">
+    <thead>
+        <tr>
+
+            <th class="hidden-xs">I</th>
+            <th class="clicable" >
+                <div class="sort_wrapper">
+                    Fecha<i class="fa fa-sort-down icono" style="margin-left: 5px;"></i>
+
+                </div>
+            </th>
+            <th>Hora
+                                        
+            </th>
+
+            <th>C</th>
+            
+            <th><span title="Informada">IN</span></th>
+            <th><span title="Médico">ME</span></th>
+            <th><span title="Técnico">TE</span></th>
+
+            <th>ID</th>
+            <th>MUT</th>
+            <th>APA</th>
+            <th>EXP</th>
+            @if (oUsuarioLogeado.VECANTIDADES == 1)
+            {
+                <th><span title="PRECIO">PR</span></th>
+                <th><span title="FACTURADA">FA</span></th>
+                <th><span title="APLAZADA">AP</span></th>
+                <th><span title="NO FACTURABLE">NF</span></th>                                          
+            }
+
+            <th class="hidden-xs">TEXTO</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr data-oid="@item.OID" data-estado="@item.ESTADO" style="color: @item.COLOR" class="hasmenu">
+
+                <td class="hidden-xs ">
+                    <input type="checkbox" onclick="return false" checked="@item.INTOCABLE" />
+                </td>
+                  <td class="jcorgFilterTextParent">
+                    <span class="jcorgFilterTextChild" style="font-size: 11px;">@item.FECHA.ToShortDateString()</span>
+                </td>
+
+                <td class="hidden-xs">
+                    <span style="@item.ESTADO" >@item.HORA</span>
+
+                </td>
+
+                <td class="hidden-xs" style="background-color:@item.CID" >&nbsp;</td>
+              
+                <td style="text-align: center;">
+                    @if (item.INFORMADA)
+                    {<i class="fa fa-file" style="color: blue;"></i>
+                    }
+
+                </td>
+                <td><span>@item.MEDICO</span></td>
+                <td><span data-bind="text: TECNICO">@item.TECNICO</span></td>
+                <td><span style="color:@item.COLOR" >@item.OID</span></td>
+                <td><span style="color:@item.COLOR">@item.COD_MUT</span></td>
+                <td><span style="color:@item.COLOR">@item.COD_FIL</span></td>
+
+                <td><span style="color:@item.COLOR">@item.FIL</span></td>
+               @if (oUsuarioLogeado.VECANTIDADES == 1)
+                {
+                    <td>
+
+                        <span data-bind="text: CANTIDAD">@item.CANTIDAD</span>
+
+
+                    </td>
+                    <td>
+                        
+                        @if (item.FACTURADA)
+                        { 
+                            <i style="color: black;" class="fa fa-dollar"></i>
+                        }
+                        
+                    </td>
+                    <td>
+                        @if (item.APLAZADO)
+                        { 
+                            <i style="color: black;" class="fa fa-dollar"></i>
+                        }
+
+
+
+                    </td>
+                    <td>
+
+                        @if (item.NOFACTURAB)
+                        { 
+                            <i style="color: black;" class="fa fa-dollar"></i>
+                        }
+
+
+
+
+
+                    </td>
+                }
+                @if (item.HAYCOMEN)
+                {
+                    <td class="hidden-xs ui-popover" data-container="body" data-content="@item.TEXTO"  data-toggle="popover" data-trigger="hover" data-placement="top" title="" data-original-title="Nota">
+                        <span  style=" color: @item.COLOR;" >@item.SUBTEXTO</span>
+                    </td>
+                }
+                else
+                {
+                    <td class="hidden-xs">
+                        <span  style=" color: @item.COLOR;">@item.TEXTO</span>
+                    </td>
+                
+                }
+
+
+
+            </tr>
+        }
+
+    </tbody>
+</table>

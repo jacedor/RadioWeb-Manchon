@@ -1,0 +1,545 @@
+﻿@model IEnumerable<RadioWeb.ViewModels.Informes.VMExploNoInformadas>
+@{
+    ViewBag.Title = "Exploraciones Pendientes";
+}
+
+
+@using (Html.BeginForm("Duplicar", "Informe", FormMethod.Post, new { @id = "myForm", @name = "myForm" }))
+{
+
+    <div class="row animated fadeInDown">
+        <input type="hidden" id="OID" name="OID" />
+        <input type="hidden" name="ReturnUrl" id="ReturnUrl" value="/Informe/ExploracionesPendientes" />
+        <div class="col-lg-12">
+            <div class="tabs-container" style="min-height:400px;">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#tab-explos">
+                            Exploraciones No Informadas
+                            <span class="label label-warning">@Model.Count()</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-pendientesRevisar">
+                            Pendientes de Revisar
+                            <span class="label label-warning" id="cuentaPendientesRevisar">@ViewBag.PendientesRevisar</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-ultimos">
+                            Mis ultimos informes
+                            <span class="label label-warning">@RadioWeb.ViewModels.Informes.VMExploNoInformadas.ULTIMOSINFORMES.Count()</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-explos" class="tab-pane active">
+                        <div class="panel-body">
+
+                            <div class="table-responsive">
+                                @*<div class="form-group">
+                                    <a  href="/Informe/ExploracionesPendientes?filter=all"
+                                       class="dropdown-toggle">
+                                        <i class="fa fa-refresh"></i>
+                                    </a>
+                                   
+                                </div>*@
+                                <table id="explosNoInformadas" class="table table-bordered footable" data-search="true" data-height="600">
+                                    <thead>
+                                        <tr>
+                                            <th data-sortable="true" >
+                                                @Html.DisplayNameFor(model => model.FECHA)
+                                            </th>
+                                           
+                                            <th data-sortable="true" >
+                                                @Html.DisplayNameFor(model => model.PACIENTE)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.NOM_MED)
+                                            </th>
+                                            <th data-sortable="true" >
+                                                @Html.DisplayNameFor(model => model.INFORMADO)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.MEDREV)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.FECHAMAXIMA)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.DIAS_ENTREGA)
+                                            </th>
+
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.OID)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.IOR_PACIENTE)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.COD_MUT)
+                                            </th>
+                                          
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.FIL)
+                                            </th>                                           
+                                            <th>
+                                                ...
+                                            </th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr data-oidPaciente="@item.IOR_PACIENTE" data-oidExploracion="@item.OID">
+                                                <td>
+                                                    <span style="display:none">@item.FECHA.Value.ToString("yyyyMMdd")</span>
+
+                                                    @Html.DisplayFor(modelItem => item.FECHA)
+                                                </td>                                               
+
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.PACIENTE)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.NOM_MED)
+                                                </td>
+                                                <td width="10">
+                                                   @if (item.IOR_MASTER > 0)
+                                                   {
+                                                    <a href="/Informe/Duplicar/@item.IOR_MASTER">
+                                                        <i class="fa fa-clipboard" style="font-size: 12px;   color:#ffb400;"
+                                                           title="Ir a Informe exploración relacionada"></i>
+                                                    </a>
+                                                   }
+                                                   else
+                                                   {
+                                                       if (item.INFORMADO)
+                                                       {
+                                                        <a href="/Informe/Duplicar/@item.OID">
+                                                            <i class="fa fa-clipboard" style="font-size: 12px; color: green;"
+                                                               title="Informada"></i>
+                                                        </a>
+                                                       }
+                                                       else
+                                                       {
+                                                        <a href="/Informe/Duplicar/@item.OID">
+                                                            <i class="fa fa-clipboard" style="font-size: 12px; color: red;"
+                                                               title="No Informada"></i>
+                                                        </a>
+                                                       }
+
+                                                   }
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.MEDREV)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.FECHAMAXIMA)
+                                                </td>
+                                                <td>
+                                                    @if (item.FECHAMAXIMA.HasValue)
+                                                    {
+                                                        if (item.DIAS_ENTREGA <= 0)
+                                                        {
+                                                            <span class="badge badge-danger">Hace @Math.Abs(@item.DIAS_ENTREGA) días</span>
+                                                        }
+                                                        else if (item.DIAS_ENTREGA == 0)
+                                                        {
+                                                            <span class="badge badge-warning">HOY</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge badge-primary">Dentro de @Math.Abs(@item.DIAS_ENTREGA) días</span>
+                                                        }
+                                                    }                                                  
+                                                
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.OID)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.IOR_PACIENTE)
+                                                </td>
+                                                <td>
+                                                    @if (ViewBag.CampoMutua == "NOMBRE")
+                                                    {
+                                                        @Html.DisplayFor(modelItem => item.DES_MUT)
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.DisplayFor(modelItem => item.COD_MUT)
+                                                    }
+                                                   
+                                                </td>
+                                               
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.FIL)
+                                                </td>
+
+                                               
+                                                <td class="text-right">
+                                                    <a data-oid="@item.OID" class="btn btn-white btn-bitbucket btnVerFoto">
+                                                        <i class="fa fa-camera"></i>
+                                                    </a>
+                                                    @*@if (item.IOR_INFORME > 0)
+                                                    {
+                                                        <a href="/Informe/Edit/@item.IOR_INFORME" data-exploracion="@item.OID" class="btn btn-white btn-bitbucket">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    }*@
+
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-pendientesRevisar" class="tab-pane">
+                        <div class="panel-body">
+                            <div class="spiner-cargando hide">
+                                <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div class="m-b-lg">
+
+                                <label for="oidPersonalRevisar" class="control-label">Médico Revisión </label>
+                                <select id="oidPersonalRevisar" name="oidPersonalRevisar" class="selectpicker form-control">
+                                    @{
+                                        List<PERSONAL> oListTemp = (List<PERSONAL>)System.Web.HttpContext.Current.Application["Medicos"];
+                                        foreach (PERSONAL item in oListTemp)
+                                        {
+                                            if (item.OID == ViewBag.oidMedico)
+                                            {
+                                                <option selected="selected" value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                            }
+                                        }
+                                    }
+                                </select>
+
+                            </div>
+                            <div class="table-responsive contenedorPendientesRevisar">
+                         
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-ultimos" class="tab-pane">
+                        <div class="panel-body">
+
+                            <div class="table-responsive">
+                                <table id="InformesList" class="table clicable  table-stripped footable"   data-filter-position="left" data-filtering="true" data-paging="true"  data-paging-size="8"
+                                       data-sorting="true" data-paging-count-format="{CP} de {TP}"
+                                       data-filter-placeholder="Buscar">
+                                    <thead>
+                                        <tr>
+                                            <th data-sortable="true"  data-type="date" data-format-string="dd/MM/YYYY" class="clicable">Fecha</th>
+                                            <th><span title="Titulo">Título</span></th>
+                                            <th data-sortable="true" ><span title="Paciente">Paciente</span></th>
+                                            <th ><span title="Revisado">Rev</span></th>                                    
+                                            <th><span title="Fecha Exploracion">Fecha Visita</span></th>
+                                            <th><span title="Fecha Prevista de Entrega">Prev.Recogida</span></th>
+                                            <th><span title="Validado">Val</span></th>
+                                            <th align="right">Imprimir</th>
+                                            <th align="right">...</th>
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in RadioWeb.ViewModels.Informes.VMExploNoInformadas.ULTIMOSINFORMES)
+                                        {
+                                            var color = "";
+
+                                            if (item.BORRADO == "T")
+                                            {
+                                                color = "red";
+                                            }
+
+
+                                            <tr data-oid="@item.OID" data-exploracion="@item.OWNER" style="color:@color;">
+                                                <td><span>@item.FECHA.ToString("dd/MM/yyyy") - @item.HORA</span></td>
+                                                <td><span>@item.TITULO</span></td>          
+                                                <td><span>@item.PACIENTE</span></td>
+                                                <td><span>@item.MEDICOREVISOR</span></td>
+                                                                                     
+                                                <td>
+                                                    <span>
+                                                        @if (@item.FECHAEXPLORACION != null)
+                                                        {
+                                                            @item.FECHAEXPLORACION.Value.ToString("dd/MM/yyyy")
+                                                        }
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span>
+                                                     
+                                                            @item.FECHAMAXIMAENTREGA
+                                                       
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    @if (item.VALIDACION == "T")
+                                                    {
+                                                        <i class="fa fa-check" style="color: green;" title="Validado"></i>
+                                                    }
+                                                    else if (item.VALIDACION == "A")
+                                                    {
+                                                        <i class="fa fa-arrow-down" style="color: yellow;" title="Anulado"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fa fa-times" style="color: red;" title="No Validado"></i>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.VALIDACION == "T")
+                                                    {
+                                                        <a href="#" data-oid="@item.OID" class="generarPDFSinClave"><i class="fa fa-file-pdf-o" style="color: red;" title="Generar PDF"></i></a>
+                                                    }
+                                                </td>
+                                                <td class="text-right">
+                                                    @{
+                                                        var accion = "Editar";
+                                                        var clase = "btn-warning";
+                                                        if (item.VALIDACION == "T")
+                                                        {
+                                                            accion = "Leer";
+                                                            clase = "btn-primary";
+                                                        }
+
+
+                                                    }
+
+
+                                                    @Html.ActionLink(
+                                                linkText: @accion,
+                                                actionName: "Edit",
+                                                controllerName: "Informe",
+                                                routeValues: new
+                                                {
+                                                    OID = @item.OID
+
+                                                },
+                                                htmlAttributes: new
+                                                {
+                                                    @class = "btn btn-warning btn-xs pull-right",
+                                                    data_oidexploracion = @ViewBag.OidExploracion
+                                                }
+
+                                                )
+
+
+                                                </td>
+                                            </tr>
+                                                        }
+
+                                    </tbody>
+                               
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+        </div>
+
+    </div>
+                                                        }
+
+<div id="contenedorModalImagenes">
+    <div id="modal-form-imagenes" class="modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+
+                    <h4 class="modal-title">Imágenes</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="contenedorCarrousel">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" id="ImprimirImagen" class="btn btn-white" type="button">Imprimir</button>
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts
+    {
+
+    <script type="text/javascript">
+
+        $(document).on('change', '#oidPersonalRevisar', function myfunction() {
+
+            var oidPersonal = $(this).val();
+            
+            var ContenedorPendientesRevisar = $('.contenedorPendientesRevisar');
+            $.ajax({
+                type: 'GET',
+                url: '/Informe/PendientesRevisar',
+                data: {
+                    oidPersonal: oidPersonal                    
+                },
+                beforeSend: function () {
+                    $(".spiner-cargando").removeClass('hide');
+                    ContenedorPendientesRevisar.html('');
+                },
+                success: function (data) {
+
+                    ContenedorPendientesRevisar.html(data);
+                   // $(".footable").footable();
+                },
+                complete: function () {
+                    $(".spiner-cargando").addClass('hide');
+                    $("#cuentaPendientesRevisar").html($("#InformesRevisar tbody tr").length);
+                    $('#InformesRevisar').footable();
+                }
+            });
+
+        });
+
+        $(document).on("shown.bs.tab", "a[data-toggle='tab']", function (e) {
+            var target = $(e.target).attr("href") // activated tab
+            switch (target) {
+                case "#tab-pendientesRevisar":
+                    var ContenedorPendientesRevisar = $('.contenedorPendientesRevisar');
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Informe/PendientesRevisar',
+                        data: {
+                            oidPersonal: $("#oidPersonalRevisar").val()
+                        },
+                        beforeSend: function () {
+                            $(".spiner-cargando").removeClass('hide');
+                            ContenedorPendientesRevisar.html('');
+                        },
+                        success: function (datosLista) {
+                            $(".spiner-cargando").addClass('hide');
+                            ContenedorPendientesRevisar.html(datosLista);
+                        },
+                        complete: function () {
+                            $(".spiner-cargando").addClass('hide');
+                            $("#cuentaPendientesRevisar").html($("#InformesRevisar tbody tr").length);
+                            $('#InformesRevisar').footable();
+                        }
+                    });
+
+                    break;
+            }
+
+        });
+
+        $(document).on("click", ".btnVerFoto", function myfunction(e) {
+            e.stopPropagation();
+            var oidExploracion = $(this).data('oid');
+            //var ContenedorModalImagenes = $('#contenedorModalImagenes');
+            var ContenedorModalImagenes = $('#contenedorCarrousel');
+            $.ajax({
+                type: 'POST',
+                url: '/Imagenes/ListaPartial',
+                data: { oid: oidExploracion },
+                beforeSend: function () {
+
+                    $(".spiner-cargando").removeClass('hide');
+                    ContenedorModalImagenes.html('');
+                    $('#modal-form-imagenes').modal('show');
+                },
+                success: function (data) {
+                    $(".spiner-cargando").addClass('hide');
+                    ContenedorModalImagenes.html(data);
+                },
+                complete: function () {
+                    $('.slick_demo_3').slick({
+                        infinite: true,
+                        speed: 500,
+                        fade: true,
+                        cssEase: 'linear',
+                        adaptiveHeight: true
+                    });
+                }
+            });
+        });
+
+
+        $(document).on('click', '#explosNoInformadas tbody tr', function () {
+            $(this).siblings().removeClass('ACTIVA');
+            $(this).addClass('ACTIVA');
+            $("#OID").val($(this).data('oidexploracion'));
+            $("#myForm").submit();
+        });
+
+        $(document).on("click", ".generarPDFSinClave", function () {
+            var oidInforme = $(this).data('oid');
+            var url = "/Informe/Imprimir?oid=" + oidInforme; //The Url to the Action  Method of the Controller
+            window.open(url, 'popup', 'width=900,height=500');
+            return false;
+        });
+
+
+        $(document).ready(function () {
+            $("li[data-view]").removeClass('active');
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewInformesPendientes]").addClass("active");
+            $("[data-view=ViewInformesPendientes]").parents("ul").removeClass("collapse");
+            makeBootstrapTable('explosNoInformadas');
+        });
+
+    </script>
+}

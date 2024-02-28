@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" TextQuality="Regular" ReportInfo.Description="Demonstrates simple list report. To create it:&#13;&#10;&#13;&#10;- go to &quot;Data&quot; menu and select &quot;Choose Report Data...&quot; item to select datasource;&#13;&#10;&#13;&#10;- go to &quot;Report|Configure Bands...&quot; menu to create the band structure;&#13;&#10;&#13;&#10;- return to the report page, doubleclick the data band to show its editor;&#13;&#10;&#13;&#10;- choose the datasource;&#13;&#10;&#13;&#10;- drag data from the Data Dictionary window to the band." ReportInfo.Created="01/17/2008 03:05:57" ReportInfo.Modified="11/30/2019 22:15:17" ReportInfo.CreatorVersion="2015.3.8.0">
+  <Dictionary>
+    <Relation Name="TELEFONO_Table" ParentDataSource="null" ChildDataSource="null" ParentColumns="OWNER" ChildColumns="IOR_PACIENTE" Enabled="true"/>
+    <Relation Name="DIRECCION_Table" ParentDataSource="null" ChildDataSource="null" ParentColumns="OWNER" ChildColumns="IOR_PACIENTE" Enabled="true"/>
+    <Parameter Name="genOidPaciente" DataType="System.Int32"/>
+    <Parameter Name="genFechaExploracion" DataType="System.DateTime"/>
+    <Parameter Name="genOidExploracion" DataType="System.Int32"/>
+    <Parameter Name="genOidCentroExterno" DataType="System.Int32"/>
+    <Parameter Name="genOidCentro" DataType="System.Int32"/>
+    <Parameter Name="cadenaConexion" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" FirstPageSource="15" OtherPagesSource="15">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="88.83">
+      <PictureObject Name="Picture1" Left="-9.45" Width="302.4" Height="85.05" ImageLocation="https://radioibweb.cdpi.es:4433/img/Logo%20Grup%20Manchon.jpg"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="92.83" Width="718.2" Height="444.15" CanGrow="true" CanShrink="true" Guides="444.15">
+      <TextObject Name="FechaNac" Top="160.65" Width="236.25" Height="18.9" Text="Fecha Nac. [Exploracion.FECHAN]" Format="Date" Format.Format="d"/>
+      <TextObject Name="Tratamiento" Top="132.3" Width="415.8" Height="18.9" Text="[IIf([Exploracion.TRAC]==5,&quot;Sra.&quot;,&quot;Sr.&quot;)] [Exploracion.PACIENTE]" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="EdadLabel" Left="236.25" Top="160.65" Width="179.55" Height="18.9" Text="Edad: [Exploracion.EDAD]" Font="Arial, 10pt, style=Bold"/>
+      <LineObject Name="Line3" Top="122.85" Width="718.2"/>
+      <TextObject Name="Text10" Left="425.25" Top="132.3" Width="292.95" Height="18.9" Text="Número H.C: [Exploracion.COD_PAC]" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text1" Left="37.8" Top="9.45" Width="103.95" Height="18.9" Text="[Exploracion.APARATO]" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text4" Top="189" Width="321.3" Height="18.9" Text="[Exploracion.DIRECCION]"/>
+      <TextObject Name="Text5" Top="217.35" Width="425.25" Height="18.9" Text="[Exploracion.CP] - [Exploracion.POBLACION]"/>
+      <TextObject Name="Text2" Left="9.45" Top="9.45" Width="37.8" Height="18.9" Text="[Exploracion.COD_GRUP]-" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text6" Left="9.45" Top="37.8" Width="359.1" Height="18.9" Text="[TitleCase(FormatDateTime([Exploracion.FECHA],&quot;Long Date&quot;))] Hora: [Exploracion.HORA] - ([Exploracion.HORA_LL])" Format="Date" Format.Format="d" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text8" Left="585.9" Top="9.45" Width="132.3" Height="18.9" Text="Id: [Exploracion.OID]" HorzAlign="Right" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text11" Left="9.45" Top="66.15" Width="387.45" Height="18.9" Text="[Exploracion.EXPLO]-[Exploracion.DES_FIL]" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text12" Left="425.25" Top="160.65" Width="292.95" Height="18.9" Text="Email: [Exploracion.EMAIL]"/>
+      <TextObject Name="Text9" Left="425.25" Top="189" Width="292.95" Height="18.9" Text="Teléfono:[Exploracion.NUMERO] Profesion: [Exploracion.PROFESION]"/>
+      <TextObject Name="Text13" Left="9.45" Top="94.5" Width="708.75" Height="18.9" Anchor="Left, Right" CanBreak="false" Text="[Exploracion.TEXTO]" Font="Arial, 11pt"/>
+      <TextObject Name="Text14" Left="425.25" Top="217.35" Width="283.5" Height="18.9" Text="[Exploracion.PROVINCIA]"/>
+      <LineObject Name="Line4" Top="255.15" Width="718.2"/>
+      <TextObject Name="Text15" Left="548.1" Top="37.8" Width="170.1" Height="18.9" Text="[Exploracion.IOR_PACIENTE]" HorzAlign="Right" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text16" Top="264.6" Width="425.25" Height="18.9" Text="[Exploracion.TRATA] [Exploracion.NOMBRE1]" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text17" Left="425.25" Top="264.6" Width="293.35" Height="18.9" Text="Nº Col:[Exploracion.COD_MED]" HorzAlign="Right"/>
+      <TextObject Name="Text18" Top="302.4" Width="292.95" Height="18.9" Text="[Exploracion.ESPECIALIDAD]"/>
+      <LineObject Name="Line5" Top="330.75" Width="718.2"/>
+      <TextObject Name="Text19" Top="340.2" Width="425.25" Height="18.9" Text="[Exploracion.CODMUT]:[Exploracion.NOMBRE]" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text20" Left="434.7" Top="340.2" Width="283.5" Height="18.9" Text="Póliza:[Exploracion.POLIZA]" Font="Arial, 10pt, style=Bold"/>
+      <LineObject Name="Line7" Top="349.65" Height="9.45"/>
+      <LineObject Name="Line8" Left="387.45" Top="368.55" Height="9.45"/>
+      <TextObject Name="Text22" Top="359.1" Width="94.5" Height="18.9" Text="Precio total"/>
+      <TextObject Name="Text23" Left="434.7" Top="359.1" Width="94.5" Height="18.9" Text="Debe"/>
+      <LineObject Name="Line2" Top="387.45" Width="718.2" Border.Style="Double" Border.Width="0.25"/>
+      <TextObject Name="Text29" Left="557.55" Top="66.15" Width="160.65" Height="18.9" Text="[IIf([Exploracion.OWNER]==1,&quot;PRIVADO&quot;,&quot;&quot;)]" HorzAlign="Right" Font="Arial, 16pt"/>
+      <LineObject Name="Line11" Top="444.15" Width="718.2" Border.Style="Double" Border.Width="0.25"/>
+      <TextObject Name="Text30" Left="321.3" Top="396.9" Width="396.9" Height="18.9" Text="[IIf([CENTROSEXTERNOS.OID]&gt;0,[CENTROSEXTERNOS.NOMBRE],&quot;&quot;)]" HorzAlign="Right" Font="Arial, 14.25pt"/>
+      <LineObject Name="Line12" Top="387.45" Width="718.2" Border.Style="Double" Border.Width="0.25"/>
+      <TextObject Name="Text31" Left="302.4" Top="302.4" Width="416.2" Height="18.9" Text="[Exploracion.ESPEC]" HorzAlign="Right" Font="Arial, 12pt, style=Bold"/>
+      <DataBand Name="Data2" Top="540.98" Width="718.2" Height="32.13" CanGrow="true" PrintIfDatasourceEmpty="true">
+        <TextObject Name="Text24" Top="3.78" Width="699.3" Height="28.35" CanGrow="true" CanShrink="true" Text="[ExplosAsociadas.HORA] - [ExplosAsociadas.COD_MUT]: [ExplosAsociadas.COD_FIL]:[ExplosAsociadas.OID] -[ExplosAsociadas.FIL]: [ExplosAsociadas.DES_FIL]"/>
+      </DataBand>
+      <DataBand Name="Data3" Top="577.11" Width="718.2" Height="28.35">
+        <TextObject Name="Text32" Width="699.3" Height="18.9" CanGrow="true" CanShrink="true" Text="[RESPUESTAS.PREGUNTA] "/>
+        <TextObject Name="Text27" Left="66.15" Top="9.45" Width="94.5" Height="18.9" Text="aaa"/>
+      </DataBand>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="609.46" Width="718.2" Height="378">
+      <TextObject Name="Text21" Left="28.35" Top="141.75" Width="321.3" Height="226.8" Text="[Exploracion.PACIENTE]&#13;&#10;Id: [Exploracion.OID]&#13;&#10;Fecha exploración: [FormatDateTime( [Exploracion.FECHA],&quot;dd/MM/yyyy&quot;)]&#13;&#10;&#13;&#10;FECHA RECOGIDA:&#13;&#10;Su resultado estará listo en [Centros.NOMBRE]&#13;&#10;[Centros.DIRECCION]-[Centros.CP]-[Centros.CIUTAT]&#13;&#10;A partir del dia.................................desde las 16 h. &#13;&#10;&#13;&#10;HORARIO RECOGIDAS: de Lunes-Viernes de 9-20 h&#13;&#10;[Exploracion.DES_FIL]&#13;&#10;HORARIO CAJA  de Lunes a Viernes de 9 a 18 horas" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text3" Left="28.35" Top="122.85" Width="151.2" Height="18.9" Text="C.D.P.I.DR.MANCHÓN&#13;&#10;" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text7" Left="387.45" Top="151.2" Width="302.4" Height="217.35" Text="                       www.dr-manchon.com&#13;&#10;En el caso de no recoger personalmente&#13;&#10;la prueba recuerden rellenar el formulario&#13;&#10;de autorización y adjuntar fotocopia del DNI del paciente.&#13;&#10;&#13;&#10;Autorizo a D ............................................&#13;&#10;&#13;&#10;con DNI ........................... para la recogida&#13;&#10;&#13;&#10;de la prueba que se me ha realizado&#13;&#10;&#13;&#10;&#13;&#10;          Firmado paciente." Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text25" Left="396.9" Top="122.85" Width="302.4" Height="18.9" Text="C.D.P.I.DR.MANCHÓN Teléfono [Centros.TELEFONO]&#13;&#10;" Font="Arial, 10pt, style=Bold"/>
+      <LineObject Name="Line1" Left="557.55" Top="378"/>
+      <TextObject Name="Text26" Left="9.45" Top="330.75" Width="340.2" Height="37.8" Text="Si dejó su número de móvil, podrá recibir un mensaje cuando  el informe esté listo, aunque sea antes de lo indicado.&#13;&#10;" Font="Arial, 8.5pt"/>
+      <LineObject Name="Line6" Left="349.65" Top="151.2" Height="217.35" Border.Width="2"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

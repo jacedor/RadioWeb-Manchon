@@ -1,0 +1,545 @@
+﻿@model RadioWeb.ViewModels.Exploracion.VWEntrada
+
+
+
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a data-toggle="tab" href="#tab-paciente">
+            Paciente
+        </a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#tab-direccion">
+            Contacto
+        </a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#tab-exploracion">
+            Explo
+        </a>
+    </li>
+    @if (ViewBag.ModuloVidSigner == "TRUE")
+    {
+        <li>
+            <a data-toggle="tab" href="#tab-vidSigner">
+                Tablet
+            </a>
+        </li>
+    }
+
+    <li>
+        <a data-toggle="tab" href="#tab-docs">
+            Docs
+        </a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#tab-escaner">
+            Escaner
+        </a>
+    </li>
+
+    <li>
+        <a data-toggle="tab" href="#tab-consumibles">
+            Cons
+        </a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#tab-imagenes">
+            Img
+        </a>
+    </li>
+    @if (Model.INFORMADA && !Model.EMPRESA.NOMBRE.Contains("DELFOS"))
+    {
+        <li>
+            <a data-toggle="tab" href="#tab-informe">
+                Informe
+            </a>
+        </li>
+    }
+</ul>
+<div class="tab-content">
+
+    <div id="tab-paciente" class="tab-pane active">
+
+        <form action="/Entrada/Paciente/" id="form-Paciente" method="post" name="form-Paciente">
+            @Html.HiddenFor(m => m.IOR_PACIENTE)
+            <div class="panel-body">
+                <div class="col-sm-6 b-r">
+
+
+                    <div class="form-group">
+                        @Html.BootstrapLabelFor(m => m.PACIENTE)
+                        @Html.TextBoxFor(m => Model.PACIENTE, new { @class = "form-control", style = "text-transform:uppercase;" })
+                        @Html.ValidationMessage("PACIENTE", "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.BootstrapLabelFor(m => m.SEXO)
+                        @Html.EditorFor(model => model.SEXO)
+                        @Html.ValidationMessage("SEXO", "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.BootstrapLabelFor(m => m.FECHANACIMIENTO)
+                        @Html.TextBoxFor(m => Model.FECHANACIMIENTO, new { @class = "form-control fecha-picker", data_mask = "99/99/9999" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.BootstrapLabelFor(m => m.EMAIL)
+                        @Html.TextBoxFor(m => Model.EMAIL, new { @class = "form-control", style = "text-transform:uppercase;" })
+                    </div>
+
+
+                </div>
+                <div class="col-sm-6 ">
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.IDIOMA)
+                        @Html.DropDownListFor(m => Model.IDIOMA, new SelectList(Model.IDIOMAS, "Key", "Value"), new { @class = "form-control " })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CIP)
+                        @Html.TextBoxFor(m => Model.CIP, new { @class = "form-control", style = "text-transform:uppercase;" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.TARJETA)
+                        @Html.TextBoxFor(m => Model.TARJETA, new { @class = "form-control", style = "text-transform:uppercase;" })
+                    </div>
+
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.QRCOMPARTIRCASO)
+                        @Html.CheckBoxFor(m => m.QRCOMPARTIRCASO)
+                    </div>
+
+
+                    <div class="form-group">
+                        <a onclick="SubFormPaciente()" class="btn btn-primary pull-right " href="#">
+                            Guardar Paciente
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="tab-direccion" class="tab-pane">
+        <form action="/Entrada/Direccion/" id="form-Direccion" method="post" name="form-Direccion">
+            @Html.HiddenFor(m => m.IOR_PACIENTE)
+            <div class="panel-body">
+                <div class="col-sm-12 ">
+                    @if (Model.DIRECCIONES.Count == 0)
+                    {
+                        Model.DIRECCIONES.Add(new DIRECCION() { POBLACION = "SIN DIRECCIÓN", OID = -1 });
+                    }
+                    @Html.Partial("~/Views/Direccion/_ListDirs.cshtml", Model.DIRECCIONES)
+                </div>
+                <div class="col-sm-12 ">
+                    @if (Model.TELEFONOS.Count == 0)
+                    {
+                        Model.TELEFONOS.Add(new TELEFONO());
+                    }
+                    @Html.Partial("~/Views/Telefono/List.cshtml", Model.TELEFONOS)
+
+                </div>
+                <div class="form-group">
+                    <a onclick="SubFormDatosContacto()" class="btn btn-primary pull-right " href="#">
+                        Guardar
+                    </a>
+
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="tab-exploracion" class="tab-pane ">
+        <form action="/Entrada/Exploracion/" class="form-horizontal" id="form-Exploracion" method="post" name="form-Exploracion" autocomplete="off">
+            @Html.HiddenFor(m => m.OIDEXPLORACION)
+            @Html.HiddenFor(m => m.IOR_APARATO)
+            @{ bool deshabilitar = false;
+                if (Model.FACTURADA == "T" || Model.PAGADA == "T" || Model.INTOCABLE == "T")
+                {
+                    deshabilitar = true;
+                }
+                bool deshabilitarInformadas = false;
+                if (Model.INFORMADA)
+                {
+                    deshabilitarInformadas = true; ;
+                }
+            }
+            <div class="panel-body row">
+                <div class="col-sm-12 ">
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            @Html.LabelFor(m => m.IOR_MEDICOINFORMANTE)
+                            @Html.DropDownListFor(m => Model.IOR_MEDICOINFORMANTE, new SelectList(Model.MEDICOS, "OID", "NOMBRE"),
+new { @class = "form-control select2" })
+                            @Html.ValidationMessage("IOR_MEDICOINFORMANTE", "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.LabelFor(m => m.IOR_MEDICOREFERIDOR)
+                            <div class="input-group date">
+                                <span class="input-group-addon">
+                                    <a id="copiarColegiado" title="Copiar a exploraciones mismo dia" href="#">
+                                        <i class="fa fa-copy"></i>
+                                    </a>
+
+                                </span><select class="form-control" id="IOR_MEDICOREFERIDOR" name="IOR_MEDICOREFERIDOR">
+                                    <option value="@Model.IOR_MEDICOREFERIDOR">
+                                        @Model.NOMBREMEDICOREFERIDOR
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            @Html.LabelFor(m => m.IOR_ENTIDADPAGADORA)
+                            @Html.DropDownListFor(m => Model.IOR_ENTIDADPAGADORA,
+new SelectList(Model.MUTUAS, "OID", "NOMBRE"),
+new { @class = "form-control select2" })
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.BootstrapLabelFor(m => m.IOR_TIPOEXPLORACION)
+                            @Html.EditorFor(model => model.IOR_TIPOEXPLORACION,
+                                               new
+                                               {
+                                                   IOR_APARATO = Model.IOR_APARATO,
+                                                   IOR_MUTUA = Model.IOR_ENTIDADPAGADORA,
+                                                   @disabled = deshabilitar
+                                               })
+                            @Html.ValidationMessageFor(model => model.IOR_TIPOEXPLORACION, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            @Html.BootstrapLabelFor(m => m.FECHAMAXENTREGA)
+                            @Html.EditorFor(model => model.FECHAMAXENTREGA, (deshabilitarInformadas ? new { @readonly = "true", autocomplete = "off" } as object : new { autocomplete = "off" } as object))
+                            @Html.ValidationMessageFor(model => model.FECHAMAXENTREGA, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.BootstrapLabelFor(m => m.NHCAP)
+                            @Html.EditorFor(model => model.NHCAP, (deshabilitar && !String.IsNullOrEmpty(Model.NHCAP) ? new { htmlAttributes = new { @readonly = "readonly" } } as object : null))
+                            @Html.ValidationMessageFor(model => model.NHCAP, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            @Html.LabelFor(m => m.IOR_CENTROEXTERNO)
+                            @Html.DropDownListFor(m => Model.IOR_CENTROEXTERNO, new SelectList(Model.CENTROEXTERNOS, "OID", "NOMBRE"),
+                                             new { @class = "form-control select2" })
+                        </div>
+                        <div class="col-sm-6">
+
+                            @Html.LabelFor(m => m.IMPORTE)
+                            @Html.EditorFor(model => model.IMPORTE,
+                                     (deshabilitar ? new { htmlAttributes = new { @readonly = "readonly" }, SIMBOLO = Model.SIMBOLO } as object : new { SIMBOLO = Model.SIMBOLO } as object))
+
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            @Html.LabelFor(m => m.IOR_CARDIOLOGO)
+                            @Html.DropDownListFor(m => Model.IOR_CARDIOLOGO, new SelectList(Model.CARDIOLOGOS, "OID", "NOMBRE"),
+                          new { @class = "form-control select2" })
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.LabelFor(m => m.REGISTRE)
+                            @Html.TextBoxFor(m => Model.REGISTRE, new { @class = "form-control", style = "text-transform:uppercase;" })
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            @Html.BootstrapLabelFor(m => m.IOR_CONDICION)
+                            @Html.EditorFor(model => model.IOR_CONDICION, new { idCondicion = "1" })
+                            @Html.ValidationMessageFor(model => model.IOR_CONDICION, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.BootstrapLabelFor(m => m.TICKET_KIOSKO)
+                            @Html.EditorFor(model => model.TICKET_KIOSKO, new { idCondicion = "1" })
+                            @Html.ValidationMessageFor(model => model.TICKET_KIOSKO, "", new { @class = "text-danger" })
+                        </div>
+
+
+                    </div>
+                    <hr class="hr-line-dashed" />
+                    <div class="form-group">
+
+                        <div class="col-sm-12 text-right">
+
+                            <a onclick="SubFormExploracion()" class="btn btn-primary pull-right" href="#">
+                                Guardar Exploración
+                            </a>
+
+                            @if (!Model.EMPRESA.NOMBRE.Contains("FORASTÉ"))
+                            {
+
+                                List<RadioWeb.Models.REFRACTOMETROS> oListaDocumentos = (List<RadioWeb.Models.REFRACTOMETROS>)ViewBag.DocumentosImprimibles;
+                                <div class="btn-group pull-right" style="margin-right:4px;">
+                                    <button data-toggle="dropdown" class="btn btn-info  dropdown-toggle" aria-expanded="false">Imprimir <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        <li><a id="btnEtiquetasEntrada" data-etiquetas="1" href="#">Etiqueta</a></li>
+                                        @foreach (RadioWeb.Models.REFRACTOMETROS doc in oListaDocumentos)
+                                        {
+                                            //if (!doc.NOMBRE.ToUpper().Contains("QREPORT"))
+                                            //{
+                                            <li><a onclick="imprimirDocumento(@Model.OIDEXPLORACION,@doc.OID)" href="#">@doc.NOMBRE</a></li>
+                                            //}
+
+                                        }
+                                    </ul>
+                                </div>
+
+                            }
+                            else
+                            {
+
+
+                                <a onclick="imprimirExploracion(@Model.OIDEXPLORACION)" class="btn btn-info pull-left " href="#">
+                                    Imprimir Ficha
+                                </a>
+
+                            }
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </form>
+    </div>
+
+    <div id="tab-vidSigner" class="tab-pane">
+        <div class="panel-body" id="modalVidContentEntrada">
+
+        </div>
+    </div>
+
+    <div id="tab-docs" class="tab-pane">
+        <div class="panel-body" id="modalDocsContentEntrada">
+
+        </div>
+
+    </div>
+
+    <div id="tab-consumibles" class="tab-pane">
+        <div class="panel-body">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div id="contenedorListaConsumiblesMutua" class="col-sm-12 col-md-12 col-lg-12">
+
+                </div>
+            </div>
+            <div class="form-group">
+                <button id="btnGuardarConsumibles" class="btn btn-sm btn-primary pull-right m-t-n-xs"><strong>Guardar</strong></button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="tab-escaner" class="tab-pane">
+        <div class="panel-body" style="padding-left:0px;padding-right:0px;">
+            <div class="col-sm-12 col-md-12 col-lg-12" style="padding-left:0px;padding-right:0px;">
+                <div id="contenedorDocumentosEscaneados">
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div id="tab-imagenes" class="tab-pane ">
+        <div class="panel-body">
+
+            <div class="tabs-container">
+                <div class="tabs-left">
+                    <ul class="nav nav-tabs">
+
+                        <li class="active"><a data-toggle="tab" href="#tab-6">Capturar</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-7">Imágenes Asociadas</a></li>
+                    </ul>
+                    <div class="tab-content ">
+                        <div id="tab-6" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="col-lg-12">
+                                    <div class="camcontent img-responsive">
+                                        <video id="video" autoplay></video>
+                                        <canvas id="canvas" class="full-width full-height" width="620" height="480" style="display:none"></canvas>
+                                    </div>
+                                    <div class="cambuttons">
+                                        <button id="snap" class="btn btn-primary" style="display:none;">Capturar</button>
+                                        <button id="reset" class="btn btn-info" style="display:none;">Repetir</button>
+                                        <button id="upload" class="btn btn-primary" style="display:none;"> Guardar </button>
+                                        <br> <span id=uploading style="display:none;"> Guardando Imágen . . .  </span>
+                                        <span id=uploaded style="display:none;">
+                                            Foto Capturada correctamente
+
+                                        </span>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div id="tab-7" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <div id="ContenedorSliderImagenes">
+
+
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="form-group">
+                                    <button id="ImprimirImagen" class="btn btn-primary" type="button">Imprimir</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @if (Model.INFORMADA && !Model.EMPRESA.NOMBRE.Contains("DELFOS"))
+
+    {
+        <div id="tab-informe" class="tab-pane">
+            <div class="panel-body" style="padding-left:0px;padding-right:0px;">
+                <div class="col-sm-12 col-md-12 col-lg-12" style="padding-left:0px;padding-right:0px;">
+                    <div id="cargandoInforme">
+                        <div class="spiner-cargando hide">
+                            <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                <div class="sk-circle1 sk-circle"></div>
+                                <div class="sk-circle2 sk-circle"></div>
+                                <div class="sk-circle3 sk-circle"></div>
+                                <div class="sk-circle4 sk-circle"></div>
+                                <div class="sk-circle5 sk-circle"></div>
+                                <div class="sk-circle6 sk-circle"></div>
+                                <div class="sk-circle7 sk-circle"></div>
+                                <div class="sk-circle8 sk-circle"></div>
+                                <div class="sk-circle9 sk-circle"></div>
+                                <div class="sk-circle10 sk-circle"></div>
+                                <div class="sk-circle11 sk-circle"></div>
+                                <div class="sk-circle12 sk-circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox" id="cuerpoModelEnvioMail">
+
+                    </div>
+
+                    <div class="col-sm-12">
+                        <a title="" data-placement="top" data-toggle="tooltip" class="btn btn-sm btn-primary" id="EnviarEmail">
+                            <i class="fa fa-reply"></i>Enviar
+                        </a>
+                        <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+@section scripts{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            // Put event listeners into place
+            window.addEventListener("DOMContentLoaded", function () {
+                // Grab elements, create settings, etc.
+                var canvas = document.getElementById("canvas"),
+                    context = canvas.getContext("2d"),
+                    video = document.getElementById("video"),
+                    videoObj = { "video": true },
+                    image_format = "jpeg",
+                    jpeg_quality = 85,
+                    errBack = function (error) {
+                        console.log("Video capture error: ", error.code);
+                    };
+
+
+                // Put video listeners into place
+                if (navigator.getUserMedia) { // Standard
+                    navigator.getUserMedia(videoObj, function (stream) {
+                        video.src = stream;
+                        video.play();
+                        $("#snap").show();
+                    }, errBack);
+                } else if (navigator.webkitGetUserMedia) { // WebKit-prefixed
+                    navigator.webkitGetUserMedia(videoObj, function (stream) {
+                        video.src = window.webkitURL.createObjectURL(stream);
+                        video.play();
+                        $("#snap").show();
+                    }, errBack);
+                } else if (navigator.mozGetUserMedia) { // moz-prefixed
+                    navigator.mozGetUserMedia(videoObj, function (stream) {
+                        video.src = window.URL.createObjectURL(stream);
+                        video.play();
+                        $("#snap").show();
+                    }, errBack);
+                }
+                // video.play();       these 2 lines must be repeated above 3 times
+                // $("#snap").show();  rather than here once, to keep "capture" hidden
+                //                     until after the webcam has been activated.
+
+                // Get-Save Snapshot - image
+                document.getElementById("snap").addEventListener("click", function () {
+                    context.drawImage(video, 0, 0, 640, 480);
+                    // the fade only works on firefox?
+                    $("#video").fadeOut("slow");
+                    $("#canvas").fadeIn("slow");
+                    $("#snap").hide();
+                    $("#reset").show();
+                    $("#upload").show();
+                });
+                // reset - clear - to Capture New Photo
+                document.getElementById("reset").addEventListener("click", function () {
+                    $("#video").fadeIn("slow");
+                    $("#canvas").fadeOut("slow");
+                    $("#snap").show();
+                    $("#reset").hide();
+                    $("#upload").hide();
+                });
+                // Upload image to sever
+                document.getElementById("upload").addEventListener("click", function () {
+                    var dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+                    $("#uploading").show();
+                    $.ajax({
+                        type: "POST",
+                        url: "html5-webcam-save.php",
+                        data: {
+                            imgBase64: dataUrl,
+                            user: "Joe", *
+                                userid: 25         *
+                                                                                              }
+                    }).done(function (msg) {
+                        console.log("saved");
+                        $("#uploading").hide();
+                        $("#uploaded").show();
+                    });
+                });
+            }, false);
+
+
+        });
+    </script>
+
+    <link rel="stylesheet" href="~/js/plugins/jquery-confirm/jquery-confirm.min.css">
+    <script src="~/js/plugins/jquery-confirm/jquery-confirm.min.js"></script>
+
+    <script src="~/js/custom/Informe/enviarInformeShared.js"></script>
+
+}

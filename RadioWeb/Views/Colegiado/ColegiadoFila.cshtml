@@ -1,0 +1,24 @@
+﻿@model List<RadioWeb.Models.COLEGIADOS>
+
+@foreach (var item in Model)
+{
+    <tr class="ColegiadoItem" data-oid="@item.OID" >
+        <td>@item.COD_MED</td>
+        <td>@item.NOMBRE</td>
+        <td>
+                @{
+                        if (item.ESPECIALIDAD != null)
+                        {
+                                    @item.ESPECIALIDAD.DESCRIPCION
+                        }
+                                            
+                }
+        </td>
+          <td>
+               <button  data-oid="@item.OID" class="btn-white btn btn-xs asignarColegiado" data-dismiss="modal">Asignar</button>
+            
+        </td>
+      
+    </tr>
+}
+

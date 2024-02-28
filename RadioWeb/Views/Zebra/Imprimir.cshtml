@@ -1,0 +1,27 @@
+﻿
+   @* Store User's SessionId *@
+       
+
+<input type="text" id="oidExploracion" name="oidExploracion" class="form-control" />
+
+
+ <fieldset>
+            <legend>Ready to print!</legend>
+            <h3>Your settings were saved! Now it's time to <a href="#" onclick="javascript:doClientPrint();" class="btn btn-large btn-success">Print</a></h3>           
+            <br /><br />
+        </fieldset>
+
+
+
+@section Scripts {
+   
+    <script src="~/js/custom/Zebra/zebra.js"></script>
+    
+    
+
+
+@* Register the WebClientPrint script code. The param is the URL for the PrintCommands method in the DemoPrintCommandsController. *@
+@Html.Raw(Neodynamic.SDK.Web.WebClientPrint.CreateScript(Url.Action("PrintCommands", "Zebra", null, Request.Url.Scheme)))
+
+
+}

@@ -1,0 +1,77 @@
+﻿@model  RadioWeb.Models.EXPLORACION
+
+<div id="modal-form-desvincular" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Cerrar</span>
+                </button>
+                <h4 class="modal-title">Desvincular Exploración</h4>
+             
+            </div>
+            @using (Ajax.BeginForm("Desvincular",
+              "Exploracion",
+              new AjaxOptions
+              {
+                  HttpMethod = "POST",
+                  UpdateTargetId = "divResultadoDesvincular"
+              }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body">
+                    <div id="divResultadoDesvincular">
+
+                    </div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Aparato</th>
+                                <th>Exploración</th>
+                                <th>...</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                          
+
+                                <tr class="@(Model.IOR_MASTER>0? "":"success") ">
+                                    <td>@Model.FECHA.Value.ToShortDateString() @Model.HORA</td>
+                                    <td>@Model.DAPARATO.DES_FIL</td>
+                                    <td>@Model.APARATO.DES_FIL</td>
+                                    <td>
+                                        <input type="hidden" id="OID" name="OID" value="@ViewBag.oidHija" />
+                                        <button class="btn btn-primary" type="submit">Desvincular</button>
+                                        @*@Html.ActionLink(
+                                                        linkText: "Desvincular",
+                                                         actionName: "Desvincular",
+                                                        controllerName: "Exploracion",
+                                                        routeValues: new
+                                                        {
+                                                            oid = @ViewBag.oidHija
+                                                        },
+                                                        htmlAttributes: new { @style = "font-weight:bold" }
+                                             )*@
+
+
+                                       
+                                    </td>
+                                </tr>
+                               
+                        </tbody>
+                    </table>
+
+
+                    
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                 
+                </div>
+            }
+        </div>
+    </div>
+</div>

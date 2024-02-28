@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Grupo Manchon</title>
+    <link href="../../Content/bootstrap.css" rel="stylesheet" />
+    <link href="Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+
+    <style>
+        .tooltip-inner {
+            max-width: 300px;
+            padding: 0;
+        }
+
+        .tooltip-alert {
+            padding: 8px 10px;
+            font-weight: bolder;
+            color: #A94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="cabecera" class="row hide" style="margin-bottom: 5px;">
+            <img height="80" src="img/Logo%20Grup%20Manchon.jpg" />
+        </div>
+        <div class="row">
+            <div class="col-md-12" id="CitasResult">
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" id="panel-title">Su cita ha sido creada con éxito</h3>
+                    </div>
+                    <div class="panel-body">
+                  
+                        <div id="TIBIDABO" class="col-sm-12 hide">
+                            <iframe width="100%" height="250" frameborder="0" style="border: 0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA9HdSI-DQDZ3aSLQVv15SwOg-wWv94K7M&q=Centro+Diagnostico+Imagen+Manchon+Tibidabo" allowfullscreen></iframe>
+                        </div>
+                        <div id="MERIDIANA" class="col-sm-12 hide">
+                            <iframe width="100%" height="250" frameborder="0" style="border: 0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA9HdSI-DQDZ3aSLQVv15SwOg-wWv94K7M&q=CDPI+Dr.Manchon+Meridiana" allowfullscreen></iframe>
+                        </div>
+                        <div id="BALMES125" class="col-sm-12 hide">
+                            <iframe width="100%" height="250" frameborder="0" style="border: 0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA9HdSI-DQDZ3aSLQVv15SwOg-wWv94K7M&q=CDPI+Dr.Manchon+Balmes" allowfullscreen></iframe>
+                        </div>
+                        <div id="CANMORA" class="col-sm-12 hide">
+                            <iframe width="100%" height="250" frameborder="0" style="border: 0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA9HdSI-DQDZ3aSLQVv15SwOg-wWv94K7M&q=Centre+Sanitari+Can+Mora" allowfullscreen></iframe>
+                        </div>
+                        <table class="table table-hover clicable">
+                            <thead>
+                                <tr class="warning">
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                      <th>Aparato</th>
+                                    <th>Exploración</th>
+                                  
+                                    <th>Centro</th>
+                                     <th>Observaciones</th>
+                                    <th class="hide">#</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tablebody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <script src="Scripts/jquery-2.0.3.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/moment.min.js"></script>
+    <script src="Scripts/moment-with-locales.min.js"></script>
+    <script src="Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="Scripts/jquery.validate.min.js"></script>
+    <script src="Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="Scripts/jquery.ba-throttle-debounce.js"></script>
+    <script src="/Scripts/jQuery.tmpl.min.js"></script>
+    <script src="/citaonline28012023.js"></script>
+    <script>
+
+
+
+        $(document).ready(function () {
+
+          
+            if (sessionStorage.CentroExterno != -1) {
+                $("#cabecera").removeClass('hide');
+            }
+            rellenarMisCitas(false);
+
+        });
+    </script>
+
+
+
+</body>
+</html>

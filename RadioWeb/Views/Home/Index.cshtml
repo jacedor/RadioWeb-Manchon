@@ -1,0 +1,1023 @@
+﻿@using RadioWeb.Models;
+@model RadioWeb.ViewModels.Exploracion.VWFiltrosHome
+@{
+    //string diaSemana = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(DateTime.Now.DayOfWeek);
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    //RadioWeb.Models.Logica.FiltrosBusquedaExploracion oFiltros = ((RadioWeb.Models.Logica.FiltrosBusquedaExploracion)Session["FiltrosBusqueda"]);
+    ViewBag.Title = "Exploraciones";
+
+}
+
+@section estilos{
+    <style>
+
+        .popover, .popover-content {
+            min-width: 500px;
+        }
+
+        .anchoTexto {
+            width: 400px !important;
+        }
+
+        .fixed-col-widths {
+            min-width: 210px !important;
+        }
+
+        /*#listaDia {
+            max-height: 600px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }*/
+    </style>
+    <link href="~/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="~/css/plugins/calendario/FullCalendar.css" rel="stylesheet" />
+
+    <link href="~/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+    <link href="~/css/plugins/dualListbox/bootstrap-duallistbox.min.css" rel="stylesheet">
+    @*  <link href="~/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet" />*@
+
+    <link href="~/js/plugins/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css" rel="stylesheet" />
+
+
+}
+
+
+@section barraTop{
+    <div class="row">
+        <div class="col-lg-12">
+            @using (Ajax.BeginForm("Buscar",
+"Home", null,
+new AjaxOptions
+{
+    HttpMethod = "GET",
+    OnFailure = "onTestFailure",
+    OnSuccess = "SuccessFiltros(data)",
+    OnBegin = "BeginFiltros",
+    OnComplete = "CompleteFiltros()"
+}, new { @class = "form-horizontal" }))
+            {
+                @Html.EditorFor(m => m.FILTROS,
+                                                   new
+                                                                                                                          {
+
+                                                                                            estadoExploracion = "true",
+                                                                                            botonBusqueda = "true",
+                                                                                            facturadoExploracion = "true"
+
+                                                                                                                          })
+            }
+
+        </div>
+    </div>
+
+}
+
+
+<div class="row animated fadeInDown">
+    <form id="ListaDia" method="get">
+        <div id="ViewListaDia" class="">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+
+                    <div class="m-b-lg" style="margin-bottom: 0;">
+
+                        <div class="m-t-md" style="margin-top: 2px;" id="botoneraSuperior">
+                            <input type="hidden" id="MODULOVIDSIGNER" name="MODULOVIDSIGNER" value="@ViewBag.ModuloVidSigner" />
+                            <input type="hidden" id="MODULOAUDIO" name="MODULOAUDIO" value="@ViewBag.ModuloAudio" />
+                            <input type="hidden" id="PAGAANTESCONFIRMAR" name="PAGAANTESCONFIRMAR" value="@ViewBag.PAGAANTESCONFIRMAR" />
+                            <input type="hidden" id="sid" name="sid" value="@Session.SessionID" />
+
+                            <div class="pull-right">
+
+                                <button type="button" id="btnDiaAnterior" data-toggle="tooltip" data-placement="top" title="Día Anterior" class="btn btn-sm btn-white"><i class="fa fa-hand-o-left" title="Día Anterior"></i></button>
+                                <button type="button" id="btnHoy" class="btn btn-sm btn-white" data-toggle="tooltip" data-placement="top" title="Hoy"><i class="fa fa-hand-o-up" title="Hoy"></i></button>
+                                <button type="button" id="btnDiaSiguiente" class="btn btn-sm btn-white" data-toggle="tooltip" data-placement="top" title="Día siguiente"><i class="fa fa-hand-o-right" title="Día Siguiente"></i></button>
+                                <button type="button" id="btnActualizarPresencia" class="btn btn-sm btn-white disabled" data-toggle="tooltip" data-placement="top" title="Presencia"><i class="fa fa-dot-circle-o" title="Actualizar Presencia"></i></button>
+                                <button type="button" id="btnPresenciaImprimir" class="btn btn-sm btn-white disabled" data-toggle="tooltip" data-placement="top" title="Presencia e Imprimir"><i class="fa fa-bolt" title="Presencia e Imprimir"></i></button>
+                                <button type="button" id="btnEntrada" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-form-Entrada" title="Dar Entrada"><i class="fa fa-map-marker" title="Entrada"></i></button>
+
+                                <div class="btn-group">
+                                    <button type="button" id="btnKiosko" class="btn btn-white btn-sm disabled">
+                                        <i class="fa fa-bell" title="Llamar Paciente"></i>
+                                    </button>
+                                    <button type="button" id="btnKioskoOpciones" class="btn btn-white btn-sm dropdown-toggle disabled" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li id="btnKioskoOpcionesAction"><a href="#">Anular llamada</a></li>
+                                    </ul>
+                                </div>
+
+
+                                @*EL USUARIO DE MANREA NO PUEDE DAR ALTAS DE EXPLORACIONES, LAS DEBE DAR POR EL SERVICIO REST CREADO PARA ELLO*@
+                                @if (oUsuarioLogeado.PERFIL != 202)
+                                {
+                                    <button type="button" id="btnAgregarExploracion" data-href="/Exploracion/AddPaso1" class="btn btn-sm btn-white disabled" title="Agregar Exploración"><i class="fa fa-plus" title="Agregar Exploración"></i></button>
+                                }
+                                <button type="button" id="btnFichaPaciente" class="btn btn-sm btn-white disabled" title="Ficha Paciente"><i class="fa fa-user" title="Ficha Paciente"></i></button>
+                                <button type="button" id="btnImprimir" class="btn btn-sm btn-white disabled" data-toggle="tooltip" data-placement="top" title="Imprimir"><i class="fa fa-print" title="Imprimir"></i></button>
+                                <div class="btn-group">
+                                    <button type="button" id="btnEtiquetas" class="btn btn-white btn-sm disabled" data-etiquetas="1">
+                                        <i class="fa fa-barcode" title="Etiquetas"></i>
+                                    </button>
+                                    <button type="button" id="btnEtiquetasMasOpciones" class="btn btn-white btn-sm dropdown-toggle disabled" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu " role="menu">
+
+                                        <li><a href="#" data-etiquetas="2">2</a></li>
+                                        <li><a href="#" data-etiquetas="3">3</a></li>
+                                        <li><a href="#" data-etiquetas="4">4</a></li>
+                                    </ul>
+                                </div>
+                                <button type="button" id="btnPagoRapido" class="btn btn-sm btn-white disabled" title="Pago Rápido"><i class="fa fa-calculator" title="Pago Rápido"></i></button>
+                                <button type="button" id="btnConfirmar" class="btn btn-sm btn-white disabled" data-toggle="tooltip" data-placement="top" title="Confirmar Exploración"><i class="fa fa-check" title="Confirmar"></i></button>
+
+                                <button type="button" id="btnModalJustificante" class="btn btn-sm btn-white disabled" data-target="#modalImprimirJustificante" data-toggle="modal" title="Justificante"><i class="fa fa-certificate" title="Justificante"></i></button>
+                                <button type="button" id="btnCapturarDesdeTablet" class="btn btn-sm btn-white hidden-lg disabled" title="Captura Imagen"><i class="fa fa-send" title="Adjuntar Imágen"></i></button>
+                                <button type="button" id="btnArqueoDiario" class="btn btn-sm btn-white " title="Arqueo Diario">
+                                    <i class="fa fa-money" title="Arqueo Diario"></i>
+                                </button>
+                                <button type="button" id="btnImprimirRecordatorio" class="btn btn-sm btn-white " title="Recordatorio Cita">
+                                    <i class="fa fa-clock-o" title="Recordatorio Cita"></i>
+                                </button>
+                                @*EL USUARIO DE MANREA NO PUEDE DAR ALTAS DE EXPLORACIONES, LAS DEBE DAR POR EL SERVICIO REST CREADO PARA ELLO*@
+                                @if (oUsuarioLogeado.PERFIL != 202)
+                                {
+
+                                    <div class="btn-group">
+                                        <button type="button" id="btnBorrar" class="btn btn-danger btn-xs disabled">Borrar</button>
+                                        <button type="button" id="btnBorrarMasOpciones" class="btn btn-danger btn-xs dropdown-toggle disabled" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#" id="btnNoPresentado">No presentado</a></li>
+                                            <li><a href="#" id="btnLlamaAnulando">Llama Anulando</a></li>
+                                        </ul>
+                                    </div>
+                                }
+                                <div class="btn-group" id="ColorPickerParent">
+                                    <button type="button" class="btn btn-info dropdown-toggle  btn-xs disabled" data-toggle="dropdown">
+                                        Color <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu " id="ColorPicker" role="menu">
+
+                                        <li><a href="#" data-cid="0" style="background-color: white;"></a></li>
+                                        <li><a href="#" data-cid="1" style="background-color: teal;"></a></li>
+                                        <li><a href="#" data-cid="2" style="background-color: red;"></a></li>
+                                        <li><a href="#" data-cid="3" style="background-color: lime;"></a></li>
+                                        <li><a href="#" data-cid="4" style="background-color: yellow;"></a></li>
+                                        <li><a href="#" data-cid="5" style="background-color: blue;"></a></li>
+                                        <li><a href="#" data-cid="6" style="background-color: fuchsia;"></a></li>
+                                        <li><a href="#" data-cid="7" style="background-color: aqua;"></a></li>
+                                        <li><a href="#" data-cid="8" style="background-color: maroon;"></a></li>
+                                        <li><a href="#" data-cid="9" style="background-color: green;"></a></li>
+                                        <li><a href="#" data-cid="10" style="background-color: olive;"></a></li>
+                                        <li><a href="#" data-cid="11" style="background-color: navy;"></a></li>
+                                        <li><a href="#" data-cid="12" style="background-color: purple;"></a></li>
+                                        <li><a href="#" data-cid="13" style="background-color: gray;"></a></li>
+                                        <li><a href="#" data-cid="14" style="background-color: black;"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <strong>
+                                <label id="fechaActualValue"></label>
+                                <label id="cuentaExploraciones" style="text-transform:capitalize"></label>
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div id="spiner-cargando-listadia" class="row hide" style="height: 600px;">
+
+                        <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+
+                    @*<div id="listaDia" >*@
+
+                    <table id="ExploracionesTable" class="table table-hover table-bordered table-striped" data-filter-control="true"
+                           data-row-attributes="rowAttr" data-height="800" data-striped="true">
+                        <thead>
+                            <tr>
+                                <th data-field="intocable" data-formatter="incotableFormat" class="hidden-xs hidden-md ">i</th>
+                                <th data-sortable="true" data-field="HHORA" data-formatter="hhoraFormat">H</th>
+                                <th data-field="HORA">Hora</th>
+                                <th data-field="ESPERA" title="Espera" data-formatter="esperaFormat">Esp</th>
+                                <th data-field="ESTADO" data-formatter="estadoFormat" data-sortable="true">Est</th>
+                                <th data-field="CID" title="Color" data-formatter="cidFormat">C</th>
+                                <th data-field="VERS" class="hidden-xs hidden-md" data-formatter="versFormat" title="Primera Visita">V</th>
+                                <th data-field="QRCOMPARTIRCASO" class="hidden-xs hidden-md" data-formatter="qReportFormat" title="QReport">QR</th>
+                                <th data-sortable="true" data-field="PACIENTE" data-formatter="pacienteFormat" data-filter-control="input" class="testClass" data-width="500">Paciente</th>
+                                <th data-sortable="true" data-field="EDAD" class="testClass">Ed.</th>
+
+                                <th data-sortable="true" data-formatter="informeFormat" data-field="INFORMADA" title="Informada">I</th>
+                                @if (ViewBag.ModuloAudio == "T")
+                                {
+                                    <th class="hidden-xs hidden-md" data-field="RECORDED" data-formatter="recordedFormat" title="Grabado Audio">R</th>
+                                }
+
+                                @if (ViewBag.ModuloVidSigner == "TRUE")
+                                {
+                                    <th class="hidden-xs hidden-md" data-field="LOPD" data-formatter="lopdFormat" title="Firmada LOPD">F</th>
+                                    <th class="hidden-xs hidden-md" data-field="FIRMA_CONSEN" data-formatter="firmaConsenFormat" title="Consentimiento informado">C</th>
+                                }
+
+                                <th class="hidden-xs hidden-md" data-field="FECHAMAXENTREGA" data-formatter="fechaMaxFormat" title="Fecha Máxima Entrega">F.Entrega</th>
+                                <th data-sortable="true" data-field="MEDICO" data-filter-control="select"><span title="Medico Informante">Me</span></th>
+                                @if (ViewBag.CampoMutua == "NOMBRE")
+                                {
+                                    <th class="hidden-xs hidden-md" data-field="COLEGIADO" data-formatter="colegiadoFormat"><span title="Medico Referidor">Col</span></th>
+
+                                }
+                                else
+                                {
+                                    <th class="hidden-xs hidden-md" data-field="COD_MED"><span title="Medico Referidor">Col</span></th>
+
+                                }
+                                <th class="hidden-xs hidden-md" data-field="TECNICO" title="Técnico">Te</th>
+
+                                <th class="hidden-xs hidden-md" data-field="@ViewBag.IdExploracion" data-filter-control="input" data-formatter="oidFormat" title="Id Exploración">Id</th>
+
+
+
+                                @if (ViewBag.CampoMutua == "NOMBRE")
+                                {
+                                    <th data-sortable="true" data-field="DES_MUT"><span title="Mutua">Mutua</span></th>
+                                }
+                                else
+                                {
+                                    <th data-sortable="true" data-field="COD_MUT"><span title="Mutua">Mutua</span></th>
+                                }
+                                @*   <th data-field="COD_FIL" data-filter-control="select">Aparato</th>*@
+                                @if (ViewBag.CampoMutua == "NOMBRE")
+                                {
+                                    <th data-field="DESAPARATO" data-filter-control="select">Aparato</th>
+
+                                }
+                                else
+                                {
+                                    <th data-field="COD_FIL" data-filter-control="select">Aparato</th>
+
+                                }
+                                @if (ViewBag.CampoMutua == "NOMBRE")
+                                {
+                                    <th data-field="DES_FIL" data-filter-control="select" data-formatter="des_filFormat">Explo</th>
+                                }
+                                else
+                                {
+                                    <th data-field="FIL" data-formatter="exploracionFormat">Explo</th>
+                                }
+
+                                <th class="hidden-xs hidden-md consumibleField" data-field="HAYCONSUMIBLE" data-formatter="consumibleFormat"><span title="Consumible/Trazador">C</span></th>
+                                @if (oUsuarioLogeado.VECANTIDADES == 1)
+                                {
+                                    <th data-field="CANTIDAD" data-formatter="cantidadFormat"><span title="Precio">Precio</span> </th>
+                                    <th class="hidden-xs hidden-md" data-formatter="facturadoFormat" data-field="FACTURADA"><span title="Facturada">F</span></th>
+                                    <th class="hidden-xs hidden-md" data-formatter="aplazadoFormat" data-field="APLAZADO"><span title="Aplazada">A</span> </th>
+                                    <th class="hidden-xs hidden-md" data-formatter="noFacturableFormat" data-field="NOFACTURAB"><span title="No Facturable">NF</span> </th>
+                                }
+
+                                <th class="hidden-xs hidden-md" data-formatter="textoFormat" data-field="TEXTO">Texto </th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    @*</div>*@
+
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!-- context menu -->
+<ul id="context-menu" class="dropdown-menu">
+    @if (oUsuarioLogeado.ESMEDICO)
+    {
+        <li data-item="informar" class="hide">
+            <a href="/Informe/Duplicar/18964392?ReturnUrl=/Home/Index">
+                <i title="Realizar informe" style="color: green; font-size: 1.3em;" class="fa fa fa-clipboard "></i>
+                <span class="nav-label" style="display:inline;">&nbsp;Informar</span>
+            </a>
+        </li>
+    }
+    else
+    {
+        <li data-item="vincularaHL7" class="hide">
+            <a>
+                <i title="Vincular a HL7" style="color: orangered; font-size: 1.3em;" class="fa fa-anchor "></i>
+                <span class="nav-label" style="display:inline;">&nbsp;Vincular a HL7</span>
+            </a>
+        </li>
+        <li data-item="pagarExploracion" class="hide">
+            <a>
+                <i title="Ir a Pagos" style="color: red; font-size: 1.3em;" class="fa fa-money "></i>
+                <span class="nav-label" style="visibility:visible;">&nbsp;Ver Pagos</span>
+            </a>
+        </li>
+        <li data-item="desvincularMaster" class="hide">
+            <a>
+                <i title="Desvincular Exploración Hija" style="color: darkred; font-size: 1.3em;" class="fa fa-chain-broken "></i>
+                <span class="nav-label" style="visibility:visible;">&nbsp;Desvincular Exploración</span>
+            </a>
+        </li>
+        <li data-item="entradaCarrito">
+            <a>
+                <i title="Dar Entrada" style="color: green; font-size: 1.3em;" class="fa fa-map-marker "></i>
+                <span class="nav-label" style="visibility:visible;">&nbsp;Entrada Paciente</span>
+            </a>
+        </li>
+        <li data-item="carrito">
+            <a>
+                <i title="Carro Exploraciones" style="color: green; font-size: 1.3em;" class="fa fa-shopping-cart "></i>
+                <span class="nav-label" style="visibility:visible;">&nbsp;Enviar al carrito</span>
+            </a>
+        </li>
+        <li data-item="carritoTodas">
+            <a>
+                <i title="Carro Exploraciones" style="color: green; font-size: 1.3em;" class="fa fa-tasks "></i>
+                <span class="nav-label" style="visibility:visible;">&nbsp;Enviar todas al carrito</span>
+            </a>
+        </li>
+
+        <li data-item="enviarSMS">
+            <a data-toggle="modal" data-target="#modalSMS">
+                <i title="Enviar SMS" style="color: black; font-size: 1.3em;" class="fa fa-phone "></i>
+                <span class="nav-label" style="visibility:visible;">&nbsp;Enviar SMS</span>
+            </a>
+        </li>
+
+        <li data-item="tiempoEspera">
+            <a data-toggle="modal" data-target="#modalTiempoEspera">
+                <i title="Tiempo Espera" style="color: black; font-size: 1.3em;" class="fa fa-clock-o "></i>
+                <span class="nav-label" style="visibility:visible;">&nbsp;Tiempo Espera</span>
+            </a>
+        </li>
+    }
+    <li data-item="imprimirLista">
+        <a>
+            <i title="Imprimir Lista" style="color: green; font-size: 1.3em;" class="fa fa-print "></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Imprimir Lista</span>
+        </a>
+    </li>
+    <li data-item="enviarQreport">
+        <a>
+            <i title="Enviar a Qreport" style="color: blue; font-size: 1.3em;" class="fa fa-envelope"></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Qreport</span>
+        </a>
+    </li>
+    <li data-item="visoresQreport">
+        <a>
+            <i title="Visores Qreport" style="color: blue; font-size: 1.3em;" class="fa fa-eye"></i>
+            <span class="nav-label" style="visibility:visible;">&nbsp;Visores Qreport</span>
+        </a>
+    </li>
+
+    <li data-item="enviarAExcel">
+        <a onclick="exportExcel('xlsx','ExploracionesTable','ListaExploraciones');">
+            <i title="Enviar a Excel" class="fa fa-file-excel-o" style="font-size: 1.3em;">
+                <span class="nav-label" style="visibility:visible;">&nbsp;Exporta a Excel</span>
+            </i>
+        </a>
+    </li>
+</ul>
+
+<div class="modal inmodal fade" id="modalTiempoEspera" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Tiempo Espera</h4>
+            </div>
+            <div class="modal-body">
+
+                <label class="col-lg-4 control-label">Hora programada</label>
+
+                <div class="col-lg-2">
+                    <span class="form-control-static" id="HoraProgramada">14:00</span>
+                </div>
+                <label class="col-lg-4 control-label">Hora llegada</label>
+
+                <div class="col-lg-2">
+                    <span class="form-control-static" id="HoraLLegada"></span>
+                </div>
+
+                <label class="col-sm-4 control-label">Realizada a las </label>
+
+                <div class="col-sm-2">
+                    <span class="form-control-static" id="HoraRealizada"></span>
+                </div>
+
+                <label class="col-sm-4 control-label">Tiempo Espera </label>
+
+                <div class="col-sm-2">
+                    <span class="form-control-static" id="tiempoEspera"></span>
+                </div>
+
+                <br />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal fade" id="modalSMS" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Enviar SMS</h4>
+            </div>
+            <div class="modal-body">
+                <div id="displayPermisoLOPDsms">
+
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Plantilla SMS</label>
+
+
+                    @{
+                        List<RadioWeb.Models.EMAIL> oListEmail = (List<RadioWeb.Models.EMAIL>)System.Web.HttpContext.Current.Application["PlantillasCorreoSMS"];
+
+                        <select id="ddlEmail" name="ddlEmail" class="selectpicker form-control ">
+                            @foreach (RadioWeb.Models.EMAIL item in oListEmail)
+                            {
+                                if (item.DIRECCION != null && item.TEXTO != null)
+                                {
+                                    <option data-contenido="@item.TEXTO" data-oid="@item.OID" value="@item.OID">@item.DIRECCION </option>
+                                }
+                            }
+                        </select>
+                    }
+
+                </div>
+                <p>
+
+                    <input type="hidden" value="GRUP MANCHON: Se le ha enviado un informe de su estudio por mail. El código de acceso es CDPI. Si tiene alguna duda llame al 934450600. Gracias" id="textoSMSPlantilla" />
+                    <textarea class="form-control" id="textoSMS" name="textoSMS" rows="3"> </textarea>
+                </p>
+                <p>
+                    <input type="text" name="movilEnvioSMS" id="movilEnvioSMS" class="form-control" value=" " />
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="EnviarSMS">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal inmodal fade" id="modalImprimirJustificante" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Justificante Visita</h4>
+            </div>
+            <div class="modal-body" style="height:150px;">
+
+                <label class="col-lg-3 control-label">Hora llegada</label>
+
+                <div class="col-lg-3">
+                    <input type="text" class="form-control" name="HoraLLegadaJustificante" id="HoraLLegadaJustificante" value="" />
+
+                </div>
+                <label class="col-lg-3 control-label">Hora Realizada</label>
+                <div class="col-lg-3">
+                    <input type="text" class="form-control" name="HoraRealizadaJustificante" id="HoraRealizadaJustificante" value="" />
+                </div>
+                <label class="col-lg-3 control-label">Texto </label>
+                <div class="col-lg-9">
+                    <p>
+                        <textarea class="form-control" id="textoLibreJustificante" name="textoLibreJustificante" rows="3"> </textarea>
+                    </p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnImprimirJustificante">Generar Justificante</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*Ventana Modal para anular huecos*@
+<div id="modal-form-MotivoAnular" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-exclamation modal-icon"></i>
+                <h4 class="modal-title">Motivo anulación</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+
+                                <label class="sr-only" for="MotivoAnulacion">Motivo anulación</label>
+                                <select id="MotivoAnulacion" class="form-control motivos">
+                                    <option value="No doctor">No doctor</option>
+                                    <option value="No técnico/auxiliar">No técnico/auxiliar</option>
+                                    <option value="Averia">Averia</option>
+                                    <option value="Mantenimiento">Mantenimiento</option>
+                                    <option value="Demora">Demora</option>
+                                    <option value="Cambio máquina RM1">Cambio máquina RM1</option>
+                                    <option value="Cambio máquina RM2">Cambio máquina RM2</option>
+                                    <option value="Cambio máquina RM3">Cambio máquina RM3</option>
+                                    <option value="Reserva ORT">Reserva ORT</option>
+                                    <option value="Reserva DEN">Reserva DEN</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                                <label class="sr-only" for="MotivoAnulacion">Otros</label>
+                                <input type="text" name="OtrosAnulacion" class="form-control hide" id="OtrosAnulacion" />
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-sm-12 hide">
+
+                        <div class="form-group">
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                <button type="button" id="anularHuecoLibre" data-dismiss="modal" class="btn btn-primary pull-right">Anular</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal-form-consumibles" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span><span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Trazadores/Consumibles</h4>
+            </div>
+
+            <div class="modal-body" id="listaConsumiblesExplo">
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-form-entrada" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+            <div class="modal-header" style="padding-top:10px;padding-bottom:10px;">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="tituloEntrada">
+                    <span id="NombrePacienteEntrada"></span>
+
+                    <button type="button" id="btnActualizarPresenciaEntrada" class="btn btn-sm btn-primary " data-toggle="tooltip" data-placement="top" title="Presencia">Presencia <i class="fa fa-dot-circle-o " style="color:red;" title="Actualizar Presencia"></i></button>
+                    <button type="button" id="btnPresenciaImprimirEntrada" class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Presencia e Imprimir">Presencia y Ficha <i class="fa fa-bolt" style="color:green;" title="Presencia e Imprimir"></i></button>
+
+                </h4>
+            </div>
+            <div class="modal-body" style="min-height:350px;">
+                <div class="spiner-cargando hide">
+                    <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                </div>
+                <div id="contenedorEntrada" class="tabs-container">
+
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal-form-ArqueoDiario" class="modal" aria-hidden="true">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Arqueo Diario</h4>
+                <div class="spiner-cargando-arqueoDiario hide">
+                    <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body" id="modalCargandoOcupacion">
+
+                <table id="tblArqueDiarioHome" class="table "
+                       data-search="true" data-height="700" data-filter-control="true">
+                    <thead>
+                        <tr>
+                            <th data-sortable="true" data-field="Fecha" data-formatter="fechaStringFormat">Fecha</th>
+                            <th data-sortable="true" data-field="DescripcionConcepto">Tipo</th>
+                            <th data-sortable="true" data-field="CuentaConcepto">Recuento</th>
+                            <th data-sortable="true" data-field="CantidadSumaConcepto">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="contenedorModalImagenes">
+    <div id="modal-form-imagenes" class="modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Imágenes</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="contenedorCarrousel">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" id="ImprimirImagen" class="btn btn-white" type="button">Imprimir</button>
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="contenedorModalRespuestas">
+    <div id="modal-form-Respuestas" class="modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Respuestas</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+
+                    @*<div class="col-sm-12 ">
+                            <div class="form-group">
+                                <label class="col-sm-10 control-label  pull-right">Solo afirmativos</label>
+                                <div class="col-sm-2    ">
+                                    <input type="checkbox" class="js-switch" checked />
+                                </div>
+                            </div>
+
+                        </div>*@
+                    <hr class="hr-line-solid">
+                    <div id="contenedorRespuestas">
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="contenedorModalVidSigner">
+    <div id="modal-form-VidSigner" class="modal " aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Enviar a VidSigner</h4>
+                </div>
+
+                <div class="modal-body" id="modalVidContent">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div id="contenedorFormDesvincular">
+    <div id="modal-form-Desvincular" class="modal " aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Desvincular Exploración</h4>
+                </div>
+
+                <div class="modal-body" id="modalDesvincularHija">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@*Ventana Modal para usar la webcam*@
+<div id="modal-form-WebCam" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-lg-12" id="captura">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Web Cam
+                                </div>
+                                <div class="panel-body">
+                                    <div id="my_camera"></div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 hide" id="vistaprevia">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    Vista Previa
+                                </div>
+                                <div class="panel-body">
+                                    <div id="results" class="well">Vista Previa</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <input type="button" class="btn btn-success pull-right" value="Capturar" onclick="take_snapshot()">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contenedorArqueoDiario">
+    <div id="modal-form-ArqueoDiario" class="modal" aria-hidden="true">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Arqueo Diario</h4>
+                    <div class="spiner-cargando-horasOcupacion hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body" id="modalCargandoOcupacion">
+
+                    <table id="tblArqueDiarioHome" class="table "
+                           data-search="true" data-height="700" data-filter-control="true">
+                        <thead>
+                            <tr>
+                                <th data-sortable="true" data-field="DESCRIPCION">HORA</th>
+                                <th data-sortable="true" data-field="NUMERO">NºLIBRES</th>
+                                <th data-sortable="true" data-field="TOTAL">NºHORAS</th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal fade" id="modalVisoresQreport" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Selecciona el visor</h4>
+            </div>
+            <div class="modal-body">
+
+                <div style="margin: 0 auto; text-align: center;">
+                    <a href="#" id="visorJpeg" class="btn btn-success">Visor jpeg</a>
+                    <a href="#" id="visorDicom" class="btn btn-success">Visor dicom</a>
+                    <a href="#" id="descargarVisor" class="btn btn-success">Descargar zip</a>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    @*  <script src="~/js/plugins/webcam/webcam.min.js"></script>*@
+
+
+    <script src="~/js/jquery.touchSwipe.min.js"></script>
+
+    <!-- Dual Listbox -->
+    <script src="~/js/plugins/dualListbox/jquery.bootstrap-duallistbox.js"></script>
+
+
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+
+    <script src="~/js/plugins/bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.js"></script>
+    <script src="~/js/plugins/bootstrap-table/extensions/cookie/bootstrap-table-cookie.js"></script>
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Home/Home.js")"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/ListaDia/Entrada.js")"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Informe/enviarInformeShared.js")"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Zebra/zebra.js")"></script>
+
+
+    @Html.Raw(Neodynamic.SDK.Web.WebClientPrint.CreateScript(Url.Action("PrintCommands", "Zebra", null, Request.Url.Scheme)))
+
+
+
+
+
+
+
+
+}
+

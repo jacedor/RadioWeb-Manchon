@@ -1,0 +1,91 @@
+﻿@model IEnumerable<RadioWeb.Models.PAGOS>
+<table id="PagosList" class="table table-hover table-bordered ">
+    <thead>
+        <tr>
+
+            <th>Fecha</th>
+            <th style="text-align:right;">Cantidad Abonada</th>
+            <th style="text-align:right;">Importe</th>
+            <th>Forma de Pago</th>
+            <th>Aplazado?</th>
+            <th>... </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var pago in Model)
+        {
+            <tr data-oidpago="@pago.OID">
+                <td>@pago.FECHA.Value.ToShortDateString()</td>
+                <td align="right">
+                    <a data-title="Cantidad a pagar" data-pk="@pago.OID"  data-cantidad="@pago.CANTIDAD"
+                       id="@String.Concat(new string[] { "PAGO[", @pago.OID.ToString(), "].OID" })"
+                       href="#" class="editable editable-click @(pago.CID == 1378 ? "cantidadPagoConsumible" : "cantidadPago")"
+                       data-url="/Pagos/UpdateCantidad" data-value="@pago.DEUDA_CANTIDAD">
+                    </a>
+                </td>
+                <td align="right">
+                    <b> @pago.DEUDA_CANTIDAD @pago.SIMBOLO</b> 
+                </td>
+                <td>
+                    <a href="#" class="formapago"
+                       id="@String.Concat(new string[] { "TIPOPAGO[", @pago.OID.ToString(), "].OID" })"
+                       data-type="select" data-pk="@pago.OID"
+                       data-value="@pago.TIPOPAGO"
+                       data-url="/Pagos/UpdateFormaPago"
+                       data-title="Forma Pago"
+                      >
+                    </a>
+                </td>
+                <td>
+                    @if (@pago.APLAZADO == "T")
+                    {
+                        <i style="color: #f70000; font-size: 1.2em;" title="Aplazado" class="fa fa-clock-o"></i>
+                    }
+                </td>
+                <td>
+                    <a class="btn btn-info pull-right btn-outline pagoExploracion pull-right" data-oidpago="@pago.OID" href="#">Pagar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6" class="danger" align="right">
+                <b>Cantidad Pendiente &nbsp;</b>
+                <span class="pull-right" id="@(Model.FirstOrDefault().CID == 1378 ? "cantidadPendienteConsumible" : "cantidadPendienteExploracion")">
+                    @ViewBag.Pendiente (
+                    @if (Model.First().DESCRIPCION == "EXPLORACION")
+                    {
+                        @Html.Label(Model.First().EXPLORACION.FIL)
+                    } )
+                </span>
+            
+
+            </td>
+           
+        </tr>
+
+    </tfoot>
+</table>
+
+
+@*  <table class="table table-hover">
+        <tbody>
+            <tr>
+                <td colspan="3" align="right">
+                    Pendiente
+                </td>
+                <td colspan="1" align="right">
+                    <span class="pull-right" id="@(Model.FirstOrDefault().CID == 1378 ? "cantidadPendienteConsumible" : "cantidadPendienteExploracion")" >
+                        @ViewBag.Pendiente
+
+                    </span>
+
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+*@  

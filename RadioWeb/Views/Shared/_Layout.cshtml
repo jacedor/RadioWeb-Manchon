@@ -1,0 +1,326 @@
+﻿@{
+    string diaSemana = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(DateTime.Now.DayOfWeek);
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+
+}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RadioWeb | @ViewBag.Title</title>
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <!-- Toastr style -->
+    <link href="~/css/plugins/toastr/toastr.min.css" rel="stylesheet">
+    <!-- Gritter -->
+    <link href="~/js/plugins/gritter/jquery.gritter.css" rel="stylesheet">
+    <link href="~/css/animate.css" rel="stylesheet">
+    <link href="~/css/plugins/datapicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/css/style.css")" rel="stylesheet">
+    <link href="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/css/custom/style.css")" rel="stylesheet">
+    <link href="~/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="~/css/bootstrap-editable.css" rel="stylesheet" />
+    <link href="~/css/plugins/select2/select2.min.css" rel="stylesheet">
+    <link href="~/css/plugins/select2/select2-bootstrap.css" rel="stylesheet" />
+    <link href="~/css/plugins/slick/slick.css" rel="stylesheet" />
+    <link href="~/css/plugins/slick/slick-theme.css" rel="stylesheet" />
+    <link href="~/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/plugins/tableexport/tableexport.min.css" rel="stylesheet" />
+    <link href="~/css/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet">
+    <link href="~/css/plugins/ladda/ladda-themeless.min.css" rel="stylesheet" />
+    @RenderSection("Estilos", required: false)
+    <!-- Latest compiled and minified CSS -->
+    <link href="~/css/plugins/bootstrap-table/bootstrap-table.css" rel="stylesheet" />
+
+    @WebReportGlobals.Scripts()
+    @WebReportGlobals.Styles()
+</head>
+
+<body onload="initSession()">
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation" style="margin-top:60px;">
+            <div class="sidebar-collapse">
+                @Html.Partial("_Menu")
+            </div>
+        </nav>
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row border-bottom">
+                <nav style="margin-bottom: 0" role="navigation" class="navbar navbar-fixed-top">
+                    <div class="navbar-header">
+                        <a href="#" class="navbar-minimalize minimalize-styl-2 btn btn-primary" data-controlador="shared" data-objeto="filtros">
+                            <i class="fa fa-bars"></i>
+                        </a>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-left ">
+
+                        <li style="padding: 14px 10px;min-height: 60px;">
+                            @{
+                                int NumeroExploraciones = 0;
+
+                                if (Session["ExploracionesLista"] != null)
+                                {
+                                    NumeroExploraciones = ((List<RadioWeb.Models.LISTADIA>)Session["ExploracionesLista"]).Count();
+                                }
+
+                            }
+                            <div class="row">
+                                <button id="CarritoCitas" data-toggle="popover" data-placement="bottom" data-html="true" type="button" class="btn btn-sm btn-white ui-popover "
+                                        data-container="body" data-content="">
+                                    <i title="Carro Exploraciones" style="color: green;" class="fa fa-shopping-cart "></i>
+                                    <span class="badge" id="ExploracionesPersonalesCuenta" style="color: red; background-color: white;">@NumeroExploraciones</span>
+                                </button>
+                            </div>
+                        </li>
+
+
+                        @{
+                            int NumeroPeticiones = 0;
+
+
+
+                            <li style="margin-left:2px;padding: 14px 10px;min-height: 60px;">
+                                <div class="row">
+                                    <button id="CarritoPeticiones" data-toggle="popover" data-placement="bottom" data-html="true" type="button" class="btn btn-sm btn-white ui-popover"
+                                            data-container="body" data-content="">
+                                        <i title="Carro Exploraciones" style="color:#ffd800;" class="fa fa-folder-open "></i>
+                                        <span class="badge" id="PeticionesPersonalesCuenta" style="color: red; background-color: white;">@NumeroPeticiones</span>
+                                    </button>
+                                </div>
+                            </li>
+
+
+                        }
+
+
+
+                    </ul>
+
+                    <ul class="nav navbar-top-links navbar-right hidden-xs">
+                        <li>  <span class="connStatus margin_top margin_bottom"></span></li>
+                        @if (oUsuarioLogeado.PRIVILEGIADO < 0)
+                        {
+                            <li class="dropdown">
+                                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+
+                                    <i class="fa fa-user"></i>  <span class="label label-primary">@RadioWeb.MvcApplication.UsuariosConectados.Count</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-alerts">
+                                    @foreach (USUARIO item in RadioWeb.MvcApplication.UsuariosConectados)
+                                    {
+                                        <li>
+                                            <a href="#" class="dropdown-item">
+                                                <div>
+                                                    @if (item.ESMEDICO)
+                                                    {
+                                                        <i class="fa fa-user-md fa-2x" style="color:green;"></i> @item.NOME
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fa fa-user fa-2x"></i> @item.NOME
+                                                    }
+
+                                                    <span class="float-right text-muted "> (@item.DESCPERFILWEB)</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="dropdown-divider"></li>
+                                    }
+
+
+
+
+                                </ul>
+
+                            </li>
+                        }
+
+                        <li>
+                            @if (oUsuarioLogeado.PERSONAL != null)
+                            {
+                                <strong class="font-bold" id="UserLogged" data-privilegiado="@oUsuarioLogeado.PRIVILEGIADO" data-login="@oUsuarioLogeado.LOGIN" data-perfil="@oUsuarioLogeado.DESCPERFILWEB"> Bienvenido @oUsuarioLogeado.LOGIN  (@oUsuarioLogeado.DESCPERFILWEB)</strong>
+                                if (oUsuarioLogeado.LOGIN == "Admin")
+                                {
+                                    <span><a title="Recargar Datos Globales" href="#"><i class="fa fa-refresh"></i></a></span>
+                                }
+                            }
+                            else
+                            {
+                                <strong class="font-bold" id="UserLogged" data-oidPersonal="@oUsuarioLogeado.PERSONAL.OID" data-login="@oUsuarioLogeado.LOGIN" data-perfil="@oUsuarioLogeado.DESCPERFILWEB">BienvenidO @oUsuarioLogeado.LOGIN (@oUsuarioLogeado.DESCPERFILWEB)</strong>
+                            }
+                            @*<span class="m-r-sm text-muted welcome-message">Bienvenido a RadioWeb 2.0</span>*@
+                            <input type="hidden" id="NombreEmpresaGlobal" value="@System.Configuration.ConfigurationManager.AppSettings["NombreEmpresa"]" />
+                            <input type="hidden" id="SimboloMonedaGlobal" value="@System.Configuration.ConfigurationManager.AppSettings["SimboloMoneda"]" />
+                        </li>
+                        @*
+                        <li>
+                            @if (oUsuarioLogeado.PERSONAL != null)
+                            {
+                                <strong class="font-bold" id="UserLogged" data-privilegiado="@oUsuarioLogeado.PRIVILEGIADO" data-login="@oUsuarioLogeado.LOGIN" data-perfil="@oUsuarioLogeado.DESCPERFILWEB"> Bienvenido @oUsuarioLogeado.LOGIN  (@oUsuarioLogeado.DESCPERFILWEB)</strong>
+                                if (oUsuarioLogeado.LOGIN == "Admin")
+                                {
+                                    <span><a title="Recargar Datos Globales" href="#"><i class="fa fa-refresh"></i></a></span>
+                                }
+                            }
+                            else
+                            {
+                                <strong class="font-bold" id="UserLogged" data-oidPersonal="@oUsuarioLogeado.PERSONAL.OID" data-login="@oUsuarioLogeado.LOGIN" data-perfil="@oUsuarioLogeado.DESCPERFILWEB">BienvenidO @oUsuarioLogeado.LOGIN (@oUsuarioLogeado.DESCPERFILWEB)</strong>
+                            }
+                            @*<span class="m-r-sm text-muted welcome-message">Bienvenido a RadioWeb 2.0</span>
+                            <input type="hidden" id="NombreEmpresaGlobal" value="@System.Configuration.ConfigurationManager.AppSettings["NombreEmpresa"]" />
+                            <input type="hidden" id="SimboloMonedaGlobal" value="@System.Configuration.ConfigurationManager.AppSettings["SimboloMoneda"]" />
+                        </li>
+                            *@
+                        @*
+                            <li>
+                                @if (oUsuarioLogeado.PERSONAL != null)
+                                {
+                                    <strong class="font-bold" id="UserLogged" data-privilegiado="@oUsuarioLogeado.PRIVILEGIADO" data-login="@oUsuarioLogeado.LOGIN" data-perfil="@oUsuarioLogeado.DESCPERFILWEB"> Bienvenido @oUsuarioLogeado.LOGIN  (@oUsuarioLogeado.DESCPERFILWEB)</strong>
+                                    if (oUsuarioLogeado.LOGIN == "Admin")
+                                    {
+                                        <span><a title="Recargar Datos Globales" href="#"><i class="fa fa-refresh"></i></a></span>
+                                    }
+                                }
+                                else
+                                {
+                                    <strong class="font-bold" id="UserLogged" data-oidPersonal="@oUsuarioLogeado.PERSONAL.OID" data-login="@oUsuarioLogeado.LOGIN" data-perfil="@oUsuarioLogeado.DESCPERFILWEB">BienvenidO @oUsuarioLogeado.LOGIN (@oUsuarioLogeado.DESCPERFILWEB)</strong>
+                                }
+                                @*<span class="m-r-sm text-muted welcome-message">Bienvenido a RadioWeb 2.0</span> //AQUI VA EL @ comentario cerrar de la linea.
+                                <input type="hidden" id="NombreEmpresaGlobal" value="@System.Configuration.ConfigurationManager.AppSettings["NombreEmpresa"]" />
+                            </li>-->
+                        *@
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                                Mi cuenta
+                            </a>
+                            <ul class="dropdown-menu dropdown-alerts" style="width:200px;">
+                                <li>
+                                    @Html.ActionLink("Cambiar Contraseña", "CambioPassword", "Users", new object { }, new { @class = "dropdown-item" })
+                                </li>
+                                <li>
+                                    @Html.ActionLink("Salir", "LogOut", "Users", new object { }, new { @class = "dropdown-item" })
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+
+                        </li>
+
+                    </ul>
+
+                </nav>
+
+
+
+            </div>
+
+
+            <div style="margin-top:60px;">
+
+
+                @RenderSection("barraTop", required: false)
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="wrapper wrapper-content">
+
+                            @RenderBody()
+
+                        </div>
+                        @*<div class="footer">
+                                <div class="pull-right">
+                                    Análisis y Desarrollo de Programas Médicos
+                                </div>
+                                <div>
+                                    <strong>Copyright</strong> ADPM &copy; 2018
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="/js/jquery-2.1.1.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="~/js/plugins/moment/moment-with-locales.min.js"></script>
+    <script src="/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="~/js/plugins/bootstrap-table/bootstrap-table.js"></script>
+    <script src="~/js/plugins/bootstrap-table/locale/bootstrap-table-es-ES.js"></script>
+    <script src="~/js/plugins/contextmenu/bootstrap-table-contextmenu.js"></script>
+    <script src="~/js/plugins/jasny/jasny-bootstrap.min.js"></script>
+    <!-- Peity -->
+    <script src="~/js/plugins/peity/jquery.peity.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="~/js/inspinia.js"></script>
+    <script src="~/js/plugins/pace/pace.min.js"></script>
+
+    <!-- jQuery UI -->
+    <script src="/js/plugins/jquery-ui/jquery-ui.min.js"></script>
+
+    <!-- GITTER -->
+    <script src="~/js/plugins/gritter/jquery.gritter.min.js"></script>
+
+    <!-- Sparkline -->
+    <script src="~/js/plugins/sparkline/jquery.sparkline.min.js"></script>
+
+    <!-- Toastr -->
+    <script src="~/js/plugins/toastr/toastr.min.js"></script>
+    @*   <script src="~/js/plugins/moment/moment.js"></script>*@
+
+    <script src="~/js/plugins/debounce/jquery.ba-throttle-debounce.min.js"></script>
+    <script src="~/js/plugins/typeahead/bootstrap3-typeahead.js"></script>
+    <script src="~/js/plugins/jprint/jQuery.print.js"></script>
+    <!-- Switchery -->
+    <script src="~/js/plugins/switchery/switchery.js"></script>
+    <!-- Data picker -->
+    <script src="~/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <!-- Sweet alert -->
+    <script src="~/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <!-- iCheck -->
+    <script src="~/js/plugins/iCheck/icheck.min.js"></script>
+    <script src="~/js/bootstrap-editable.min.js"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Shared.js")"></script>
+
+    <script src="~/js/plugins/datapicker/bootstrap-datepicker.es.js"></script>
+    <!-- Select2 -->
+    <script src="~/js/plugins/select2/select2.min.js"></script>
+    <!-- slick carousel-->
+    <script src="~/js/plugins/slick/slick.min.js"></script>
+    <script src="~/js/plugins/SheetJS/shim.min.js"></script>
+    <script src="~/js/plugins/SheetJS/xlsx.full.min.js"></script>
+    <script src="~/js/plugins/SheetJS/Blob.js"></script>
+    <script src="~/js/plugins/SheetJS/FileSaver.js"></script>
+    <script src="~/js/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- Ladda -->
+    <script src="~/js/plugins/ladda/spin.min.js"></script>
+    <script src="~/js/plugins/ladda/ladda.min.js"></script>
+    <script src="~/js/plugins/ladda/ladda.jquery.min.js"></script>
+    <script src="~/js/plugins/mask/jquery.mask.min.js"></script>
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+
+         $(document).ready(function () {
+             if ('WebSocket' in window || 'MozWebSocket' in window) {
+               //history.pushState('', 'Index', "?login=@User.Identity.Name");
+                 var wdApp;
+                 wdApp = new WDApp("@User.Identity.Name");
+                 wdApp.init();
+             }
+        });
+    </script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/WSApp.js")"></script>
+</body>
+</html>

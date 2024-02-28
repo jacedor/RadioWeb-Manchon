@@ -1,0 +1,371 @@
+﻿@model RadioWeb.ViewModels.Exploracion.VWExploracion
+@using RadioWeb.Models;
+@{
+    ViewBag.Title = "Exploración";
+}
+
+
+<input type="hidden" id="IOR_PACIENTE" name="IOR_PACIENTE" value="@Model.EXPLORACION.IOR_PACIENTE" />
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-6">
+        <h2><b>@Model.PACIENTE.PACIENTE1</b></h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="index.html">@Model.PACIENTE.DESCMUTUA</a>
+            </li>
+            <li>
+                <a>@Model.PACIENTE.EDAD</a>
+            </li>
+
+        </ol>
+    </div>
+    <div class="col-lg-6">
+        <br />
+        <ol class="breadcrumb">
+            <li>
+                NHC - @Model.PACIENTE.COD_PAC
+            </li>
+            <li>
+                ID - @Model.PACIENTE.OID
+            </li>
+
+        </ol>
+
+        <div class="checkbox-inline">
+            <label>
+                <input name="NUEVA_LOPD" id="NUEVA_LOPD" type="checkbox" class="i-checks" @(Model.PACIENTE.NUEVA_LOPD == "T" ? "checked='checked'" : "")>
+                LOPD
+            </label>
+        </div>
+        <div class="checkbox-inline">
+            <label>
+                <input name="AVISO" id="AVISO" type="checkbox" class="i-checks" @(Model.PACIENTE.AVISO == "T" ? "checked='checked'" : "")>
+                AVISO
+            </label>
+
+        </div>
+        <div class="checkbox-inline">
+            <label>
+                <input name="VIP" id="VIP" type="checkbox" class="i-checks" @(Model.PACIENTE.VIP == "T" ? "checked='checked'" : "")>
+                VIP
+            </label>
+
+        </div>
+        <div class="checkbox-inline">
+            <label>
+                <input name="RIP" id="RIP" type="checkbox" class="i-checks" @(Model.PACIENTE.RIP == "T" ? "checked='checked'" : "")>
+                RIP
+            </label>
+
+        </div>
+        <div class="checkbox-inline">
+            <label>
+                <input name="COMPARTIR" id="COMPARTIR" type="checkbox" class="i-checks" @(Model.PACIENTE.COMPARTIR == "T" ? "checked='checked'" : "")>
+                QREPORT
+            </label>
+
+        </div>
+        <div class="checkbox-inline">
+            <label>
+                <input name="OTROS3" id="OTROS3" type="checkbox" class="i-checks" @(Model.PACIENTE.OTROS3 == "T" ? "checked='checked'" : "")>
+                DIFUSIÓ
+            </label>
+        </div>
+        <div class="checkbox-inline">
+            <label>
+                <input name="ENLACE" id="ENLACE" type="checkbox" class="i-checks" @(Model.PACIENTE.ENLACE == "T" ? "checked='checked'" : "")>
+                ENLACE
+            </label>
+
+        </div>
+
+        @{
+            var EstaBorrado = "none;";
+            if (@Model.PACIENTE.BORRADO == "T")
+            {
+                EstaBorrado = "block;";
+            }
+        }
+        <div class="checkbox-inline">
+            <label>
+                <span class="label label-danger" style="display:@EstaBorrado">BORRADO</span>
+            </label>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<div class="wrapper wrapper-content animated fadeIn">
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-paciente">Paciente</a></li>
+                    <li class=""><a data-toggle="tab" href="#tab-exploraciones">Exploraciones</a></li>
+                    <li class=""><a data-toggle="tab" href="#tab-documentos">Documentos</a></li>
+                    <li class=""><a data-toggle="tab" href="#tab-informes">Informes</a></li>
+                    <li class=""><a data-toggle="tab" href="#tab-imagenes">Imágenes</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-paciente" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="form-horizontal" id="DetailsPaciente">
+                                <div class="form-group ">
+
+                                    <div class="col-sm-2">
+
+                                        @Html.LabelFor(m => m.PACIENTE.TRAC, new { @class = "control-label " })
+                                        @Html.DropDownListFor(m => Model.PACIENTE.TRAC, new SelectList(Model.TRATAMIENTOS, "Key", "Value"), new { @class = "form-control " })
+
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label" for="nombrePaciente">Paciente</label>
+                                        <input class="form-control" id="PACIENTE1" name="PACIENTE1" maxlength="40" style="text-transform:uppercase;" type="text" value="@Model.PACIENTE.PACIENTE1" required />
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label for="fNacimiento" class="control-label">Fecha Nac</label>
+                                        @if (Model.PACIENTE.FECHAN.HasValue)
+                                        {
+                                            <input type="text" class="form-control " data-mask="99/99/9999" id="FECHAN" name="FECHAN" value="@Model.PACIENTE.FECHAN.Value.ToShortDateString()">
+                                        }
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label" for="compañia">Compañia</label>
+                                        @{
+                                            List<MUTUAS> oListTemp = (List<MUTUAS>)System.Web.HttpContext.Current.Application["Mutuas"];
+                                            <select id="CID" name="CID" class="select2 form-control ">
+                                                @foreach (MUTUAS item in oListTemp)
+                                                {
+
+                                                    if (item.OID == Model.PACIENTE.CID)
+                                                    {
+                                                        <option selected="selected" data-subtext="@item.NOMBRE" data-text-value="@item.CODMUT" value="@item.OID">@item.CODMUT - @item.NOMBRE  </option>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <option data-subtext="@item.NOMBRE" data-text-value="@item.CODMUT" value="@item.OID">@item.CODMUT - @item.NOMBRE  </option>
+                                                    }
+
+                                                }
+                                            </select>
+
+                                        }
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+
+                                    <div class="col-sm-2">
+                                        <label for="dni" class="control-label">D.N.I.</label>
+                                        <input class="form-control" id="DNI" name="DNI" type="text" value="@Model.PACIENTE.DNI" maxlength="12" style="text-transform:uppercase" />
+                                    </div>
+
+
+
+                                    <div class="col-sm-4">
+                                        <label class="control-label" for="Tarjeta">Tarjeta</label>
+                                        <input class="form-control" id="TARJETA" name="TARJETA" type="text" maxlength="20" value="@Model.PACIENTE.TARJETA" />
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label for="Profesion" class="control-label">Profesión</label>
+                                        <input class="form-control" id="PROFESION" name="PROFESION" type="text" maxlength="15" value="@Model.PACIENTE.PROFESION" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="control-label" for="email">Email</label>
+                                        <input class="form-control" id="EMAIL" name="EMAIL" style="text-transform:none;" maxlength="60" type="text" value="@Model.PACIENTE.EMAIL" />
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label for="dni" class="control-label">D.N.I. Responsable</label>
+                                        <input class="form-control" id="DNIRESPONSABLE" name="DNI" type="text" value="@Model.PACIENTE.DNIRESPONSABLE" style="text-transform:uppercase" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="Profesion" class="control-label">Responsable</label>
+                                        <input class="form-control" id="RESPONSABLE" name="RESPONSABLE" type="text" value="@Model.PACIENTE.RESPONSABLE" />
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label for="OTROS4" class="control-label">Idioma</label>
+                                        @{
+                                            Dictionary<string, string> oListIdiomas = (Dictionary<string, string>)ViewBag.Idiomas;
+                                            <select id="OTROS4" name="OTROS4" class="select2 form-control ">
+                                                @foreach (KeyValuePair<string, string> item in oListIdiomas)
+                                                {
+                                                    if (item.Key == Model.PACIENTE.OTROS4.ToString())
+                                                    {
+                                                        <option selected="selected" value="@item.Key">@item.Value  </option>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.Key">@item.Value  </option>
+                                                    }
+                                                }
+                                            </select>
+                                        }
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="CIP" class="control-label">CIP</label>
+                                        <input class="form-control" id="CIP" name="CIP" type="text" value="@Model.PACIENTE.CIP" maxlength="15" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-2">
+                                        <label for="Poliza" class="control-label">Póliza/S.S</label>
+                                        <input class="form-control" id="POLIZA" name="POLIZA" type="text" value="@Model.PACIENTE.POLIZA" maxlength="30" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-exploraciones" class="tab-pane">
+                        <div class="panel-body" id="exploracionesPaciente" style="max-height: 300px;overflow-y: scroll;">
+                            <div class="spiner-cargando-exploraciones-paciente hide">
+                                <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-documentos" class="tab-pane">
+                        <div class="panel-body" id="documentosPaciente" style="max-height: 300px;overflow-y: scroll;">
+                            <div class="spiner-cargando-documentos-paciente hide">
+                                <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-informes" class="tab-pane">
+                        <div class="panel-body" id="informesPaciente" style="max-height: 300px;overflow-y: scroll;">
+                            <div class="spiner-cargando-informes-paciente hide">
+                                <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-t-lg">
+        <div class="col-lg-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#tab-exploracion">
+                            @Html.EditorFor(m => m.EXPLORACION.ESTADODESCRIPCION)
+                            @*     @Html.EditorFor("ESTADO",m=>m.ESTADO)*@
+                           @* <span class="label label-warning">@Model.EXPLORACION.ESTADODESCRIPCION</span>*@
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-informe">
+                            Informe
+
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-exploracion" class="tab-pane active">
+                        <div class="panel-body">
+                            @{
+                                //EN la tabla mutuas el campo OWNER difencia esto
+                                //1.- Privado
+                                //2.- Mutuas.
+                                //3.- ICS
+                                switch (@Model.EXPLORACION.ENTIDAD_PAGADORA.OWNER)
+                                {
+                                    case 1:
+                                        @Html.Partial("~/Views/Exploracion/PartialPrivados.cshtml", Model.EXPLORACION)
+
+                                        break;
+                                    case 2:
+                                        @Html.Partial("~/Views/Exploracion/PartialMutuas2.cshtml", Model.EXPLORACION)
+
+                                        break;
+                                    case 3:
+                                        Html.RenderPartial("PartialICS");
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div id="tab-informe" class="tab-pane ">
+                        <div class="panel-body">
+                            Inofrme
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/js/custom/Exploracion/Details2.js"></script>
+
+
+}
+
+
+
+
+
+
+
+

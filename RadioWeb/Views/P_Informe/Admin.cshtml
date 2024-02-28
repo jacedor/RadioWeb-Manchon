@@ -1,0 +1,104 @@
+﻿@model List<RadioWeb.Models.P_INFORMES>
+
+
+
+<div class="wrapper wrapper-content animated fadeInRight ecommerce" style="padding-top:0px;padding-bottom:0px;">
+
+    <div class="ibox-content m-b-sm border-bottom">
+        @using (Ajax.BeginForm("Admin", "P_Informe", new AjaxOptions
+        {//GetPatients is name of method in PatientController
+            HttpMethod = "POST",
+            InsertionMode = InsertionMode.Replace, //target element(#patientList) will be replaced
+            UpdateTargetId = "plantillasList",
+            LoadingElementId = "loader" // div with .gif loader - that is shown when data are loading
+        }))
+        {
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="form-horizontal" id="DetailInforme">
+                        <div class="form-group ">
+                            <div class="col-sm-4">
+                                <label class="control-label" for="titulo">Titulo</label>
+                                <input class="form-control" id="titulo" name="titulo" type="text" />
+                            </div>
+
+                            <div class="col-sm-3">
+                                <label class="control-label" for="tipo">Tipo</label>
+                                @Html.DropDownList("TIPO", new SelectList(ViewBag.TIPOS, "Key", "Value"),
+                                        new { @class = "form-control " })
+
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="control-label" for="tipo">Idioma</label>
+                                @Html.DropDownList("IDIOMA", new SelectList(ViewBag.IDIOMAS, "Key", "Value"),
+                                        new { @class = "form-control " })
+
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn  btn-primary pull-right">Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+        }
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="spiner-cargando" id="loader" style="display:none">
+                <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                    <div class="sk-circle1 sk-circle"></div>
+                    <div class="sk-circle2 sk-circle"></div>
+                    <div class="sk-circle3 sk-circle"></div>
+                    <div class="sk-circle4 sk-circle"></div>
+                    <div class="sk-circle5 sk-circle"></div>
+                    <div class="sk-circle6 sk-circle"></div>
+                    <div class="sk-circle7 sk-circle"></div>
+                    <div class="sk-circle8 sk-circle"></div>
+                    <div class="sk-circle9 sk-circle"></div>
+                    <div class="sk-circle10 sk-circle"></div>
+                    <div class="sk-circle11 sk-circle"></div>
+                    <div class="sk-circle12 sk-circle"></div>
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-content" id="plantillasList">
+
+                    @Html.Partial("~/Views/P_Informe/_Lista.cshtml", Model)
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+
+
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+    <script>
+
+
+        $(document).ready(function () {
+
+            makeBootstrapTable("PlantillaList");
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewEditorPlantillas]").addClass("active");
+            $("[data-view=ViewEditorPlantillas]").parents("ul").removeClass("collapse");
+        });
+
+    </script>
+}

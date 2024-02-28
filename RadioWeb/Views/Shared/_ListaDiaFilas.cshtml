@@ -1,0 +1,389 @@
+﻿@model IEnumerable<RadioWeb.Models.LISTADIAAMBFORATS>
+@{
+    //radioweb2.0
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)ViewData["oUsuario"];
+
+}
+
+@foreach (var item in Model)
+{
+    var HoraHorario = "";
+    var claseActiva = "";
+    var esHueco = "huecoOcupado";
+    var estaPresente = "";
+    if (item.ESTADO == "2")
+    {
+        estaPresente = "espera";
+    }
+
+    if (item.OID < 0 && item.ANULADA == false)
+    {
+        esHueco = "huecoLibre";
+    }
+    if (item.ACTIVA && item.OID > 0)
+    {
+        claseActiva = "ACTIVA";
+    }
+    if (item.ANULACONSENTIMIENTO)
+    {
+        claseActiva = "ANULACONSENTIMIENTO";
+    }
+    if (item.HHORA != null)
+    {
+        HoraHorario = "background-color: rgba(147, 146, 146, 0.99)";
+    }
+
+    if (esHueco == "huecoLibre")
+    {
+        HoraHorario = "background-color:rgba(0, 255, 33, 0.86)";
+    }
+
+<tr class="@esHueco @claseActiva" data-index="9999" data-cid="@item.CID" data-ior_master="@item.IOR_MASTER" data-informada="@item.INFORMADA" data-firmada="@item.FIRMA_CONSEN"
+    data-mutua="@item.COD_MUT" data-grupo="@item.GRUPOAPA" data-hora="@item.HORA" data-aparato="@item.IOR_APARATO"
+    data-ior_paciente="@item.IOR_PACIENTE" data-horaex="@item.HORA_EX" data-anulada="@item.ANULADA"
+    data-horall="@item.HORA_LL" data-espera="@item.ESPERA" data-hhora="@item.HHORA" data-oid="@item.OID"
+    data-facturada="@item.FACTURADA" data-pagado="@item.PAGADO" data-owner="@item.IOR_PACIENTE" data-estado="@item.ESTADO"
+    data-estadodesc="@item.ESTADODESC" data-anulaconsentimiento="@item.ANULACONSENTIMIENTO" style="color: @item.COLOR !important">
+    <td data-field="intocable">
+        <input type="checkbox" class="INTOCABLE disabled" @( item.INTOCABLE == true ? "checked" : "")>
+    </td>
+
+    <td data-field="hhora" class="hhora" style="@HoraHorario">
+        <span class="hidden">@item.ORDER_HHORA</span>
+        <span style="color:@item.COLOR_HORARIO;" class="hhora">@item.HHORA</span>
+    </td>
+    <td data-field="hora">
+        <span class="hora">@item.HORA</span>
+    </td>
+
+    <td data-field="ESPERA" class="@estaPresente" data-horall="@item.HORA_LL">
+        <span style="color:@item.COLOR;font-weight:bold;" class="valor">@item.ESPERA</span>
+
+    </td>
+    <td data-field="CIDCOLOR" class="cid">
+
+        @if (item.CIDCOLOR != null && item.CIDCOLOR.Length > 0)
+        {
+            <div style="background-color:@item.CIDCOLOR;height:100%;width:100%;">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+
+        }
+        @if (esHueco == "huecoLibre")
+        {
+            <a href="#modal-form-MotivoAnular" data-toggle="modal" class="dropdown-toggle">
+                <i class="fa fa-remove" style="color: red; font-size: 11px;" title="Anular Hora"></i>
+            </a>
+        }
+        @if (item.ANULADA)
+        {
+            <i class="fa fa-thumbs-up desanularHora" style="color: green; font-size: 11px;" title="Desanular Hora"></i>
+        }
+
+    </td>
+
+    @if (item.VERS == 1)
+    {
+        <td data-field="VERS">
+            <i class="fa  fa-child" title="Primera visita" style="font-size: 1.6em; color: green"></i>
+        </td>
+    }
+    else
+    {
+        <td data-field="VERS"></td>
+    }
+    @if (item.QRCOMPARTIRCASO)
+    {
+        <td data-field="QRCOMPARTIRCASO">
+            <i class="fa  fa-envelope" title="Qreport " style="font-size: 1.6em; color: blue"></i>
+        </td>
+    }
+    else
+    {
+        <td data-field="QRCOMPARTIRCASO"></td>
+    }
+
+    <td data-field="PACIENTE" data-filter-control="input">
+        @if (esHueco == "huecoLibre")
+        {
+            <span style="color:@item.COLOR;font-size:12px;">@item.PACIENTE </span>
+        }
+        else
+        {
+            <span class="hidden">@item.PACIENTE</span>
+            <b>
+                <a href="/Exploracion/Details/@item.OID?ReturnURL=/Home/Index">
+                    <span title="Paciente" style="color:@item.COLOR">@item.PACIENTE</span>
+                </a>
+            </b>
+
+
+        }
+    </td>
+    
+        <td data-field="INFORMADA">
+            <span class="hidden">@item.INFORMADA</span>
+            @if (item.INFORMADA)
+            {
+                if (oUsuarioLogeado.PERFIL == 202)  //recepción Manresa
+                {
+                    <a><i class="fa fa-clipboard" style="font-size: 12px; color: green;" title="Informada"></i></a>
+                }
+                else
+                {
+                    //al ser una exploracion hija de otra no dejamos informarla y ponemos el icono en amarillo
+                    if (item.IOR_MASTER > 0)
+                    {
+                        <a href="/Informe/Duplicar/@item.IOR_MASTER">
+                            <i class="fa fa-copy" style="font-size: 14px;  color:green;"
+                               title="Exploracion Relacionada INFORMADA"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Informe/Duplicar/@item.OID">
+                            <i class="fa fa-clipboard" style="font-size: 14px; color: green;"
+                               title="Informada"></i>
+                        </a>
+                    }
+
+                }
+
+            }
+            else
+            {
+                if (esHueco == "huecoLibre")
+                {
+                    // string fecha, string hora, string descAparato
+                    <i class="fa fa-plus agregarExploracion"
+                       data-href="/Exploracion/AddPaso1?FECHA=@item.FECHA.ToShortDateString()&HORA=@item.HHORA&IOR_APARATO=@item.IOR_APARATO"
+                       style="font-size: 11px; color: black;" title="Agregar Exploración"></i>
+                }
+                else
+                {
+                    if (item.IOR_MASTER > 0)
+                    {
+                        <a href="/Informe/Duplicar/@item.IOR_MASTER">
+                            <i class="fa fa-copy" style="font-size: 14px; color:red;"
+                               title="Exploración Relacionada NO INFORMMADA"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        if (item.ESTADO == "2" || item.ESTADO == "3")
+                        {
+                            <a href="/Informe/Duplicar/@item.OID">
+                                <i class="fa fa-clipboard" style="font-size: 14px; color: red;" title="NO INFORMADA"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <i class="fa fa-clipboard" style="font-size: 12px; color: red;" title="No Informada"></i>
+                        }
+
+                    }
+
+
+                }
+
+            }
+        </td>
+        @if (ViewBag.ModuloVidSigner == "TRUE")
+        {
+            <td data-field="LOPD">
+                @if (item.OID > 0)
+                {
+                    if (item.LOPD)
+                    {
+                        <a target="_blank" href="/Exploracion/DownloadLopd?OID=@item.IOR_PACIENTE">
+                            <i class="fa fa-smile-o" style="font-size: 11px; color: green;" title="LOPD FIRMADA"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="#">
+                            <i class="fa fa-smile-o" style="font-size: 11px; color: red;" title="LOPD NO FIRMADA"></i>
+                        </a>
+                    }
+                }
+
+
+            </td>
+            <td data-field="FIRMA_CONSEN">
+                @if (item.OID > 0)
+                {
+                    if (item.FIRMA_CONSEN)
+                    {
+                        <a target="_blank" href="#" data-toggle="modal" data-target="#modal-form-Respuestas" class="iconVerRespuestas">
+                            <i class="fa fa-lightbulb-o" style="font-size: 11px; color: green;" title="Consentimiento Firmado"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="#">
+                            <i class="fa fa-lightbulb-o" style="font-size: 11px; color: red;" title="Consentimiento No Firmado"></i>
+                        </a>
+                    }
+                }
+
+            </td>
+        }
+        <td data-field="FECHAMAXENTREGA">
+            @if (item.FECHAMAXENTREGA.HasValue)
+            {
+                <span title="Fecha Informe" style="color:@item.COLOR">
+                    @item.FECHAMAXENTREGA.Value.ToShortDateString()
+                </span>
+            }
+        </td>
+        <td>
+            @if (!(esHueco == "huecoLibre") && !(item.ANULADA))
+            {
+                <span title="Médico Informante" style="color:@item.COLOR">@item.MEDICO</span>
+            }
+        </td>
+        <td>
+            <span title="Colegiado" style="color:@item.COLOR">@item.COD_MED</span>
+        </td>
+        <td>
+            <span title="Técnico" style="color:@item.COLOR">@item.TECNICO</span>
+        </td>
+        <td>
+            @if (!(esHueco == "huecoLibre") && !(item.ANULADA))
+            {
+                <span title="Id Exploración" style="color:@item.COLOR">
+                    @item.OID
+                </span>
+            }
+
+        </td>
+
+
+        <td>
+            @if (ViewBag.CampoMutua == "NOMBRE")
+            {
+                <span title="Mutua" style="color:@item.COLOR">@item.DES_MUT</span>
+            }
+            else
+            {
+                <span title="Mutua" style="color:@item.COLOR">@item.COD_MUT</span>
+            }
+
+        </td>
+        <td><span style="color:@item.COLOR" title="Aparato">@item.COD_FIL</span></td>
+        <td>
+            <span title="Exploración">
+                @if (ViewBag.CampoMutua == "NOMBRE")
+                {
+                    <span title="@item.DES_FIL" style="color:@item.COLOR">
+                        @if (!String.IsNullOrEmpty(item.DES_FIL) && item.DES_FIL.Length > 10)
+                        {
+                            @item.DES_FIL.Substring(0, 10)@:...
+                        }
+                        else
+                        {
+                            @item.DES_FIL
+                        }
+
+                    </span>
+                }
+                else
+                {
+                    <span style="color:@item.COLOR" title="Exploracion">
+                        @item.FIL
+                    </span>
+                }
+            </span>
+        </td>
+        <td class="consumibleField">
+            @if (item.HAYCONSUMIBLE)
+            {
+                <a href="#" data-toggle="modal" data-target="#modal-form-consumibles">
+                    <i class="fa fa-eyedropper" style="font-size: 11px; color: blue;" title="Consumible"></i>
+                </a>
+
+            }
+
+        </td>
+        @if (oUsuarioLogeado.VECANTIDADES == 1)
+        {
+            <td style="text-align: right;">
+                @if (item.OID > 0 && item.PAGADO == false && item.ESTADO == "3")
+                {
+                    <span style="color: red;">
+                        @if (item.CANTIDAD >= 0)
+                        {
+                            @item.CANTIDAD.ToString("0.00")
+                        }
+
+
+                    </span>
+                }
+                else
+                {
+                    if (item.OID > 0)
+                    {
+                        <span style="color: @item.COLOR;">
+                            @if (item.CANTIDAD >= 0)
+                            {
+                                @item.CANTIDAD.ToString("0.00")
+                            }
+                        </span>
+                    }
+
+                }
+
+            </td>
+            <td>
+                @if (item.FACTURADA)
+                {
+                    <i style="color: black;" title="Facturada" class="fa fa-dollar"></i>
+                }
+            </td>
+            <td>
+                @if (item.APLAZADO)
+                {
+                    <i style="color: black;" title="Aplazado" class="fa fa-clock"></i>
+                }
+            </td>
+            <td>
+
+                @if (item.NOFACTURAB)
+                {
+                    <i style="color: black;" title="No Facturable" class="fa fa-thumbs-down"></i>
+                }
+
+
+            </td>
+        }
+        @if (item.OID > 0)
+        {
+            if (!String.IsNullOrWhiteSpace(item.TEXTO))
+            {
+                <td class="ui-popover textoExploracion hidden-xs hidden-md" style="min-width: 200px;color:@item.COLOR">
+                    <span data-toggle="tooltip" data-placement="left" title="@item.TEXTO" style="color: @item.COLOR">
+                        <a href="#" data-type="textarea" style="color:@item.COLOR" class="textoXeditable" data-url="/Exploracion/EditarTexto" id="@item.OID"
+                           data-pk="@item.OID" data-value="@item.TEXTO" data-title="Editar texto">@item.SUBTEXTO</a>
+                    </span>
+                </td>
+            }
+            else
+            {
+                <td class="textoExploracion hidden-xs hidden-md" data-oid="@item.OID">
+                    <span style="color: @item.COLOR">@item.SUBTEXTO</span>
+                    <span data-toggle="tooltip" data-placement="left" title="Agregar Texto" style="color: @item.COLOR">
+                        <a href="#" data-type="textarea" style="color:@item.COLOR" class="textoXeditable" data-url="/Exploracion/EditarTexto" id="@item.OID"
+                           data-pk="@item.OID" data-value="@item.TEXTO" data-title="Editar texto">...</a>
+                    </span>
+
+                </td>
+
+            }
+
+        }
+        else
+        {
+            <td>-</td>
+        }
+
+
+</tr>
+}

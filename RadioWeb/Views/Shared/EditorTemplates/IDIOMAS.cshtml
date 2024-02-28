@@ -1,0 +1,15 @@
+﻿@using RadioWeb.Utils
+@model string
+@{
+
+    var ior_idioma = (String.IsNullOrEmpty(Model) ? "" : Model);
+    var idiomas = DataBase.Idiomas().Select(u => new SelectListItem
+    {
+        Text = u.Value,
+        Value = u.Key.ToString(),
+        Selected = u.Key == ior_idioma.ToString()
+    }).ToArray();
+}
+
+@Html.DropDownList("", idiomas, new { @class = "form-control select2" })
+

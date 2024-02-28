@@ -1,0 +1,55 @@
+﻿@model RadioWeb.ViewModels.Permisos.VMPermisos
+
+
+<table id="PermisosTable" class="table">
+    <thead>
+        <tr>
+            <th data-sortable="true">Controlador</th>
+            <th data-sortable="true">Acción</th>
+            <th data-sortable="true"> Permiso</th>
+           
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Permisos.Count; i++)
+        {
+            <tr>
+                <td>@Model.Permisos[i].OBJNAME.Split('.')[0].ToString()</td>
+                <td>@Model.Permisos[i].OBJNAME.Split('.')[1].ToString()</td>
+                <td>
+                  
+                    <a href="#" id="@String.Concat(Model.Permisos[i].ESTADO, i.ToString())"
+                           data-type="select"
+                           data-url="/Permisos/EditarCampo"
+                           data-pk="@String.Concat(Model.Permisos[i].MODULO,":",Model.Permisos[i].OBJNAME,":", Model.Permisos[i].IDUSER)"
+                           data-value="@Model.Permisos[i].ESTADO"
+                           data-title="Permitir o Denegar"
+                           class="textoXeditable"
+                           data-original-title="Acción">
+
+                        @if (Model.Permisos[i].ESTADO.ToString() == "1")
+                        {
+                            @:PERMITIR
+
+                        }else if (Model.Permisos[i].ESTADO.ToString() == "2")
+                        {
+                            @:SOLO LECTURA
+                        }
+                        else {
+                            @:DENEGAR
+                        }
+                        </a>
+
+                </td>
+                
+
+            </tr>
+        }
+
+
+    </tbody>
+</table>
+
+
+
+

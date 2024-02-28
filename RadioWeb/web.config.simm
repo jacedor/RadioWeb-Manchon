@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Para obtener más información sobre cómo configurar la aplicación de ASP.NET, visite
+	http://go.microsoft.com/fwlink/?LinkId=152368
+	-->
+<configuration>
+  <configSections>
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+    <sectionGroup name="applicationSettings" type="System.Configuration.ApplicationSettingsGroup, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <section name="RadioWeb.Properties.Settings" type="System.Configuration.ClientSettingsSection, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+    </sectionGroup>
+    <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
+    <section name="glimpse" type="Glimpse.Core.Configuration.Section, Glimpse.Core" />
+  </configSections>
+  <connectionStrings>
+    <add name="ConexionBD" connectionString="character set=WIN1252;initial catalog=C:\ADPM\DATA\SIMM\IBRADIO_ES.FDB;data source=LOCALHOST;user id=SYSDBA;password=masterkey" providerName="FirebirdSql.Data.FirebirdClient" />
+    <add name="ConexionUsuarios" connectionString="character set=WIN1252;initial catalog=C:\ADPM\DATA\SIMM\RADIOIBUSUARIOS.FDB;data source=LOCALHOST;user id=SYSDBA;password=masterkey" providerName="FirebirdSql.Data.FirebirdClient" />
+    <add name="ConexionTextos" connectionString="character set=WIN1252;initial catalog=C:\Users\Radio\Documents\ADPM\Delfos\DATA\TEXTOS.FDB;data source=LOCALHOST;user id=SYSDBA;password=masterkey" providerName="FirebirdSql.Data.FirebirdClient" />
+
+  </connectionStrings>
+  <appSettings>
+    <add key="webpages:Version" value="3.0.0.0" />
+    <add key="webpages:Enabled" value="false" />
+    <add key="PreserveLoginUrl" value="true" />
+    <add key="ClientValidationEnabled" value="true" />
+    <add key="UnobtrusiveJavaScriptEnabled" value="true" />
+    <add key="RutaImagenes" value="c:\Intel" />
+    <add key="CitaOnlineBase" value="c:\citaonline\" />
+    <add key="RutaAPILog" value="c:\citaonline\log" />
+    <add key="NombreEmpresa" value="Gamma Delfos" />
+    <add key="ComboMutuas" value="Nombre" />
+    <add key="RutaDOCS" value="c:\RADIOIB\RADIO\RADIOIBD7\DOCS" />
+    <add key="RutaInformesCora" value="C:\RadioWeb2.0\RadioWeb\INFOSCORA" />
+    <add key="RutaCONS" value="c:\RADIOIB\RADIO\RADIOIBD7\CONS" />
+    <add key="RutaWL" value="c:\RADIOIB\RADIO\RADIOIBD7\WORKLIST" />
+    <add key="RutaSMS" value="C:\inetpub\wwwroot\smsFiles" />
+    <add key="RutaRtf" value="C:\RadioIB\RADIO\RADIOIBD7\RTF" />
+    <add key="RutaXerox" value="C:\RadioIB\RADIO\RADIOIBD7\XEROX" />
+    <add key="RutaXerox2" value="C:\RadioIB\RADIO\RADIOIBD7\XEROX2" />
+    <add key="RutaXerox3" value="C:\RadioIB\RADIO\RADIOIBD7\XEROX3" />
+    <add key="RutaXerox4" value="C:\RadioIB\RADIO\RADIOIBD7\XEROX4" />
+    <add key="RutaXerox5" value="C:\RadioIB\RADIO\RADIOIBD7\XEROX5" />
+    <add key="RutaXerox6" value="C:\RadioIB\RADIO\RADIOIBD7\XEROX6" />
+    <add key="RutaXerox7" value="C:\RadioIB\RADIO\RADIOIBD7\XEROX7" />
+    <add key="RutaManresa" value="C:\RadioIB\RADIO\RADIOIBD7\Manresa" />
+    <add key="RutaClinicum" value="C:\RadioIB\RADIO\RADIOIBD7\Clinicum" />
+    <add key="RutaLesMoreres" value="C:\RadioIB\RADIO\RADIOIBD7\LesMoreres" />
+
+    <add key="RutaEBA" value="C:\RadioIB\RADIO\RADIOIBD7\EBA" />
+    <add key="RutaDifusio" value="C:\RadioIB\RADIO\RADIOIBD7\DIFUSIO" />
+    <add key="RutaSYSTEMX" value="C:\RadioIB\RADIO\RADIOIBD7\SYSTEMX INFORMES" />
+    <add key="EndPointVidSigner" value="https://pre-vidsignercloud.validatedid.com" />
+    <add key="UserNameVidSigner1" value="ManchonTibidaboSubscription" />
+    <add key="PasswordVidSigner1" value="manchtib3klhjerpadsf" />
+    <add key="UserNameVidSigner2" value="ManchonTibidaboSubscription" />
+    <add key="PasswordVidSigner2" value="manchtib3klhjerpadsf" />
+    <add key="UserNameVidSigner6" value="ManchonMeridianaSubscription" />
+    <add key="PasswordVidSigner6" value="mancmerivmerjhehjd" />
+    <add key="UserNameVidSigner4" value="ManchonSubscriptionDemo" />
+    <add key="PasswordVidSigner4" value="1234" />
+    <add key="RutaWebCam" value="c:\images" />
+    <add key="smtpServer" value="smtp.strato.com" />
+    <add key="smtpMail" value="noreply@simm.barcelona" />
+    <add key="smtpUser" value="noreply@simm.barcelona" />
+    <add key="smtpPort" value="465" />
+    <add key="smtpPassword" value="SdTpr!2017u" />
+    <add key="smtpusessl" value="true" />
+    <add key="RutaVidSigner" value="c:\citaonline\vidSigner" />
+    <add key="ClientValidationEnabled" value="true" />
+    <add key="UnobtrusiveJavaScriptEnabled" value="true" />
+  </appSettings>
+  <system.web>
+    <!--<customErrors defaultRedirect="/Shared/Error" mode="Off">
+      <error statusCode="403" redirect="/Permisos/AccesoNoPermitido" />
+    </customErrors>-->
+
+    <authorization>
+      <allow users="*" />
+    </authorization>
+    <httpHandlers>
+      <add verb="*" path="wcp.axd" type="Neodynamic.SDK.Web.WebClientPrint, Neodynamic.SDK.WebClientPrint" />
+    </httpHandlers>
+    <httpRuntime targetFramework="4.5" />
+    <compilation debug="true" targetFramework="4.5.2" />
+    <authentication mode="Forms">
+      <forms loginUrl="~/" timeout="30" />
+    </authentication>
+    <pages>
+      <namespaces>
+        <add namespace="System.Web.Helpers" />
+        <add namespace="System.Web.Mvc" />
+        <add namespace="System.Web.Mvc.Ajax" />
+        <add namespace="System.Web.Mvc.Html" />
+        <add namespace="System.Web.Optimization" />
+        <add namespace="System.Web.Routing" />
+        <add namespace="System.Web.WebPages" />
+        <add namespace="RadioWeb.Models" />
+      </namespaces>
+    </pages>
+    <!--
+						If you are deploying to a cloud environment that has multiple web server instances,
+						you should change session state mode from "InProc" to "Custom". In addition,
+						change the connection string named "DefaultConnection" to connect to an instance
+						of SQL Server (including SQL Azure and SQL  Compact) instead of to SQL Server Express.
+			-->
+    <sessionState timeout="30" mode="InProc" customProvider="DefaultSessionProvider">
+      <providers>
+        <add name="DefaultSessionProvider" type="System.Web.Providers.DefaultSessionStateProvider, System.Web.Providers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" connectionStringName="DefaultConnection" />
+      </providers>
+    </sessionState>
+    <!--<sessionState timeout="3" mode="InProc" customProvider="DefaultSessionProvider">
+			<providers>
+				<add name="DefaultSessionProvider" type="System.Web.Providers.DefaultSessionStateProvider, System.Web.Providers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" connectionStringName="DefaultConnection" />
+			</providers>
+		</sessionState>-->
+    <profile defaultProvider="DefaultProfileProvider">
+      <providers>
+        <add name="DefaultProfileProvider" type="System.Web.Providers.DefaultProfileProvider, System.Web.Providers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" connectionStringName="DefaultConnection" applicationName="/" />
+      </providers>
+    </profile>
+    <membership defaultProvider="DefaultMembershipProvider">
+      <providers>
+        <add name="DefaultMembershipProvider" type="System.Web.Providers.DefaultMembershipProvider, System.Web.Providers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" connectionStringName="DefaultConnection" enablePasswordRetrieval="false" enablePasswordReset="true" requiresQuestionAndAnswer="false" requiresUniqueEmail="false" maxInvalidPasswordAttempts="5" minRequiredPasswordLength="6" minRequiredNonalphanumericCharacters="0" passwordAttemptWindow="10" applicationName="/" />
+      </providers>
+    </membership>
+    <roleManager defaultProvider="DefaultRoleProvider">
+      <providers>
+        <add name="DefaultRoleProvider" type="System.Web.Providers.DefaultRoleProvider, System.Web.Providers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" connectionStringName="DefaultConnection" applicationName="/" />
+      </providers>
+    </roleManager>
+  </system.web>
+  <system.webServer>
+    <!--<httpErrors errorMode="Custom" existingResponse="Replace">
+      <remove statusCode="403" />
+      <remove statusCode="404" />
+      <remove statusCode="500" />
+      <error statusCode="403" path="/Permisos/AccesoNoPermitido" responseMode="ExecuteURL" />
+
+    </httpErrors>-->
+    <validation validateIntegratedModeConfiguration="false" />
+    <handlers>
+      <add name="FastReportHandler" path="FastReport.Export.axd" verb="*" type="FastReport.Web.Handlers.WebExport" />
+      <add name="WCP" verb="*" path="wcp.axd" type="Neodynamic.SDK.Web.WebClientPrint, Neodynamic.SDK.WebClientPrint" preCondition="integratedMode" />
+      <remove name="ExtensionlessUrlHandler-Integrated-4.0" />
+      <remove name="OPTIONSVerbHandler" />
+      <remove name="TRACEVerbHandler" />
+      <add name="ExtensionlessUrlHandler-Integrated-4.0" path="*." verb="*" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" />
+    </handlers>
+  </system.webServer>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+
+      <dependentAssembly>
+        <assemblyIdentity name="EntityFramework" publicKeyToken="b77a5c561934e089" />
+        <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="FirebirdSql.Data.FirebirdClient" publicKeyToken="3750abcc3150b00c" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-6.4.0.0" newVersion="6.4.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-10.0.0.0" newVersion="10.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="itextsharp" publicKeyToken="8354ae6d2174ddca" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-5.5.12.0" newVersion="5.5.12.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="itextsharp.xmlworker" publicKeyToken="8354ae6d2174ddca" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-5.5.12.0" newVersion="5.5.12.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+        <bindingRedirect oldVersion="0.0.0.0-5.2.3.0" newVersion="5.2.3.0" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+  <entityFramework>
+    <defaultConnectionFactory type="EntityFramework.Firebird.FbConnectionFactory, EntityFramework.Firebird" />
+    <providers>
+      <provider invariantName="System.Data.SqlClient" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
+      <provider invariantName="FirebirdSql.Data.FirebirdClient" type="EntityFramework.Firebird.FbProviderServices, EntityFramework.Firebird" />
+    </providers>
+  </entityFramework>
+
+  <system.data>
+    <DbProviderFactories>
+      <remove invariant="FirebirdSql.Data.FirebirdClient" />
+      <add name="FirebirdClient Data Provider" invariant="FirebirdSql.Data.FirebirdClient" description=".NET Framework Data Provider for Firebird" type="FirebirdSql.Data.FirebirdClient.FirebirdClientFactory, FirebirdSql.Data.FirebirdClient" />
+    </DbProviderFactories>
+  </system.data>
+</configuration>

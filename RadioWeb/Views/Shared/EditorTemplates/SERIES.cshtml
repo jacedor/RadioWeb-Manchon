@@ -1,0 +1,19 @@
+﻿@using RadioWeb.Models.Repos
+@model string
+@{
+
+    var modelValue = !String.IsNullOrEmpty(Model) ? Model : "SIN ASIGNAR";
+    var series = SeriesRepositorio.Lista().Select(u => new SelectListItem
+    {
+        Text = u.SERIE + "-" + u.TIPO,
+        Value = u.SERIE.ToString(),
+        Selected = u.SERIE == modelValue
+    }).ToList();
+
+    var sinAginar = new SelectListItem { Text = "SIN ASIGNAR", Value = "-1" };
+    series.Add(sinAginar);
+    series= series.OrderByDescending(p=>p.Text).ToList();
+}
+ 
+@Html.DropDownList("", series, new { @class = "form-control select2" })
+

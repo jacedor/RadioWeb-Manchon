@@ -1,0 +1,217 @@
+﻿@using RadioWeb.Models;
+@using RadioWeb.ViewModels.Paciente;
+@model RadioWeb.Models.PACIENTE
+@{
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    ViewBag.Title = "Paciente";
+}
+
+
+
+@section estilos{
+    <style>
+        .popover, .popover-content {
+            min-width: 530px;
+        }
+
+        .anchoTexto {
+            width: 400px;
+        }
+    </style>
+    <link href="~/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="~/css/plugins/calendario/FullCalendar.css" rel="stylesheet" />
+    <link href="~/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="~/css/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+
+
+
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="m-t-md" style="margin-top: 0px;">
+            <div class="pull-left">
+                <a title="" data-placement="top" data-toggle="tooltip" class="btn btn-white btn-sm " href="@Model.URLPREVIAPACIENTE" data-original-title="Volver">
+                    <i class="fa fa-reply"></i>Volver
+                </a>
+            </div>
+            <div class="pull-right">
+
+                <button type="button" id="btnImprimir" class="btn btn-sm btn-white" data-toggle="tooltip" data-placement="top" title="Imprimir" data-oid="@Model.OID">
+                    <i class="fa fa-print" title="Imprimir"></i>
+                </button>
+
+                <button type="button" id="btnIntocable" class="btn btn-sm btn-white" data-toggle="tooltip" data-placement="top" title="Intocable">
+                    <i class="fa fa-exclamation-circle" title="Intocable"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row m-t-md">
+    <div class="col-lg-12">
+        @Html.EditorForModel()
+    </div>
+</div>
+
+
+
+
+
+<div class="modal inmodal fade" id="myModalEnvioInforme" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Enviar Informe por email</h4>
+                <small class="font-bold">@Model.PACIENTE1</small>
+            </div>
+            <div class="modal-body" id="cargandoInforme">
+                <div class="spiner-cargando hide">
+                    <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" id="cuerpoModelEnvioMail">
+            </div>
+
+            <div class="modal-footer">
+                <a title="" data-placement="top" data-toggle="tooltip" class="btn btn-sm btn-primary" id="EnviarEmail" data-original-title="Send"><i class="fa fa-reply"></i>Enviar</a>
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal fade" id="modalSMS" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Enviar SMS</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row text-center">
+                    @*Llamamos a la partial view, generando el modelo de vista con los datos de paciente.*@
+                    @{
+                        VMLOPDPaciente settings = new VMLOPDPaciente { 
+                            ENVIO_MAIL = Model.ENVIO_MAIL,
+                            ENVIO_MEDICO = Model.ENVIO_MEDICO,
+                            ENVIO_PROPAGANDA = Model.ENVIO_PROPAGANDA,
+                            ENVIO_RESULTADOS = Model.ENVIO_RESULTADOS,
+                            ENVIO_SMS = Model.ENVIO_SMS
+                        };
+                        Html.RenderPartial("_permisosLOPDbotones", settings);
+
+                    }
+                <p>
+                    <input type="hidden" value="GRUP MANCHON:  Se le ha enviado un informe de su estudio por mail. El código de acceso es CDPI . Si tiene alguna duda llame al 934450600. Gracias" id="textoSMSPlantilla" />
+                    <textarea class="form-control" id="textoSMS" name="textoSMS" rows="3">GRUP MANCHON:  Se le ha enviado un informe de su estudio por mail. El código de acceso es CDPI . Si tiene alguna duda llame al 934450600. Gracias</textarea>
+
+                </p>
+                <p>
+                    @if (Model.TELEFONOS.Count > 0)
+                    {
+                        <input type="text" name="movil" id="movil" value="@Model.TELEFONOS.First().NUMERO" />
+                    }
+                    else
+                    {
+                        <input type="text" name="movil" id="movil" value="" />
+
+                    }
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="EnviarSMS">Enviar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- context menu -->
+<ul id="context-menu" class="dropdown-menu">
+    <li data-item="carrito">
+        <a>
+            <i title="Carro Exploraciones" style="color: green; font-size: 1.3em;" class="fa fa-shopping-cart "></i>
+            <span class="nav-label">&nbsp;Enviar al carrito</span>
+        </a>
+
+    </li>
+    <li data-item="irACalendario">
+        <a>
+            <i title="Ir a ListaDia" style="color: green; font-size: 1.3em;" class="fa fa-calendar "></i>
+            <span class="nav-label">&nbsp;Ir a ListaDia</span>
+        </a>
+
+    </li>
+</ul>
+
+
+@section scripts{
+    <script src="~/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote-es-ES.min.js"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/Paciente/Details.js")"></script>
+    <script src="~/js/custom/Informe/enviarInformeShared.js"></script>
+
+
+
+    <script type="text/javascript">
+
+
+
+        $(document).ready(function () {
+
+            $('#FECHAN').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                language: "es",
+                format: "dd/mm/yyyy"
+            });
+
+
+
+        });
+
+
+
+
+
+
+    </script>
+
+}
+
+
+
+
+
+
+
+
+
+

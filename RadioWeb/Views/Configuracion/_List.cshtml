@@ -1,0 +1,38 @@
+﻿@model List<RadioWeb.Models.WEBCONFIG>
+<div class="panel-body">
+
+    <table id="@String.Concat("ConfiguracionesTable",ViewBag.Seccion)" class="table table-hover" 
+           data-classes="table table-striped table-bordered table-hover" data-search="true" data-height="700">
+        <thead>
+            <tr>
+                <th data-field="CLAVE" data-sortable="true">Parámetro</th>
+                <th data-field="VALOR">Valor</th>
+                <th data-field="DESCRIPCION">Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>@item.CLAVE</td>
+                    <td>
+                        <a href="#" data-type="text" class="textoXeditable" data-url="/Configuracion/EditarCampo" id="VALOR" data-pk="@item.OID" data-value="@item.VALOR" data-title="Editar @item.CLAVE">
+                            @item.VALOR
+                        </a>
+                    </td>
+                    <td>
+                        <a href="#" data-type="text" class="textoXeditable" data-url="/Configuracion/EditarCampo" id="DESCRIPCION" data-pk="@item.OID" data-value="@item.DESCRIPCION" data-title="Editar @item.CLAVE">
+                            @item.DESCRIPCION
+                        </a>
+                    </td>
+                </tr>
+        }
+
+
+        </tbody>
+    </table>
+
+</div>
+
+

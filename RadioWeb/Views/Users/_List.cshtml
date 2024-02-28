@@ -1,0 +1,45 @@
+﻿@model List<RadioWeb.Models.USUARIO>
+
+
+<table id="UsuariosTable" class="table table-hover  table-bordered " data-height="500"       data-search="true"   >
+    <thead>
+        <tr>
+            <th data-sortable="true">Nombre</th>
+            <th data-sortable="true">Login</th>
+            <th data-sortable="true">Perfil</th>
+            <th>Privilegiado</th>
+            <th>...</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr data-userid="@item.IDUSER">
+                <td>@item.NOME</td>
+                <td>@item.LOGIN</td>
+                <td>
+
+                    @item.DESCPERFILWEB
+
+
+                </td>
+                <td>@item.PRIVILEGIADO</td>
+
+                <td>
+                    <a href="@Url.Action("Edit","Users",new {oid=item.IDUSER})">Editar</a>
+                </td>
+            </tr>
+        }
+
+
+
+
+
+
+    </tbody>
+</table>
+
+
+
+

@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Estadisticas Visita";
+    RadioWeb.Models.Usuario oUsuarioLogeado = (RadioWeb.Models.Usuario)Session["Usuario"];
+}
+
+
+@section estilos{
+
+
+    <link href="~/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+}
+
+<div class="row  border-bottom white-bg dashboard-header">
+
+    <div class="col-sm-3">
+        <h2>Panel de Control </h2>
+        <small>Lista de Espera</small>
+        @{
+            RadioWeb.Utils.RecuentoPorGrupo oRecuentoMesFuturas = ((RadioWeb.Utils.RecuentoPorGrupo)ViewBag.ListaEspera);
+        }
+        <ul class="list-group clear-list m-t" id="listaEspera">
+            @{
+                      
+                int i = 1;
+                string clase = "label-success";
+                foreach (string key in oRecuentoMesFuturas.RecuentoPorMes.Keys)
+                {
+                    switch (i)
+                    {
+                        case 2:
+                            clase = "label-info";
+                            break;
+                        case 3:
+                            clase = "label-primary";
+                            break;
+                        case 4:
+                            clase = "label-default";
+                            break;
+                        case 5:
+                            clase = "label-info";
+                            break;
+                        case 6:
+                            clase = "label-primary";
+                            break;
+                        case 7:
+                            clase = "label-default";
+                            break;
+
+                        default:
+                            break;
+                    }
+                <li class="list-group-item" data-clase="@clase" data-grupo="@key">
+                    <span class="pull-right">@oRecuentoMesFuturas.RecuentoPorMes[key].ToString()
+                    </span>
+                    <span class="label @clase">@i</span> @key
+                </li>
+                    i = i + 1;
+                }
+            }
+
+
+
+        </ul>
+    </div>
+    <div class="col-sm-9 ">
+                
+        <div class="flot-chart dashboard-chart col-sm-12"  style="width:100%;height:300px">
+            <div class="flot-chart-content " id="flot-bar-chart"></div>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<div class="row animated fadeInDown">
+
+
+    <div class="col-lg-4">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                @{
+                    RadioWeb.Utils.RecuentoPorGrupo oRecuentoMesAnterior = ((RadioWeb.Utils.RecuentoPorGrupo)ViewBag.PorGruposMesAnterior);
+                }
+
+                <h5>Totales  <span id="mesAnteriores" style="text-transform: capitalize;">@System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(int.Parse(oRecuentoMesAnterior.Mes)) -  @oRecuentoMesAnterior.Anyo</span> </h5>
+
+            </div>
+            <div class="ibox-content" id="recuentoMensual">
+
+                @Html.Partial("~/Views/Estadisticas/RecuentoPorGrupo.cshtml", oRecuentoMesAnterior)
+
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <!-- Flot -->
+    <script src="js/plugins/flot/jquery.flot.js"></script>
+    <script src="js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="js/plugins/flot/jquery.flot.resize.js"></script>
+    <script src="js/plugins/flot/jquery.flot.pie.js"></script>
+    <script src="js/plugins/flot/jquery.flot.time.js"></script>
+    <script src="~/js/custom/estadisticas/estadisticas.js"></script>
+}

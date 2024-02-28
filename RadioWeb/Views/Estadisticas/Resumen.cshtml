@@ -1,0 +1,345 @@
+﻿@model RadioWeb.ViewModels.Estadistica.VWFiltrosResumenFacturacion
+@using RadioWeb.Models;
+@{
+    //  string diaSemana = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(DateTime.Now.DayOfWeek);
+    //RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    //RadioWeb.Models.Logica.FiltrosBusquedaExploracion oFiltros = ((RadioWeb.Models.Logica.FiltrosBusquedaExploracion)Session["FiltrosBusqueda"]);
+    ViewBag.Title = "Resumen";
+
+}
+
+@section Estilos{
+
+    <link href="~/css/plugins/textSpinners/spinners.css" rel="stylesheet" />
+    <link href="/css/c3.css" rel="stylesheet" />
+
+}
+
+
+
+
+<div class="row">
+    <div class="col-lg-12 form-horizontal">
+
+        @Html.EditorFor(m => m.FILTROS,
+                                                                                                           new
+                                                                                                           {
+                                                                                                               fechaPicker = "multiFecha",
+                                                                                                               filtroPaciente = "false",
+                                                                                                               estadoExploracion = "true",
+                                                                                                               facturadoExploracion = "true",
+                                                                                                               anyoComparativa = "true",
+                                                                                                               botonBusqueda = "true",
+                                                                                                               seleccionMutuasMultiple = "true"
+                                                                                                           })
+
+    </div>
+    <input type="hidden" id="busquedaJson" value="" />
+</div>
+
+
+
+
+<div class="row" id="lineaParamGrafica">
+    <div class="col-sm-8 m-b-xs">
+        <div data-toggle="buttons" class="btn-group btn-group-toggle">
+            <label class="btn btn-sm btn-white btn-danger active  ">
+                @* onclick="javascript:$(this).removeClass('btn-default').addClass('btn-danger').addClass('active');$(this).siblings().removeClass('btn-success').removeClass('active').addClass('btn-default');">*@
+                <input type="radio" id="anualTabla" name="optionsTabla" value="ViewAcumuladoTable" class="opcionActiva"> ANUAL
+            </label>
+            <label class="btn btn-sm btn-white" onclick="javascript:$(this).removeClass('btn-default').addClass('btn-danger').addClass('active');$(this).siblings().removeClass('btn-success').removeClass('active').addClass('btn-default');">
+                <input type="radio" id="mensualTabla" name="optionsTabla" value="ViewMensualTable"> MENSUAL
+            </label>
+            <label class="btn btn-sm btn-white" onclick="javascript:$(this).removeClass('btn-default').addClass('btn-danger').addClass('active');$(this).siblings().removeClass('btn-success').removeClass('active').addClass('btn-default');">
+                <input type="radio" id="evolutivaTabla" name="optionsTabla" value="ViewEvolutivaTable"> EVOLUTIVA
+            </label>
+            <label class="btn btn-sm btn-white " onclick="javascript:$(this).removeClass('btn-default').addClass('btn-danger').addClass('active');$(this).siblings().removeClass('btn-success').removeClass('active').addClass('btn-default');">
+                <input type="radio" id="diariaTabla" name="optionsTabla" value="ViewDiariaTable"> DIARIA
+            </label>
+        </div>
+    </div>
+    <div class="col-sm-4 text-right">
+
+        <button class="btn btn-default xlsx" onclick="prepararExportExcel();">Exportar a Excel</button>
+
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>Panel de Resultados</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="fullscreen-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="ibox-content">
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="ViewGraficoAcumulado" class="hide graficoContainer">
+                            <div id="spiner-cargando-graficoAcumulado" class="row hide" style="height: 300px;">
+                                <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            @*<div class="actions">
+                                    <a href="" class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
+                                    <a href="" class="btn btn-xs btn-white"><i class="fa fa-heart"></i> Love</a>
+                                </div>*@
+                            <div id="chartAcumulado"></div>
+                        </div>
+                        <div id="ViewGraficoDiario" class="hide graficoContainer">
+                            <div id="spiner-cargando-graficoDiario" class="row hide" style="height: 300px;">
+                                <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div id="chartDiario"></div>
+                        </div>
+                        <div id="ViewGraficoMensual" class="graficoContainer">
+                            <div id="spiner-cargando-graficoLineas" class="row hide" style="height: 300px;">
+                                <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div id="chart"></div>
+                        </div>
+                        <div id="ViewGraficoEvolutivo" class="hide graficoContainer">
+                            <div id="spiner-cargando-graficoEvolutivo" class="row hide" style="height: 300px;">
+                                <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div id="chartEvolutivo"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="ViewAcumuladoTable">
+                            <div id="spiner-cargando-acumulado" class="row hide" style="height: 300px;">
+                                <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+
+                            </div>
+                        </div>
+                        <div id="ViewMensualTable" class="hide">
+                            <div id="spiner-cargando-resumen" class="row hide" style="height: 300px;">
+                                <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+
+                            </div>
+                        </div>
+                        <div id="ViewEvolutivaTable" class="hide">
+                            <div id="spiner-cargando-evolutivo" class="row hide" style="height: 300px;">
+                                <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+
+                            </div>
+                        </div>
+                        <div id="ViewDiariaTable" class="hide">
+                            <div id="spiner-cargando-diario" class="row hide" style="height: 300px;">
+                                <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*<div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>Datos Resumen</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="fullscreen-link">
+                            <i class="fa fa-expand"></i>
+                        </a>
+
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>*@
+
+
+
+
+
+
+
+@section scripts{
+
+    <script>
+        function prepararExportExcel() {
+            var idSelector = $("#lineaParamGrafica label.active").children("input").attr("id");
+            var idTabla;
+
+            switch (idSelector) {
+                case "anualTabla":
+                    idTabla = 'tbltotales';
+                    break;
+                case "mensualTabla":
+                    idTabla = 'tblMensual';
+                    break;
+                case "evolutivaTabla":
+                    idTabla = 'totalesEvolutivo';
+                    break;
+                case "diariaTabla":
+                    idTabla = 'tblResumenDiario';
+                    break;
+                default:
+                    idTabla = 'tblMensual';
+            }
+
+            exportExcel('xlsx', idTabla, idSelector);
+
+        }
+
+    </script>
+
+    <script src="~/js/custom/c3/d3.v3.min.js"></script>
+    <script src="~/js/custom/c3/c3.js"></script>
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/estadisticas/resumen.js")"></script>
+
+
+
+
+}

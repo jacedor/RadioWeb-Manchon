@@ -1,0 +1,135 @@
+﻿@model RadioWeb.ViewModels.Paciente.VMAddPaso2
+@{
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    ViewBag.Title = "Paciente";
+}
+
+@section estilos{
+
+    <link href="~/css/plugins/summernote/summernote.css" rel="stylesheet" />
+}
+
+@using (Html.BeginForm("AddPaso3", "Exploracion"))
+{
+    int j = 0;
+    @Html.HiddenFor(p => p.PACIENTEALTA.OID)
+    @Html.HiddenFor(p => p.IOR_BOLSA)
+
+    foreach (var item in Model.HUECOS)
+    {
+        <input type="hidden" name="@String.Concat(new string[] { "HUECOS", "[", @j.ToString(), "].FECHA" })"
+               id="@String.Concat(new string[] { "HUECOS", "[", @j.ToString(), "].FECHA" })" value="@item.FECHA" />
+        <input type="hidden" name="@String.Concat(new string[] { "HUECOS", "[", @j.ToString(), "].HORA" })"
+               id="@String.Concat(new string[] { "HUECOS", "[", @j.ToString(), "].HORA" })" value="@item.HORA" />
+        <input type="hidden" name="@String.Concat(new string[] { "HUECOS", "[", @j.ToString(), "].IOR_APARATO" })"
+               id="@String.Concat(new string[] { "HUECOS", "[", @j.ToString(), "].IOR_APARATO" })" value="@item.IOR_APARATO" />
+
+
+        j = j + 1;
+    }
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins" style="margin-bottom: 5px;">
+                <div class="ibox-content " style="padding-bottom: 10px;">
+                    <a onclick="javascript:window.history.back();" id="btnAnterior" class="btn  btn-sm btn-warning" role="button">< Anterior</a>
+
+                    <button type="submit" id="btnSiguiente" class="btn btn-sm btn-primary pull-right">Siguiente ></button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins" style="margin-bottom: 5px;">
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        @Html.EditorFor(p => p.PACIENTEALTA)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+}
+
+
+@section scripts{
+
+
+    <script src="~/js/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote.min.js"></script>
+    <script src="~/js/plugins/summernote/summernote-es-ES.min.js"></script>
+    <script src="~/js/custom/Exploracion/Alta.js"></script>
+    <script>
+        $(document).ready(function () {
+
+          
+
+            $('input[data-val-required]').each(function () {
+                $(this).attr("placeholder", "CAMPO OBLIGATORIO");
+                var req = $(this).attr('data-val-required');
+                if (undefined != req) {
+                    if ($('#' + $(this).attr('id')).text.length === 0) {
+                        $('#' + $(this).attr('id')).css('border', '2px solid red');
+                    }
+                    var label = $('label[for="' + $(this).attr('id') + '"]');
+                 
+                    var text = label.text();
+                    if (text.length > 0) {
+                        label.append('<span style="color:red"> *</span>');
+                    }
+                }
+            });
+
+            $('select[data-val-enteropositivo]').each(function () {
+                var req = $(this).attr('data-val-enteropositivo');
+                if (undefined != req) {
+                   
+                   
+                    var label = $('label[for="' + $(this).attr('id') + '"]');
+                  
+                    var text = label.text();
+                    if (text.length > 0) {
+                        label.append('<span style="color:red"> *</span>');
+                    }
+                }
+            });
+
+
+
+            var form_original_data = $("form").serialize();
+
+
+
+            $("#btnSiguiente").click(function () {
+
+                if ($("form").serialize() != form_original_data) {
+                    $("input[name*='HAYCAMBIOS']").val("T");
+
+                }
+
+                return true;
+            });
+
+        });
+
+
+    </script>
+
+}
+
+
+
+
+
+
+
+
+

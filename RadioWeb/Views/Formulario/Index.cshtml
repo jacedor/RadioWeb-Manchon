@@ -1,0 +1,275 @@
+﻿@model RadioWeb.ViewModels.VWFormulario
+
+@{
+    ViewBag.Title = "Index";
+}
+@section estilos{
+
+    <link href="~/css/plugins/chosen/chosen.css" rel="stylesheet" />
+}
+
+
+<div class="row animated fadeInDown">
+    <input type="hidden" id="OID" name="OID" />
+    <div class="col-lg-12">
+        <div class="tabs-container" style="min-height:400px;">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a data-toggle="tab" href="#tab-formularios">
+                        Formularios
+                        <span class="label label-warning">@Model.FORMULARIOS.Count()</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#tab-preguntas">
+                        Preguntas
+                        <span class="label label-warning" id="cuentaPendientesRevisar">@Model.PREGUNTAS.Count</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#tab-vistaPrevia">
+                        Vista Previa
+
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+
+                <div id="tab-formularios" class="tab-pane active">
+                    <div class="panel-body">
+
+                        <div class="table-responsive">
+                            <table id="FormularioList" class="table clicable  table-stripped footable" data-filter-position="left" data-filtering="true" data-paging="true" data-paging-size="8"
+                                   data-sorting="true" data-paging-count-format="{CP} de {TP}"
+                                   data-filter-placeholder="Buscar">
+                                <thead>
+                                    <tr>
+                                        <th data-type="date" data-format-string="dd/MM/YYYY" class="clicable">Fecha</th>
+                                        <th><span title="Titulo">Título</span></th>
+                                        <th align="right">...</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.FORMULARIOS)
+                                    {
+                                        var color = "";
+
+                                        if (item.ACTIVO == "F")
+                                        {
+                                            color = "red";
+                                        }
+
+
+                                        <tr data-oid="@item.OID" style="color:@color;">
+                                            <td><span>@item.FECHA.ToString("dd/MM/yyyy")</span></td>
+                                            <td><span>@item.DESCRIPCION</span></td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="10">
+                                            <ul class="pagination pull-right"></ul>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-preguntas" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+
+                            <table id="preguntasList" class="table table-bordered footable"
+                                   data-filter-position="left" data-filtering="true" data-paging="true" data-paging-size="8"
+                                   data-sorting="true" data-paging-count-format="{CP} de {TP}"
+                                   data-filter-placeholder="Buscar">
+                                <thead>
+                                    <tr>
+                                        <th>Orden</th>
+                                        <th><span title="Titulo">Título</span></th>
+                                        <th>Tipo</th>
+                                        <th>Respuestas</th>
+                                        <th>....</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var pregunta in Model.PREGUNTAS)
+                                    {
+                                        <tr data-oid="@pregunta.OID ">
+                                            <td><span>@pregunta.ORDEN</span></td>
+                                            <td><span>@pregunta.DESCRIPCION</span></td>
+                                            <td>
+                                                @pregunta.TIPO.TIPO
+                                            </td>
+                                            <td>
+                                                
+                                                @foreach (var itemRespuestas in pregunta.RESPUESTAS)
+                                                {
+                                                <p class="form-control-static">@itemRespuestas.VALOR</p>
+                                                }
+                                                
+
+                                            </td>
+                                            <td class="project-actions">
+                                                <a href="#" data-oid="@pregunta.OID" data-target="#modal-form-pregunta"
+                                                   data-toggle="modal" class="btn btn-white btn-sm editarPregunta">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="16">
+                                            <ul class="pagination pull-right"></ul>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <div class="modal fade" id="modal-form-pregunta" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+
+                            <div class="modal-content">
+                                <div class="modal-header" style="padding-top:10px;padding-bottom:10px;">
+                                    <button type="button" class="close" data-dismiss="modal">
+                                        <span aria-hidden="true">&times;</span>
+                                        <span class="sr-only">Cerrar</span>
+                                    </button>
+                                    <h4 class="modal-title" id="tituloEntrada">
+                                        Editar pregunta
+                                    </h4>
+                                </div>
+                                <div class="modal-body" style="min-height:350px;">
+                                    <div class="spiner-cargando hide">
+                                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                            <div class="sk-circle1 sk-circle"></div>
+                                            <div class="sk-circle2 sk-circle"></div>
+                                            <div class="sk-circle3 sk-circle"></div>
+                                            <div class="sk-circle4 sk-circle"></div>
+                                            <div class="sk-circle5 sk-circle"></div>
+                                            <div class="sk-circle6 sk-circle"></div>
+                                            <div class="sk-circle7 sk-circle"></div>
+                                            <div class="sk-circle8 sk-circle"></div>
+                                            <div class="sk-circle9 sk-circle"></div>
+                                            <div class="sk-circle10 sk-circle"></div>
+                                            <div class="sk-circle11 sk-circle"></div>
+                                            <div class="sk-circle12 sk-circle"></div>
+                                        </div>
+                                    </div>
+                                    <div id="contenedorEditarPregunta">
+
+
+                                    </div>
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div id="tab-vistaPrevia" class="tab-pane">
+                    <div class="panel-body">
+
+                        <div class="table-responsive vistaPrevia">
+                            <div class="col-lg-12">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-title">
+                                        <h5>@Model.CURRENTFORMULARIO.DESCRIPCION</h5>
+                                    </div>
+                                    <div class="ibox-content">
+                                        <form method="get" class="form-horizontal">
+                                            @foreach (var preguntaVistaPrevia in Model.PREGUNTAS)
+                                            {
+                                                <div class="form-group">
+                                                    <label class="control-label">@preguntaVistaPrevia.DESCRIPCION</label>
+                                                    @switch (preguntaVistaPrevia.TIPO.TIPO.ToUpper())
+                                                    {
+                                                        case "RADIOMULTIPLE":
+
+                                                            break;
+                                                        case "TEXTBOX":
+                                                            <input class="form-control" type="text" id="@preguntaVistaPrevia.OID" name="@preguntaVistaPrevia.OID">
+                                                            break;
+                                                        case "TEXTAREA":
+                                                            <textarea id="@preguntaVistaPrevia.OID" name="@preguntaVistaPrevia.OID" class="form-control" rows="2" style="text-transform: none;"></textarea>
+                                                            break;
+                                                        case "RADIOSIMPLE":
+
+                                                            break;
+                                                        case "SELECT":
+                                                            <select class="form-control m-b select2" id="@preguntaVistaPrevia.OID" name="@preguntaVistaPrevia.OID">
+                                                                @foreach (var itemRespuestas in preguntaVistaPrevia.RESPUESTAS)
+                                                                {
+                                                                    <option value="@itemRespuestas.OID">@itemRespuestas.VALOR</option>
+
+                                                                }
+                                                            </select>
+                                                            break;
+
+                                                    }
+
+                                                </div>
+                                                <div class="hr-line-dashed"></div>
+                                            }
+
+                                            <div class="form-group">
+                                                <div class="col-sm-3 col-sm-offset-9  pull-right">
+                                                    <button class="btn btn-white" type="submit">Cancel</button>
+                                                    <button class="btn btn-primary" type="submit">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+@section scripts
+    {
+    <!-- Chosen -->
+
+    <script src="~/js/plugins/chosen/chosen.jquery.js"></script>
+    <script src="~/js/custom/formulario/formularioAdmin.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.chosen-select').chosen({ width: "100%" });
+        });
+    </script>
+}
+
+
+
+
+
+
+
+

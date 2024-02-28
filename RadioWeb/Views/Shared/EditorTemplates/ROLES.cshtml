@@ -1,0 +1,15 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+@{
+
+    var modelValue = Model.HasValue ? Model : -1;
+    var roles = UsuariosRepositorio.Lista().Where(u=>u.TIPO=="P").Select(u => new SelectListItem
+    {
+        Text = u.NOME,
+        Value = u.IDUSER.ToString(),
+        Selected = u.IDUSER == modelValue
+    }).ToArray();
+}
+ 
+@Html.DropDownList("", roles, new { @class = "form-control select2" })
+

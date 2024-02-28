@@ -1,0 +1,129 @@
+﻿@model RadioWeb.Models.PAGO_PACIENTE
+
+@using (Html.BeginForm("PagoSimple","Pagos2",FormMethod.Post,new {@class="form-horizontal",id="frm-pagosimple" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div id="modal-form-pagoSimple" class="modal fade " aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button">
+                        <span aria-hidden="true">×</span><span class="sr-only">Cerrar</span>
+                    </button>
+                    <h2 class="modal-title">
+                        <b>@Model.NPACIENTE</b>
+
+                    </h2>
+                    <h3>
+                        (@Model.EXPLORACION - @Model.FECHAPAGO.Value.ToShortDateString())
+                    </h3>
+                </div>
+
+
+                <div class="modal-body">
+
+
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.OID)
+                    @Html.HiddenFor(model => model.OIDPAGO)
+                    @Html.HiddenFor(model => model.ORDEN)
+                    @Html.HiddenFor(model => model.IOR_PACIENTE)
+                    <input type="hidden" name="FECHA" id="FECHA" value="@Model.FECHA.Value.ToShortDateString()" />
+               
+
+                    <div class="form-group">
+
+                        <div class="col-sm-2">
+                            @Html.BootstrapLabelFor(m => m.FECHA)
+                            <br />
+                            @Html.DisplayFor(model => model.FECHA)
+                            @Html.ValidationMessageFor(model => model.FECHA, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.BootstrapLabelFor(m => m.MUTUA)
+                            <br />
+                            @Html.DisplayFor(model => model.MUTUA)
+                            @Html.ValidationMessageFor(model => model.MUTUA, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.BootstrapLabelFor(m => m.MUTUA)
+                            <br />
+                            @Html.DisplayFor(model => model.MUTUA)
+                            @Html.ValidationMessageFor(model => model.MUTUA, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="editor-label">
+                                @Html.BootstrapLabelFor(m => m.FACTURADA)
+                            </div>
+                            <div class="editor-field">
+                                @Html.DisplayFor(model => model.FACTURADA)
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="editor-label">
+                                @Html.BootstrapLabelFor(m => m.PAGADO)
+                            </div>
+                            <div class="editor-field">
+                                @Html.DisplayFor(model => model.PAGADO)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            @Html.BootstrapLabelFor(m => m.PRECIO)
+                            @if (Model.PRECIO == "0")
+                            {
+                                @Html.EditorFor(model => model.PRECIO)
+                                @Html.ValidationMessageFor(model => model.PRECIO, "", new { @class = "text-danger" })
+                            }
+                            else
+                            {
+                                <br />
+                                @Html.CurrencyWithCulture(Decimal.Parse(Model.PRECIO))
+
+                            }
+
+
+                        </div>
+                        <div class="col-sm-4">
+                            @Html.BootstrapLabelFor(m => m.PAGO)
+                            @Html.EditorFor(model => model.PAGO)
+                            @Html.ValidationMessageFor(model => model.PAGO, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-sm-2">
+                            @Html.BootstrapLabelFor(m => m.TIPOPAGO)
+                            @Html.EditorFor(model => model.TIPOPAGO)
+                            @Html.ValidationMessageFor(model => model.TIPOPAGO, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class=" col-md-10">
+                            <input type="submit" value="Guardar" class="btn btn-primary pull-right confirmarPagoSimple" />
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cancelar</button>
+
+                </div>
+
+
+
+            </div>
+
+             
+
+            </div>
+        </div>
+ 
+}
+
+

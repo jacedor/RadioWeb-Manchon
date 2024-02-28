@@ -1,0 +1,24 @@
+﻿@{
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+}
+<ul class="nav metismenu" id="side-menu">
+
+    @foreach (var mainMenu in oUsuarioLogeado.MainMenus.OrderBy(p=>p.ORDEN))
+    {
+        <li>
+            <a href="#">
+                <i class="fa @mainMenu.ICONO"></i>
+                <span class="nav-label">@mainMenu.DESCRIPCION</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="nav nav-second-level collapse">
+                @foreach (var submenu in oUsuarioLogeado.SubMenus.Where(s => s.IDPARENT == mainMenu.ID).OrderBy(s => s.ORDEN))
+                {
+                    <li data-view="@submenu.ICONO"><a href="@submenu.URL">@submenu.DESCRIPCION</a></li>
+                }
+            </ul>
+        </li>
+    }
+
+   
+</ul>

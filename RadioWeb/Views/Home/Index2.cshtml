@@ -1,0 +1,242 @@
+﻿@using RadioWeb.Models;
+@{
+    
+    string diaSemana = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(DateTime.Now.DayOfWeek);
+    RadioWeb.Models.Usuario oUsuarioLogeado = (RadioWeb.Models.Usuario)Session["Usuario"];
+
+}
+@model RadioWeb.Models.Logica.Mes
+@section estilos{
+    <link href="~/css/plugins/datapicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="~/css/plugins/calendario/FullCalendar.css" rel="stylesheet" />
+    <link href="~/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+
+}
+
+@section barraTop{
+    <form id="filtrosBusqueda" method="get">
+
+        <div class="border-bottom white-bg dashboard-header">
+            <div class="row">
+                <div class="col-sm-4 ">
+                    <div class="form-group">
+                        <label class=" control-label ">Fecha</label>
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            @{
+                                string FechaActual = "";
+                                if (Session["FiltrosBusqueda"] != null)
+                                {
+                                    FechaActual = ((RadioWeb.Models.Logica.FiltrosBusqueda)Session["FiltrosBusqueda"]).Fecha;
+                                }
+                                else
+                                {
+                                    FechaActual = DateTime.Now.ToString("dd-MM-yyyy");
+
+                                }
+                                
+                            }
+                            <input id="fechaSelect" type="text" class="form-control" value="@FechaActual">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">Aparato</label>
+                        @{
+                            List<RadioWeb.Models.DAPARATOS> oListTemp = ((List<RadioWeb.Models.DAPARATOS>)Session["DAparatos"]);
+                            
+                            
+                        
+                            <select id="ddlAparatos" name="ddlAparatos" class="form-control m-b " data-filter-calendar="true">
+                                @foreach (RadioWeb.Models.DAPARATOS item in oListTemp)
+                                {
+                                    if (!item.COD_FIL.Contains("OBSOLETO"))
+                                    {
+                                        if (Session["FiltrosBusqueda"] != null && item.OID == ((RadioWeb.Models.Logica.FiltrosBusqueda)Session["FiltrosBusqueda"]).oidAparato)
+                                        {
+                                    <option  selected="selected"  value="@item.OID" >@item.COD_FIL</option>
+                                        }
+                                        else
+                                        {
+                                    <option    value="@item.OID" >@item.COD_FIL</option>
+                                        }
+
+                                    }
+
+                                }
+                            </select>
+                        }
+
+                        @*@Html.DropDownList("ddlAparatos", (IEnumerable<SelectListItem>)ViewBag.Daparatos, new { data_filter_calendar = "true", @class = "form-control m-b" })*@
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">Grupo</label>
+
+                        @Html.DropDownList("ddlGrupo", (IEnumerable<SelectListItem>)ViewBag.GrupoAparatos, new { data_filter_calendar = "true", @class = "form-control", style = "padding:4px;" })
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">Mutua</label>
+
+
+                        @{
+                            List<RadioWeb.Models.MUTUAS> oListTempMutuas = (List<RadioWeb.Models.MUTUAS>)Session["Mutuas"];
+                        
+                            <select id="ddlMutuas" class="selectpicker form-control " data-filter-calendar="true" data-live-search="true" style="padding: 4px;">
+                                @foreach (RadioWeb.Models.MUTUAS item in oListTempMutuas)
+                                {
+                                    if (Session["FiltrosBusqueda"] != null && item.OID == ((RadioWeb.Models.Logica.FiltrosBusqueda)Session["FiltrosBusqueda"]).oidMutua)
+                                    {
+                                    <option data-subtext="@item.NOMBRE" selected="selected" data-text-value="@item.CODMUT" value="@item.OID" >@item.CODMUT </option>
+                                    }
+                                    else
+                                    {
+                                    <option data-subtext="@item.NOMBRE" data-text-value="@item.CODMUT" value="@item.OID" >@item.CODMUT </option>
+                                    }
+
+                                }
+                            </select>
+                        }
+
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label">Centro</label>
+
+                        @{                        
+                            List<RadioWeb.Models.CENTROS> oListCentros = (List<RadioWeb.Models.CENTROS>)Session["Centros"];
+                            <select id="ddlCentros" class="selectpicker form-control " data-filter-calendar="true" data-live-search="true" style="padding: 4px;">
+                                @foreach (RadioWeb.Models.CENTROS item in oListCentros)
+                                {
+                                    <option data-subtext="@item.NOMBRE" data-text-value="@item.NOMBRE" value="@item.OID" >@item.NOMBRE </option>
+                                }
+                            </select>
+                        }
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label class=" control-label">Tipo</label>
+
+                        <select id="ddlTipoExploracion" class="selectpicker form-control " data-filter-calendar="true" data-live-search="true" style="padding: 4px;">
+                            <option value="-1">&nbsp;</option>
+                            <option value="1">PRI</option>
+                            <option value="2">MUT</option>
+                            <option value="3">ICS</option>
+                        </select>
+
+                    </div>
+                </div>
+
+
+                <div class="col-sm-1 ">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Borrados</label>
+                        <div class="col-sm-10">
+                            <input type="checkbox" class="js-switch" checked />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+}
+
+<div class="row animated fadeInDown">
+    <div id="ViewCalendario">
+        <div class="col-lg-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Calendario</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" id="calendario">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Resumen </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+
+                    </div>
+                </div>
+                <div class="ibox-content " id="resumen" style="height: 300px;">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/js/custom/calendario/Calendario.js"></script>
+
+    <script src="~/js/custom/ListaDia/ListaDia.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var elem = document.querySelector('.js-switch');
+            var switchery = new Switchery(elem, { color: '#ED5565' });
+
+            fechaActualGlobal = $("#fechaSelect").val();
+            $("#ViewCalendario").addClass('hide');
+            $("#ViewListaDia").addClass('hide');
+            $('#fechaSelect').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "dd-mm-yyyy"
+            });
+            if (sessionStorage.vistaActual == "ViewCalendario" || sessionStorage.vistaActual == undefined) {
+                LoadCalendar();
+            }
+            if (sessionStorage.vistaActual == "ViewListaDia") {
+                LoadListaDia();
+            }
+
+
+
+
+
+
+
+        });
+    </script>
+}
+
+

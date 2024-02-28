@@ -1,0 +1,21 @@
+﻿@model IEnumerable<RadioWeb.ViewModels.VWAgendaMultiple>
+
+
+
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        <div class="col-lg-2 contenedorLista" id="@string.Concat("container", @i.ToString())" style="padding-left:5px;padding-right:5px;" >
+            
+            @Html.Partial("~/Views/AgendaMulti/_ListaDia.cshtml", Model.ElementAt(i))
+
+
+        </div>
+    }
+
+
+
+
+
+
+
+

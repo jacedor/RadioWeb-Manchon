@@ -1,0 +1,25 @@
+﻿@model String
+@{
+    var acciones = new SelectList(
+        new List<SelectListItem> {
+new SelectListItem {Text ="Imprimir",Value = "Imprimir",Selected = "Imprimir" == Model},
+new SelectListItem {Text = "Imprimir y Firmar",Value = "ImprimirYFirmar", Selected = "ImprimirYFirmar" == Model },
+new SelectListItem {Text = "Firmar",Value = "Firmar", Selected = "Firmar" == Model}
+        }, "Value", "Text", Model
+        );
+}
+
+@if (Model != "FIRMADO")
+{
+    @Html.DropDownList("",
+        acciones,
+        new
+        {
+            id = @ViewData["id"],
+            @class = "form-control select2",
+            data_width = "100%"
+        })
+}
+
+
+

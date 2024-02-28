@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadioWeb", "RadioWeb\RadioWeb.csproj", "{2E1264E5-2721-4D57-90EB-CE692797DFC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADPM.Common", "ADPM.Common\ADPM.Common.csproj", "{430E5B4C-68A2-4C7D-930C-28B502726533}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuoTempo", "TuoTempo\TuoTempo.csproj", "{2316E078-5BED-4CFC-A790-2601A3E93F22}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E1264E5-2721-4D57-90EB-CE692797DFC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E1264E5-2721-4D57-90EB-CE692797DFC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E1264E5-2721-4D57-90EB-CE692797DFC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E1264E5-2721-4D57-90EB-CE692797DFC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{430E5B4C-68A2-4C7D-930C-28B502726533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{430E5B4C-68A2-4C7D-930C-28B502726533}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{430E5B4C-68A2-4C7D-930C-28B502726533}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{430E5B4C-68A2-4C7D-930C-28B502726533}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2316E078-5BED-4CFC-A790-2601A3E93F22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2316E078-5BED-4CFC-A790-2601A3E93F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2316E078-5BED-4CFC-A790-2601A3E93F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2316E078-5BED-4CFC-A790-2601A3E93F22}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B2F1E6FA-FCB9-47AA-9B2A-BFC93B79AB53}
+	EndGlobalSection
+EndGlobal

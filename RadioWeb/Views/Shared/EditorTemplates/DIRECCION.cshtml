@@ -1,0 +1,144 @@
+﻿@model ICollection<RadioWeb.Models.DIRECCION>
+@{
+
+    var htmlField = ViewData.TemplateInfo.HtmlFieldPrefix;
+    htmlField = htmlField.Replace(".", @"\\.");
+
+}
+
+@if (Model.Count == 0)
+{
+    Model.Add(new DIRECCION()
+    {
+        OID = -1,
+        OWNER = (int)ViewData["owner"]
+    });
+}
+
+@*@if (!htmlField.StartsWith("PACIE"))
+    {
+
+        @:<form action="/Direccion/Edit" data-ajax="true" data-ajax-method="POST" data-ajax-mode="replace" data-ajax-update="#divResultadoDireccion" id="form1" method="post" novalidate="novalidate">
+            }*@
+
+
+<div class="ibox float-e-margins" style="margin-bottom:5px;">
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+            @{ int j = 0; }
+            @foreach (var item in Model)
+            {
+                <li class="@( Model.ToList().IndexOf(item) == 0 ? "active" : "")">
+                    <a data-toggle="tab" href="#@item.OID">@(String.IsNullOrEmpty(@item.POBLACION) ? "SIN DIRECCION" : item.POBLACION)</a>
+                </li>
+            }
+            <li id="tabNuevaDireccion" class="rightside" style="float:right;" role="presentation">
+                <a class="dropdown-toggle" href="#modal-form-AddDireccion" data-toggle="modal">
+                    <i class="fa fa-plus" title="Nueva Dirección" style="color: red;"></i>
+                </a>
+            </li>
+        </ul>
+        <div id="tabDireccionesContainer" class="tab-content">
+
+
+
+            @*<div id="DireccionesContainer">*@
+            @foreach (var itemdireccion in Model)
+            {
+                itemdireccion.INDICE = j;
+                @Html.Partial("~/Views/Direccion/DireccionForm.cshtml", itemdireccion);
+                j = j + 1;
+            }
+            @*</div>  *@
+
+
+
+        </div>
+    </div>
+
+    <div class="row @(htmlField.StartsWith("PAC")?"hide":"hide")">
+        <div class="col-md-12  pull-right">
+            <button type="submit" data-toggle="tooltip"
+                    data-placement="top" title="Guardar" class="btn btn-primary pull-right">
+                <i class="fa fa-save" title="Guardar"></i> Guardar
+            </button>
+        </div>
+
+    </div>
+</div>
+@*@if (!htmlField.StartsWith("PACIEN"))
+{
+    @:</form>
+}*@
+
+
+@*Ventana Modal para agregar nuevos telefonos*@
+<div id="modal-form-AddDireccion" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Nueva Direccion</h4>
+            </div>
+            <div class="modal-body">
+                @{
+                    var direccion = new DIRECCION
+                    {
+                        INDICE = 10000,
+                        OWNER = (int)ViewData["owner"]
+                    };
+                }
+                @Html.Partial("~/Views/Direccion/DireccionForm.cshtml", direccion)
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="guardarNuevaDireccion" class="btn btn-primary pull-right">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '#guardarNuevaDireccion', function () {
+            var direccion = {};
+            direccion.INDICE = $("#tabDireccionesContainer").find('.direccion').length;
+            direccion.DIRECCION1 = $('#@htmlField\\[10000\\]\\.DIRECCION1').val();
+            direccion.CP = $('#@htmlField\\[10000\\]\\.CP').val();
+            direccion.POBLACION = $('#@htmlField\\[10000\\]\\.POBLACION').val();
+            direccion.PROVINCIA = $('#@htmlField\\[10000\\]\\.PROVINCIA').val();
+            direccion.PAIS = $('#@htmlField\\[10000\\]\\.PAIS').val();
+
+            $.ajax({
+                url: '/Direccion/Post',
+                type: 'POST',
+                data: { direccion: direccion },
+                success: function (data) {
+                    $("#tabDireccionesContainer>.tab-pane").removeClass('active');
+                    $("#tabNuevaDireccion").siblings().removeClass('active');
+                    var nuevoTab = "<li class='active'><a data-toggle='tab' href='#" + direccion.INDICE + "'>" + direccion.POBLACION + "</a></li>";
+                    $("#tabNuevaDireccion").before(nuevoTab);
+
+
+                    $(".direccion").removeClass("active");
+                    $("#tabDireccionesContainer>.tab-pane:last").parent().append(data);//.removeClass('active');
+                    //hay una casuistica en la que al agregar más de una dirección
+                    //se marcan las dos como activa y queda mal. Por eso intentamos
+                    //solucionar el tema mirando si hay más de uno
+                    if ($("#tabDireccionesContainer>.tab-pane.active").length > 1) {
+                        $("#tabDireccionesContainer>.tab-pane:first").addClass('active');
+
+                    }
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+                }
+            });
+
+
+            $("#modal-form-AddDireccion").modal('hide');
+        });
+    });
+
+</script>
+

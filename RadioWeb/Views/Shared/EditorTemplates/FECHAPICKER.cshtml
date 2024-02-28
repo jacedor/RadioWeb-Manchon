@@ -1,0 +1,11 @@
+﻿@model DateTime?
+
+@{
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control fecha-picker" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+@Html.TextBox("",ViewData.TemplateInfo.FormattedModelValue, "{0:dd/MM/yyyy}",
+   htmlAttributes)

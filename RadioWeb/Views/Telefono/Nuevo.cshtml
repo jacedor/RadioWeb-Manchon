@@ -1,0 +1,10 @@
+﻿@model RadioWeb.Models.TELEFONO
+
+     <tr data-oid="@Model.OID" class="telefono" >
+                        <td>
+                            <input type="text" style="text-transform:none;"  id="@String.Concat("LOCALIZACION", @Model.OID)"  class="form-control localizacion"  value="@Model.LOCALIZACION"/></td>
+                        <td>
+                            <input type="text"  id="@String.Concat("NUMERO", @Model.OID)"  class="form-control numero"  value="@Model.NUMERO"/></td>
+                        <td><i data-oid="@Model.OID"  class="fa fa-times fa-2x borrarTelefono" style="color:red;"></i></td>
+                    </tr>
+

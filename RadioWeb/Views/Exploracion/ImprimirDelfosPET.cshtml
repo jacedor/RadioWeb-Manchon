@@ -1,0 +1,526 @@
+﻿@model RadioWeb.ViewModels.VWImprimirFicha
+@{
+    Layout = String.Empty;
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Ficha @Model.PACIENTE</title>
+
+    <style type="text/css">
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #eee;
+            font-size: 12px;
+            color: #555;
+        }
+
+        #datosPaciente {
+            margin-bottom: 8px;
+        }
+
+            #datosPaciente li {
+                padding: 2px;
+            }
+
+        ul li.negrita {
+            font-weight: bold;
+        }
+
+        .invoice-box table {
+            width: 100%;
+            line-height: inherit;
+        }
+
+            .invoice-box table td {
+                padding: 0px;
+            }
+
+            .invoice-box table tr td:nth-child(2) {
+                text-align: right;
+            }
+
+
+            .invoice-box table tr.top table td.title {
+                font-size: 12px;
+                line-height: 25px;
+                color: #333;
+            }
+
+            .invoice-box table tr.heading td {
+                background: #eee;
+                border-bottom: 1px solid #ddd;
+                font-weight: bold;
+            }
+
+            .invoice-box table tr.details td {
+                padding-bottom: 10px;
+            }
+
+            .invoice-box table tr.information td {
+                padding: 1px;
+                background-color: red;
+            }
+
+            .invoice-box table tr.item td {
+                border-bottom: 1px solid #eee;
+            }
+
+            .invoice-box table tr.bordearriba td {
+                border-top: 1px solid black;
+            }
+
+            .invoice-box table tr.bordeabajo td {
+                border-bottom: 1px solid black;
+            }
+
+            .invoice-box table tr.bordeizquierda td {
+                border-left: 1px solid black;
+            }
+
+            .invoice-box table tr.bordederecha td {
+                border-right: 1px solid black;
+            }
+
+            .invoice-box table tr.item.last td {
+                border-bottom: none;
+            }
+
+        .fondomarillo {
+            font-weight: bold;
+        }
+
+        .fondogris {
+            color: black;
+        }
+
+        .fondoBlanco {
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    @if (Model.QRCOMPARTIRCASO == "T")
+    {
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr class="information">
+                <td width="900" style="color:red;">
+                    EL PACIENTE HA SOL.LICITA LA RECOLLIDA ONLINE - NO IMPRIMIR INFORME E IMATGES
+                </td>
+            </tr>
+        </table>
+    }
+
+    <ul style="list-style-type:none;font-size:14px;margin-left:-5px;padding-left:0px;">
+
+        <li>
+            ID EXPLO: @Model.OID - ID PAC: @Model.IOR_PACIENTE
+            @if (Model.CID == 2)
+            {
+                <span style="color:red;font-size:19pt;">INGRESADO</span>
+            }
+        </li>
+        <li class="negrita">
+            Pacient: @Model.PACIENTE
+            @if (!String.IsNullOrEmpty(Model.DNI))
+            {
+                @Html.Raw(" - DNI:"); @Model.DNI;
+            }
+        </li>
+        <li>
+            Data naixement: @Model.FECHAN - Edat: @Model.EDAD
+
+
+        </li>
+        <li>Teléfon: @Model.NUMERO</li>
+        <li>Finançament: @Model.NOMBRE</li>
+        <li>Prescriptor: @Model.NOMBRECOLEGIADO</li>
+        <li>Data Exploracion: @Model.FECHA.ToShortDateString() - @Model.HORA (@Model.HORA_LL)</li>
+        <li>Hora impresió: @DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")</li>
+        <li>Exploració: @Model.DES_FIL</li>
+        @foreach (var item in Model.EXPLOSASOCIADAS)
+        {
+            if (item.IOR_MASTER == Model.OID || item.OID == Model.IOR_MASTER)
+            {
+                @String.Concat(item.DES_FIL)
+            }
+        }
+    </ul>
+
+
+
+    <div class="invoice-box">
+
+        @if (Model.QRCOMPARTIRCASO == "T")
+        {
+            <table cellpadding="0" cellspacing="0" border="0">
+                <tr class="information">
+                    <td width="900" style="color:red;">
+                        EL PACIENTE HA SOL.LICITA LA RECOLLIDA ONLINE - NO IMPRIMIR INFORME E IMATGES
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        <table cellpadding="0" cellspacing="0" border="1">
+            <tr>
+                <td>
+
+                    <table cellpadding="8" cellspacing="0" border="0">
+                        <tr>
+                            <td valign="bottom">
+                                Malaltia actual/data dx:
+                            </td>
+                            <td width="430">
+                                <br />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+                        </tr>
+
+                    </table>
+
+
+                    <table cellpadding="8" cellspacing="0" border="0">
+                        <tr>
+                            <td valign="top" width="75" style="border-bottom:2px solid black;">
+                                QMT/Ultima sessio
+                            </td>
+                            <td width="75" style="border-bottom:2px solid black;">
+                                NO &nbsp;&nbsp;&nbsp;&nbsp; SI.................
+                            </td>
+                            <td width="75" style="border-bottom:2px solid black;">    RT/Ultima sessio</td>
+
+                            <td width="75" style="border-bottom:2px solid black;">
+                                NO &nbsp;&nbsp;&nbsp;&nbsp; SI.................
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table cellpadding="4" cellspacing="0" border="0">
+                        <tr>
+                            <td valign="bottom" width="40">
+                                Tractament
+                            </td>
+                            <td width="280" valign="bottom" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+
+                        </tr>
+                        <tr>
+
+                            <td colspan="2" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+
+                        </tr>
+                        <tr>
+
+                            <td colspan="2" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+
+                        </tr>
+                    </table>
+
+                    <table cellpadding="4" cellspacing="0">
+                        <tr>
+                            <td valign="top" border="0">
+                                Antecedents patologics
+                            </td>
+                            <td width="140" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+                            <td>Intervencions quirugiques</td>
+
+                            <td width="120" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td colspan="4" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+
+                        </tr>
+                        <tr>
+
+                            <td colspan="4" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+
+                        </tr>
+                        <tr>
+
+                            <td colspan="4" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+
+                        </tr>
+                    </table>
+                    <table cellpadding="4" cellspacing="0">
+                        <tr>
+                            <td width="100" valign="top" border="0">
+                                Traumatismes
+                            </td>
+                            <td width="200" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+                            <td>Infeccions</td>
+
+                            <td width="200" style="border-bottom:2px solid black;">
+                                &nbsp;
+                            </td>
+                        </tr>
+
+
+
+                    </table>
+
+                    <table cellpadding="4" cellspacing="0">
+                        <tr>
+                            <td valign="top" width="40">
+                                FUR:
+                            </td>
+
+
+                        </tr>
+                    </table>
+
+                    <table class="fondomarillo" cellpadding="4" cellspacing="0" border="0">
+                        <tr class="bordearriba">
+                            <td valign="top" border="1">
+                                Alergies
+                            </td>
+                            <td width="140">
+                                <hr style="margin-top:6px;" />
+                            </td>
+                            <td align="left">Diabetes</td>
+
+                            <td width="210">
+                                <hr style="margin-top:6px;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign="top" border="1">
+                                Contrast iodat
+                            </td>
+                            <td width="140">
+                                <hr style="margin-top:6px;" />
+                            </td>
+                            <td align="left"> Metformina (Dianben)</td>
+
+                            <td width="210">
+                                <hr style="margin-top:6px;" />
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td valign="top" colspan="4" border="1">
+                                Nefropatía
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                    <table class="fondogris" cellpadding="0" border="0" cellspacing="0">
+                        <tr>
+                            <td width="340">
+                                <table cellpadding="0" width="200" border="0" cellspacing="0">
+                                    <tr>
+                                        <td width="150" valign="top" border="1">
+                                            Deju
+                                        </td>
+                                        <td>NO</td>
+                                        <td>SI</td>
+
+
+                                    </tr>
+                                </table>
+                                <br />
+                                <table cellpadding="2" width="200" border="0" cellspacing="0">
+
+                                    <tr class="bordearriba">
+                                        <td valign="top" border="1">
+                                            Tetrazepam
+                                        </td>
+                                        <td>NO</td>
+                                        <td>SI</td>
+
+                                    </tr>
+                                    <tr class="bordearriba">
+                                        <td valign="top" border="1">
+                                            Diazepam
+                                        </td>
+                                        <td>NO</td>
+                                        <td>SI</td>
+                                    </tr>
+                                    <tr class="bordearriba">
+                                        <td valign="top" border="1">
+                                            Furosemida
+                                        </td>
+                                        <td>NO</td>
+                                        <td>SI</td>
+                                    </tr>
+                                    <tr class="bordearriba">
+                                        <td valign="top" border="1">
+                                            Sueroterapia
+                                        </td>
+                                        <td>NO</td>
+                                        <td>SI</td>
+                                    </tr>
+                                    <tr class="bordearriba">
+                                        <td valign="top" border="1">
+                                            Sondatge ves
+                                        </td>
+                                        <td>NO</td>
+                                        <td>SI</td>
+                                    </tr>
+
+
+                                </table>
+                                <table cellpadding="2" width="200" border="0" cellspacing="0">
+                                    <tr class="bordearriba">
+                                        <td valign="top" border="1" colspan="3">
+                                            Glicemia pre injecció/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hora <br /> <span style="text-align:right;">mg/dl</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td width="20">
+                                &nbsp;
+                            </td>
+                            <td width="340">
+                                <table cellpadding="0" width="400" border="0" cellspacing="0">
+                                    <tr>
+                                        <td valign="top">
+                                            <span style="text-decoration:underline;">Pes&nbsp;&nbsp;&nbsp;&nbsp;kg</span>
+                                        </td>
+
+                                        <td valign="top">
+                                            <span style="text-decoration:underline;">Talla&nbsp;&nbsp;&nbsp;&nbsp;cm</span>
+                                        </td>
+
+                                    </tr>
+                                </table>
+                                <br />
+                                <table class="fondoBlanco" cellpadding="4" width="400" border="0" cellspacing="0">
+                                    <tr style="background-color:white;">
+                                        <td valign="top" colspan="2">
+                                            Lloc Injecció
+                                        </td>
+
+
+                                    </tr>
+                                    <tr class="bordearriba" style="background-color:white;">
+                                        <td valign="top" colspan="2">
+                                            Dosis FDG-F18
+                                        </td>
+
+
+                                    </tr>
+                                    <tr class="bordearriba" style="background-color:white;">
+                                        <td valign="top" colspan="2">
+                                            Hora injecció
+                                        </td>
+
+
+                                    </tr>
+                                    <tr class="bordearriba" style="background-color:white;">
+                                        <td valign="top" colspan="2">
+                                            Reste
+                                        </td>
+
+
+                                    </tr>
+
+
+                                </table>
+                                <br />
+
+                                <table cellpadding="4" width="400" border="0" cellspacing="0">
+                                    <tr>
+                                        <td valign="top" colspan="2">
+                                            Operador
+                                        </td>
+
+
+
+                                    </tr>
+
+                                    <tr class="bordearriba">
+                                        <td valign="top" width="100" colspan="2">
+                                            Inici exploració
+                                        </td>
+
+
+                                    </tr>
+                                </table>
+
+
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table cellpadding="4" cellspacing="0">
+                        <tr class="bordearriba">
+                            <td valign="top" border="1">
+
+                                Incidencies
+                            </td>
+                            <td width="140">
+                                <br /><br />
+                                <hr style="margin-top:6px;" />
+                            </td>
+
+                        </tr>
+
+
+                    </table>
+
+                </td>
+            </tr>
+        </table>
+
+
+
+
+        <table cellpadding="4" cellspacing="0" border="0">
+            <tr class="">
+                <td colspan="2">
+                    ALTRES EXPLORACIONS
+                </td>
+
+            </tr>
+            @foreach (var item in Model.EXPLOSASOCIADAS)
+            {
+                if (item.IOR_MASTER != Model.OID && item.OID != Model.IOR_MASTER)
+                {
+                    <tr class="item">
+                        <td>
+                            @item.FECHA.ToShortDateString()
+                        </td>
+                        <td>
+                            @item.HORA
+                        </td>
+                        <td align="right">
+                            @item.COD_FIL @item.DES_FIL
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</body>
+
+</html>

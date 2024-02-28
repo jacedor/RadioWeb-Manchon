@@ -1,0 +1,2 @@
+﻿insert into webconfig (oid, vers, clave, valor, seccion, descripcion) values (gen_id(GENUID,1), 0, 'CentrosVidSigner', '1,3,4,6,20', 'VIDSIGNER','Array con los centros con suscrpcion activa.');
+insert into webconfig (oid, vers, clave, valor, seccion, descripcion) values (gen_id(GENUID,1), 1, 'CentrosVidSigner', '1,3,4,6,20', 'VIDSIGNER','Array con los centros con suscrpcion activa.');

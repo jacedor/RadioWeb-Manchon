@@ -1,0 +1,19 @@
+﻿@model double
+
+@{
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control" };
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+<div class="input-group">
+    @Html.TextBox("", ViewData.TemplateInfo.FormattedModelValue.ToString(), htmlAttributes)
+    @if (ViewData["SIMBOLO"] != null)
+    {
+    <span class="input-group-addon">@ViewData["SIMBOLO"]</span>
+    }else{
+    <span class="input-group-addon">€</span>
+
+    }
+</div>
+

@@ -1,0 +1,108 @@
+﻿@model IEnumerable<RadioWeb.Models.TELEFONO>
+@{
+
+    var htmlField = ViewData.TemplateInfo.HtmlFieldPrefix;
+}
+@*Ventana Modal para agregar nuevos telefonos*@
+<div id="modal-form-AddTelefono" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Nuevo Telefono</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <label class="sr-only" for="localizacionTelefonoNuevo">Localización Contacto</label>
+                                <input type="text" class="form-control" placeholder="Localización" id="localizacionTelefonoNuevo">
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="NumeroTelefonoNuevo">Teléfono</label>
+                                <input type="text" class="form-control" id="NumeroTelefonoNuevo" placeholder="Teléfono">
+                            </div>
+
+                            <button type="button" id="guardarNuevoTelefono" class="btn btn-primary pull-right">Guardar</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ibox float-e-margins" style="max-height: 215px;overflow-y: scroll;">
+
+    <div class="ibox-content" style="padding-top:0px;padding-bottom:5px;">
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Localización Contacto</th>
+                    <th>Teléfono</th>
+                    <th>
+                        <a class="dropdown-toggle" href="#modal-form-AddTelefono" data-toggle="modal">
+                            <i class="fa fa-plus" title="Nuevo Telefono" style="color: red;"></i>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="listaTelefonos">
+                @{ int j = 0;
+                    foreach (var item in Model.OrderByDescending(t => t.OID))
+                    {
+                        <tr id="@item.OID" data-owner="@item.OWNER">
+                            <td>
+                                <input class="form-control" name="@String.Concat(new string[] { htmlField,"[", @j.ToString(), "].OID" })"
+                                       id="@String.Concat(new string[] { htmlField,"[", @j.ToString(), "].OID" })"
+                                       type="hidden" value="@item.OID" />
+                                <input class="form-control" name="@String.Concat(new string[] { htmlField,"[", @j.ToString(), "].LOCALIZACION" })"
+                                       id="@String.Concat(new string[] { htmlField,"[", @j.ToString(), "].LOCALIZACION" })" type="text"
+                                       value="@item.LOCALIZACION" />
+                            </td>
+                            <td>
+                                <input class="form-control" name="@String.Concat(new string[] { htmlField,"[", @j.ToString(), "].NUMERO" })"
+                                       id="@String.Concat(new string[] { htmlField,"[", @j.ToString(), "].NUMERO" })" type="text" value="@item.NUMERO" />
+                            </td>
+                        </tr>
+                        j = j + 1;
+                    }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '#guardarNuevoTelefono', function () {
+
+            var oidPaciente = $("#OIDPACIENTE").val();
+            var filasTelefono = $("#listaTelefonos tr").length;
+
+            var filaNuevaTelefono = "<tr  data-owner='" + oidPaciente + "' >";
+            filaNuevaTelefono += "<td>";
+            filaNuevaTelefono += "<input type='hidden' name='TELEFONOS[" + filasTelefono + "].OID' id='TELEFONOS[" + filasTelefono + "].OID'   value='-1' />";
+            filaNuevaTelefono += "<input class='form-control' name='TELEFONOS[" + filasTelefono + "].LOCALIZACION' id='TELEFONOS[" + filasTelefono + "].LOCALIZACION'  type='text' value='" + $('#localizacionTelefonoNuevo').val() + "' />";
+            filaNuevaTelefono += "</td>";
+            filaNuevaTelefono += "<td>";
+            filaNuevaTelefono += "<input class='form-control' name='TELEFONOS[" + filasTelefono + "].NUMERO' id='TELEFONOS[" + filasTelefono + "].NUMERO'  type='text' value='" + $('#NumeroTelefonoNuevo').val() + "' />";
+            filaNuevaTelefono += "</td>";
+            filaNuevaTelefono += "</tr>";
+
+            $("#listaTelefonos").append(filaNuevaTelefono);
+            $("#modal-form-AddTelefono").modal('hide');
+        });
+    });
+
+</script>
+
+
+
+
+
+
+
+
+

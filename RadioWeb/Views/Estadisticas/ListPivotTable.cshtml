@@ -1,0 +1,86 @@
+﻿@model IEnumerable<RadioWeb.Models.PIVOTTABLE>
+
+@{
+    ViewBag.Title = "ListPivotTable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>LISTA DE MIS ESTADISTICAS</h2>
+
+@*<p>
+        @Html.ActionLink("Create New", "Create")
+    </p>*@
+<table class="table table-bordered table-striped " id="ListaPivotTable" data-search="true" data-height="700">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NOMBRE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DESCRIPCION)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FECHAINICIO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FECHAFIN)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+
+            <td>
+                <a href="#" data-type="text" class="textoXeditable" data-url="/Estadisticas/EditarCampoPivot" id="NOMBRE" data-pk="@item.OID" data-value="@item.NOMBRE" data-title="Editar @item.NOMBRE">
+                    @item.NOMBRE
+                </a>
+                
+            </td>
+            <td>
+                <a href="#" data-type="textarea" class="textoXeditable" data-url="/Estadisticas/EditarCampoPivot" id="DESCRIPCION" data-pk="@item.OID" data-value="@item.DESCRIPCION" data-title="Editar @item.NOMBRE">@item.DESCRIPCION</a>
+               
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FECHAINICIO)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FECHAFIN)
+            </td>
+            <td>
+
+                @Html.ActionLink("Consultar", "PivotTable", "Estadisticas", new { oid = item.OID }, null) |
+
+                @Html.ActionLink("Duplicar", "PivotTableDuplicar", "Estadisticas", new { oid = item.OID }, null) 
+
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+@section scripts
+    {
+
+
+
+    <script type="text/javascript">
+
+       
+       
+        $(document).ready(function () {
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewTBI]").addClass("active");
+            $("[data-view=ViewTBI]").parents("ul").removeClass("collapse");
+                $("#ListaPivotTable").bootstrapTable();
+                $('.textoXeditable').editable({
+                    container: 'body',
+                    inputclass: 'anchoTexto'
+                });
+            });
+    </script>
+
+
+}

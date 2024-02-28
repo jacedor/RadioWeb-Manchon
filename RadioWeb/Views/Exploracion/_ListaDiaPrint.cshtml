@@ -1,0 +1,171 @@
+﻿@model IEnumerable<RadioWeb.Models.LISTADIAAMBFORATS>
+@{
+    Layout = String.Empty;
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+            font-size: 10px;
+            font-family: 'Verdana, Geneva, Tahoma, sans-serif';
+            color: #555;
+        }
+
+            .invoice-box table {
+                width: 100%;
+                line-height: inherit;
+                border-spacing: 0px;
+            }
+
+                .invoice-box table td {
+                    vertical-align: top;
+                }
+
+                .invoice-box table tr {
+                    border: 1px solid #eee;
+                }
+
+
+                    .invoice-box table tr.top table td.title {
+                        color: #333;
+                    }
+
+
+
+                    .invoice-box table tr.heading td {
+                        background: #eee;
+                        border: 1px solid #ddd;
+                        font-weight: bold;
+                    }
+
+                    .invoice-box table tr.details td {
+                        padding-bottom: 2px;
+                    }
+
+                    .invoice-box table tr.item td {
+                        border: 1px solid #eee;
+                    }
+
+                    .invoice-box table tr.item.last td {
+                        border-bottom: none;
+                    }
+
+                    .invoice-box table tr.total td:nth-child(2) {
+                        border-top: 2px solid #eee;
+                        font-weight: bold;
+                    }
+
+        tr.border_bottom td {
+            border: 1px solid black;
+            font-size: 10px;
+        }
+
+        tr.border_bottom th {
+            border: 1px solid black;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <p class="text-right">@DateTime.Now.ToLongDateString() @DateTime.Now.ToLongTimeString()</p>
+    <div class="invoice-box">
+        <table id="ExploracionesTable" class="table table-hover table-bordered" style="border:1px solid black;">
+            <thead>
+                <tr class="border_bottom">
+
+
+                    <th>HOR</th>
+                    <th>FNAC</th>
+                    <th data-field='paciente'>PACIENTE</th>
+                    <th>EDAD</th>
+                    <th>MUT</th>
+                    <th>APA</th>
+                    <th>EXPLO</th>
+                    <th>OBSER</th>
+                    <th>TEL</th>
+                    <th>COLOR</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    var claseActiva = "";
+
+                    var esHueco = "huecoOcupado";
+
+                    <tr class="border_bottom" style="color: @item.COLOR; border:1px solid black;">
+
+
+                        <td>
+                            <span class="hora">@item.HORA</span>
+                        </td>
+                        <td>
+                            <span class="hora">@(item.PACIENTEOBJECT.FECHAN.HasValue ? item.PACIENTEOBJECT.FECHAN.Value.ToShortDateString() : "")</span>
+                        </td>
+
+                        <td style="text-align:left;">
+                            @if (esHueco == "huecoLibre")
+                            {
+                                <span style="color:@item.COLOR;font-size:12px;">@item.PACIENTE </span>
+                            }
+                            else
+                            {
+                                @item.PACIENTE
+
+                            }
+                        </td>
+                        <td>
+                            <span title="Edad">@item.EDAD</span>
+                        </td>
+                        <td>
+                            <span title="Aparato">@item.DES_MUT</span>
+                        </td>
+                        <td>
+                            <span title="Aparato">@item.COD_FIL</span>
+                        </td>
+                        <td>
+                            <span title="Exploracion">
+                                @item.DES_FIL
+                            </span>
+                        </td>
+                        <td width="130">
+
+
+                            @if (!String.IsNullOrEmpty(item.TEXTO) && item.TEXTO.Length > 50)
+                            {
+                                @item.TEXTO.Substring(0, 50)
+                            }
+                            else
+                            {
+                                @item.TEXTO
+                            }
+                        </td>
+                        <td>
+                            <span title="Telefono">
+                                @if(item.PACIENTEOBJECT.TELEFONOS.Count > 0){
+                                    @item.PACIENTEOBJECT.TELEFONOS.First().NUMERO;
+                                }
+                                else
+                                {
+                                    @:"No Tel."
+                                }
+                            </span>
+                        </td>
+                        <td>
+                            <div style="background-color:@item.CIDCOLOR;" class="text-center">&nbsp;&nbsp;</div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

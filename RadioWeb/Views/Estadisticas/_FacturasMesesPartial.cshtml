@@ -1,0 +1,105 @@
+﻿@model IEnumerable<RadioWeb.Models.Estadistica.ItemFacturasMes>
+
+<div id="toolbar">
+    <div class="form-inline" role="form">
+        <div class="col-lg-10">
+            <div class="form-group">
+                <button class="btn btn-outline btn-info" id="VerGrafico" title="Ver Grafico Lineas" type="button" data-target="#modal-grafico" data-toggle="modal">
+                    <i class="fa fa-line-chart"></i>
+                </button>
+                <button class="btn btn-outline btn-info" id="verGraficoBarras" title="Ver Grafico Barras" type="button" data-target="#modal-grafico" data-toggle="modal">
+                    <i class="fa fa-bar-chart-o"></i>
+                </button>
+                <button class="btn btn-outline btn-info" id="verGraficoQuesito" title="Ver Grafico Porcentage" type="button" data-target="#modal-grafico" data-toggle="modal">
+                    <i class="fa  fa-pie-chart"></i>
+                </button>
+
+                <button class="btn btn-default xlsx" onclick="exportExcel('xlsx','tblFacturasPorMutua','FacturasPorMutua');">Exportar a Excel</button>
+
+            </div>
+        </div>
+        
+    </div>
+</div>
+<table id="tblFacturasPorMutua" class="table table-bordered table-striped" data-click-to-select="true" data-search="true"  data-toolbar="#toolbar">
+    <thead>
+        <tr>
+            <th data-checkbox="true"></th>
+            <th data-sortable="true" data-field="Mutua">Mutua</th>
+            <th data-sortable="true" data-field="Total"  data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Total</th>
+            <th data-sortable="true" data-field="Enero" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Ene</th>
+            <th data-sortable="true" data-field="Febrero" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Feb</th>
+            <th data-sortable="true" data-field="Marzo" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Mar</th>
+            <th data-sortable="true" data-field="Abril" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Abr</th>
+            <th data-sortable="true" data-field="Mayo" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">May</th>
+            <th data-sortable="true" data-field="Junio" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Jun</th>
+            <th data-sortable="true" data-field="Julio" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Jul</th>
+            <th data-sortable="true" data-field="Agosto" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Ago</th>
+            <th data-sortable="true" data-field="Septiembre" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Sep</th>
+            <th data-sortable="true" data-field="Octubre" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Oct</th>
+            <th data-sortable="true" data-field="Noviembre" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Nov</th>
+            <th data-sortable="true" data-field="Diciembre" data-sorter="priceSorter" align="right" data-type="numeric" class="text-right">Dic</th>
+
+
+        </tr>
+    </thead>
+
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            if (item.Mutua != "TOTAL")
+            {
+                <tr class="@(item.Mutua=="TOTAL" ? "totalStats" : "")">
+                    <td></td>
+                    <td style="padding:0;" class="totalResumen" title="@item.MutuaNombre">@item.Mutua</td>
+                    <td align="right">@string.Format("{0:C}", item.Total)</td>
+                    <td align="right">@string.Format("{0:C}", item.Enero)</td>
+                    <td align="right">@string.Format("{0:C}", item.Febrero)</td>
+                    <td align="right">@string.Format("{0:C}", item.Marzo)</td>
+                    <td align="right">@string.Format("{0:C}", item.Abril)</td>
+                    <td align="right">@string.Format("{0:C}", item.Mayo)</td>
+                    <td align="right">@string.Format("{0:C}", item.Junio)</td>
+                    <td align="right">@string.Format("{0:C}", item.Julio)</td>
+                    <td align="right">@string.Format("{0:C}", item.Agosto)</td>
+                    <td align="right">@string.Format("{0:C}", item.Septiembre)</td>
+                    <td align="right">@string.Format("{0:C}", item.Octubre)</td>
+                    <td align="right">@string.Format("{0:C}", item.Noviembre)</td>
+                    <td align="right">@string.Format("{0:C}", item.Diciembre)</td>
+                </tr>
+            }
+
+
+
+        }
+    </tbody>
+    @if (Model != null && Model.Count() > 0)
+    {
+        <tfoot>
+            <tr class="totalStats">
+                <td></td>
+                <td>
+                    @Model.Last().Mutua
+                </td>
+                <td align="right"><input type="hidden" value="@Model.Last().Total" id="TotalGlobal" /> @string.Format("{0:C}", Model.Last().Total)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Enero)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Febrero)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Marzo)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Abril)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Mayo)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Junio)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Julio)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Agosto)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Septiembre)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Octubre)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Noviembre)</td>
+                <td align="right">@string.Format("{0:C}", Model.Last().Diciembre)</td>
+
+
+            </tr>
+        </tfoot>
+    }
+
+
+</table>

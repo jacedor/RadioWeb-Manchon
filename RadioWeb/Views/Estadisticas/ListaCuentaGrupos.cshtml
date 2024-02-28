@@ -1,0 +1,25 @@
+﻿@model IEnumerable<RadioWeb.Models.Estadistica.ItemEstadisticoExploraciones>
+
+<table class="table">
+    <tbody>
+
+        @{
+           
+            
+            foreach (var item in Model)
+            {
+         
+            <tr>
+                <td>
+                    <button class="btn m-r-sm"  style="background-color:@item.Color" data-grupo="@item.Grupo" type="button"><span style="color: white;">@item.Valor</span></button>
+                    @item.Grupo
+                </td>
+
+            </tr>
+           
+            }
+        }
+
+
+    </tbody>
+</table>

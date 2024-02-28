@@ -1,0 +1,129 @@
+﻿    @model RadioWeb.ViewModels.VWFiltros
+@{
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+}
+
+@section Estilos{
+
+
+    <style type="text/css">
+
+        .modal-dialog {
+            width: 90%;
+            height: 90%;
+            margin: 0;
+            padding: 0;
+            padding-left: 10%;
+            padding-top: 2%;
+        }
+
+        .modal-content {
+            height: auto;
+            min-height: 90%;
+            border-radius: 0;
+        }
+    </style>
+    <link href="~/css/plugins/tableexport/tableexport.min.css" rel="stylesheet" />
+    <link href="~/css/plugins/textSpinners/spinners.css" rel="stylesheet" />
+    <link href="/css/c3.css" rel="stylesheet" />
+    <link href="~/css/plugins/pivottable/pivot.min.css" rel="stylesheet" />
+}
+
+<div class="row">
+    <p>
+        @Html.ActionLink("Volver a Mi Lista", "ListPivotTable", new { oid = oUsuarioLogeado.IDUSER }, new { @class = "btn btn-info" })
+    </p>
+    <div id="output" class="hidden"></div>
+    <input type="hidden" id="datosPivotTable" name="datosPivotTable" value="@ViewBag.PivotData">
+    <input type="hidden" id="OID" name="OID" value="@Model.OIDACTIVA">
+    <div class="col-lg-12 form-horizontal">
+        @using (Ajax.BeginForm("PivotTable",
+"Estadisticas", null,
+new AjaxOptions
+{
+    HttpMethod = "POST"
+
+}, new { @class = "form-horizontal" }))
+        {
+
+            <div class="ibox " style="margin-bottom:0px;">
+              
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <div class="col-sm-2 col-md-2">
+
+                            @Html.BootstrapLabelFor(m => m.FECHA_INICIO)
+                            @Html.EditorFor(model => model.FECHA_INICIO, new
+        {
+            htmlAttributes = new { autocomplete = "off", @class = "fecha-mask"  }
+        })
+                        </div>
+                        <div class="col-sm-2 col-md-2">
+
+                            @Html.BootstrapLabelFor(m => m.FECHA_FIN)
+                            @Html.EditorFor(model => model.FECHA_FIN, new
+        {
+            htmlAttributes = new { autocomplete = "off", @class = "fecha-mask" }
+        })
+                        </div>
+
+                        <div class="col-sm-2 col-md-2" style="margin-top:5px;">
+                            <br />
+                            <button class="btn btn-primary btn-block" type="submit">Buscar</button>
+                        </div>
+
+                        <div class="col-sm-4 col-md-4 text-right" style="margin-top:5px;">
+                            <br />
+                            <button class="btn btn-warning " type="button" id="GuardarCrossTable">Guardar CrossTable</button>
+                        </div>
+                        <div class="col-sm-2 col-md-2 text-right" style="margin-top:5px;">
+                            <br />
+                            <button class="btn btn-warning " onclick="tableToExcel('testTable', 'W3C Example Table')" type="button" id="ExcelExport">Excel</button>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+
+            <div class="ibox" style="margin-bottom:5px;">
+             
+                <div class="ibox-content" >
+                    <h2>
+                        <span class="text-navy">@ViewBag.PivotTitulo</span>
+                    </h2>
+                    <div id="ContentTable">
+
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>
+
+
+@section scripts{
+
+
+    <script src="~/js/custom/c3/d3.v3.min.js"></script>
+        <script src="~/js/custom/c3/c3.js"></script>
+    <script src="https://cdn.plot.ly/plotly-basic-latest.min.js"></script>
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/plugins/jquery-ui/jquery-ui.js"></script>
+
+    <script src="~/js/plugins/pivottable/pivot.js"></script>
+    <script src="~/js/plugins/pivottable/pivot.es.js"></script>
+    <script src="~/js/plugins/pivottable/tips_data.min.js"></script>
+    <script src="~/js/plugins/pivottable/plotly_renderers.min.js"></script>
+    <script src="~/js/plugins/pivottable/export_renderers.js"></script>
+    <script src="~/js/plugins/pivottable/d3_renderers.min.js"></script>
+    <script src="~/js/plugins/pivottable/gchart_renderers.js"></script>
+    <script src="~/js/plugins/pivottable/c3_renderers.js"></script>
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/estadisticas/pivotTable.js")"></script>
+
+}

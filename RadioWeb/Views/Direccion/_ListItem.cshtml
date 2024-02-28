@@ -1,0 +1,37 @@
+﻿@model RadioWeb.Models.DIRECCION
+
+  <div id="@Model.OID" class="direccion tab-pane active  fade  in">
+
+            <div class="form-group">
+                <div class="col-sm-9">
+                    <label class="control-label" for="direccion">Calle</label>
+                    <input class="form-control" id="@String.Concat("DIRECCION", @Model.OID)" name="direccion" maxlength="40" type="text" value="@Model.DIRECCION1" />
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label" for="CP">CP</label>
+                    <input class="form-control" id=" @String.Concat("CP", @Model.OID)" name="CP" type="text" maxlength="5" value="@Model.CP" />
+                </div>
+            </div>
+            <div class="form-group">
+
+                <div class="col-sm-5">
+                    <label class="control-label" for="POBLACION">Población</label>
+                    @if (!Model.POBLACION.ToUpper().Equals( "SIN DIRECCIÓN")) { 
+                       <input class="form-control" id="@String.Concat("POBLACION", @Model.OID)" name="POBLACION" maxlength="30" type="text" value="@Model.POBLACION" />
+                    }else{
+                       <input class="form-control" id="@String.Concat("POBLACION", @Model.OID)" name="POBLACION" maxlength="30" type="text"  />
+                    }
+                 
+                </div>
+                <div class="col-sm-4">
+                    <label class="control-label" for="Provincia">Provincia</label>
+                    <input class="form-control" id="@String.Concat("PROVINCIA", @Model.OID)" name="Provincia" maxlength="15" type="text" value="@Model.PROVINCIA" />
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label" for="Pais">Pais</label>
+                    <input class="form-control" id="@String.Concat("PAIS", @Model.OID)" name="Pais" type="text" maxlength="15" value="@Model.PAIS" />
+                </div>
+            </div>
+
+
+        </div>

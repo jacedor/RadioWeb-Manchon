@@ -1,0 +1,260 @@
+﻿@model RadioWeb.ViewModels.Estadistica.VWFiltrosResumenFacturacion
+@using RadioWeb.Models;
+@{
+    //  string diaSemana = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(DateTime.Now.DayOfWeek);
+    //RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    //RadioWeb.Models.Logica.FiltrosBusquedaExploracion oFiltros = ((RadioWeb.Models.Logica.FiltrosBusquedaExploracion)Session["FiltrosBusqueda"]);
+    ViewBag.Title = "Resumen";
+
+}
+
+@section Estilos{
+
+
+    <link href="~/css/plugins/tableexport/tableexport.min.css" rel="stylesheet" />
+}
+
+
+<form class="form-horizontal" id="form0" autocomplete="off">
+
+
+    <div class="col-lg-12 form-horizontal">
+
+
+
+        <div class="form-group">
+            <div class="col-sm-2 col-md-2">
+
+
+                <label class="control-label" for="FINICIO">FECHA INICIAL</label>
+                <input autocomplete="off" class="form-control date-picker" id="FINICIO" name="FINICIO" type="text" value="@Model.FILTROS.FECHA_INICIO">
+
+            </div>
+            <div class="col-sm-2 col-md-2">
+
+
+                <label class="control-label" for="FFIN">FECHA FINAL</label>
+                <input autocomplete="off" class="form-control fecha-picker" id="FFINAL" name="FFINAL" type="text" value="@Model.FILTROS.FECHA_FIN">
+
+            </div>
+            <div class="col-sm-2 col-md-2">
+
+
+                <label class="control-label" for="CENTRO">CENTRO </label>
+                <select class="form-control select2 select2-hidden-accessible" data-filter-calendar="true" data-val="true" data-val-number="El campo CENTRO debe ser un número." data-val-required="El campo CENTRO es obligatorio." id="CENTRO" name="CENTRO" type="text" tabindex="-1" aria-hidden="true">
+                    <option value="-1"> </option>
+                    <option value="1">ODONTOCARE - KENNEDY</option>
+                    <option value="2" selected="selected">VERIS - KENNEDY</option>
+                    <option value="3">ODONTOCARE - ALBORADA</option>
+                    <option value="4">VERIS - QUICENTRO SUR</option>
+                    <option value="5">VERIS - CUENCA</option>
+                    <option value="6">VERIS - ALBORADA</option>
+                    <option value="7">VERIS - TUMBACO</option>
+                    <option value="8">VERIS - MALL DEL SOL</option>
+                    <option value="9">ODONTOCARE - MALL DEL SOL</option>
+                    <option value="10">VERIS - GUAYAQUIL SUR</option>
+                    <option value="11">VERIS - EL DORADO</option>
+                    <option value="12">VERIS - SAN LUIS</option>
+                    <option value="13">ODONTOCARE - LA Y</option>
+                    <option value="14">VERIS - GRANADOS</option>
+                    <option value="15">VERIS - LA Y</option>
+                </select>
+
+            </div>
+
+            <div class="col-md-2">
+                <label class="control-label" for="FILTROS_ESTADO">ESTADO </label>
+                @Html.EditorFor(model => model.FILTROS.ESTADO)
+            </div>
+            <div class="col-md-3">
+
+                <br>
+
+                <button id="EnviarFiltros" class="btn btn-primary  " type="button"><i class="fa fa-search"></i></button>
+
+                <button class="btn btn-warning " onclick="tableToExcel('ActividadTable', 'W3C Example Table')" type="button" id="ExcelExport">Excel</button>
+
+            </div>
+        </div>
+    </div>
+
+
+</form>
+
+
+
+
+
+
+
+
+
+<div class="row">
+    <div class="col-lg-12">
+        @*<button class="btn btn-default xlsx" onclick="exportExcel('xlsx','ActividadTable','DATAEXPORTED' + @DateTime.Now.ToShortDateString());">Exportar a Excel</button>*@
+    </div>
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>Panel de Resultados</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="fullscreen-link">
+                        <i class="fa fa-expand"></i>
+                    </a>
+
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="ibox-content">
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table id="ActividadTable" class="table table-hover table-bordered table-striped"
+                               data-striped="true" >
+                            <thead>
+                                <tr>
+                                    <th data-field="NOMBRESUCURSAL">CENTRO</th>
+                                    <th data-sortable="true" data-field="FECHAPLANIFICACION">PLANI</th>
+                                    <th data-sortable="true" data-field="FECHAREALIZACION">REALI</th>
+
+                                    <th data-field="CODIGOVISUALIZACION" data-sortable="true">CODIGO VISUALIZACION</th>
+
+                                    <th data-sortable="true" data-field="FECHAEMISIONFACT">FECHA FAC</th>
+
+                                    <th data-field="NUMEROFACTURA">NUMERO FACTURA</th>
+                                    <th data-field="NUMEROHISTCLINICA" title="HC">HC</th>
+                                    <th data-sortable="true" data-field="APELLIDOSCOMPLETOPACIENTE" data-width="500">PACIENTE</th>
+
+                                    <th data-field="PRESTACION">PRESTACION</th>
+                                    <th data-field="PROCEDIMIENTO">PROCEDIMIENTO</th>
+                                    <th data-field="CPT">CPT</th>
+                                    <th data-field="APELLIDOSCOMPLETOMEDICO">MEDICO</th>
+
+                                    <th  data-field="TARIFASERVICIOREALIZADO">TARIFA</th>
+
+
+
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+@section scripts{
+  @*  <script src="~/js/custom/tableexport/tableexport.min.js"></script>*@
+    <script type="text/javascript">
+        var tableToExcel = (function () {
+            var uri = 'data:application/vnd.ms-excel;base64,'
+                , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet ></x: ExcelWorksheets ></x: ExcelWorkbook ></xml ><![endif]-- > <meta http-equiv="content-type" content="text/plain; charset=UTF-8" /></head > <body><table>{table}</table></body></html > '
+                , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+                , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+            return function (table, name) {
+                if (!table.nodeType) table = document.getElementById(table)
+                var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+                window.location.href = uri + base64(format(template, ctx))
+            }
+        })();
+        $(document).on('click', '#EnviarFiltros', function (ev) {
+
+            var urlWithParams = "/api/Calero?fechaInicio=" + $("#FINICIO").val() + "&fechaFin=" + $("#FFINAL").val() + "&centro=" + $("#CENTRO").val() + "&estado=" + $("#FILTROS_ESTADO").val();
+
+            $.ajax({
+                type: 'GET',
+                url: urlWithParams,
+
+                beforeSend: function () {
+
+                  
+                    if ($("caption.tableexport-caption").length>0) {
+                        $("caption.tableexport-caption").remove();
+
+                    }
+                    $('#ActividadTable').bootstrapTable('refresh');
+                },
+                success: function (data) {
+
+                    $('#ActividadTable').bootstrapTable({
+                        data: data,
+
+                        onLoadSuccess: function (status, res) {
+                            
+                            //$("#ActividadTable").tableExport({
+                            //    formats: ["xlsx", "txt", "csv"], //Tipo de archivos a exportar ("xlsx","txt", "csv", "xls")
+                            //    position: 'top',  // Posicion que se muestran los botones puedes ser: (top, bottom)
+                            //    bootstrap: true,//Usar lo estilos de css de bootstrap para los botones (true, false)
+                            //    fileName: "ListadoPaises",    //Nombre del archivo
+                            //});
+                        }
+                    });
+
+            
+                    $('#ActividadTable').bootstrapTable('load', data);
+
+                  
+                }
+            });
+
+
+
+        });
+
+        function dateFormat(value, row, index) {
+            var date = moment(value);
+            if (date.isValid()) {
+                return moment(value).format('DD/MM/YYYY');
+            } else {
+                return '';
+            }
+
+        }
+
+        function fechaPlanificacion(value, row) {
+            if (row.FECHAPLANIFICACION !== null) {
+
+                return moment(value).format("DD/MM/YYYY");
+            }
+
+        }
+        function fechaEmisionFormatter(value, row) {
+            if (row.FECHAEMISIONFACT !== null) {
+
+                return moment(value).format("DD/MM/YYYY");
+            }
+
+        }
+        
+
+    </script>
+
+
+
+
+
+}
+
+
+

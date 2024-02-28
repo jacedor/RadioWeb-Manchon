@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+@section barraTop{
+    <div class="row">
+        <div class="col-lg-12">
+            @using (Ajax.BeginForm("Buscar",
+"Home", null,
+new AjaxOptions
+{
+    HttpMethod = "GET",
+    OnFailure = "onTestFailure",
+    OnSuccess = "SuccessFiltros(data)",
+    OnBegin = "BeginFiltros",
+    OnComplete = "CompleteFiltros()"
+}, new { @class = "form-horizontal" }))
+            {
+                @Html.EditorFor(m => m.FILTROS,
+                                                   new
+                                                                                                                          {
+
+                                                                                            estadoExploracion = "true",
+                                                                                            botonBusqueda = "true",
+                                                                                            facturadoExploracion = "true"
+
+                                                                                                                          })
+            }
+
+        </div>
+    </div>
+
+}

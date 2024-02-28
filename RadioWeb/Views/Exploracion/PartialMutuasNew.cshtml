@@ -1,0 +1,647 @@
+﻿@model RadioWeb.Models.EXPLORACION
+
+@{
+
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+
+    bool deshabilitar = false;
+    if (Model.PAGADO =="T" || Model.FACTURADA == "T" || Model.INTOCABLE == "T")
+    {
+        deshabilitar = true;
+    }
+
+    bool deshabilitarInformadas = false;
+    if (Model.INFORMADA == "T")
+    {
+        deshabilitarInformadas = true;
+    }
+
+}
+
+
+@{
+    var estadoPanelExploracion = "in";
+    var iconExplo = "fa-chevron-up";
+
+    if (ViewData["EXPLORACION.FICHAEXPLORACION"] != null && ViewData["EXPLORACION.FICHAEXPLORACION"].ToString() == "0")
+    {
+        estadoPanelExploracion = "";
+        iconExplo = "fa-chevron-down";
+    }
+}
+<div class="panel panel-@Model.ESTADODESCRIPCION">
+    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapseExploracion">
+        <h5 class="panel-title">
+            <b>@Model.DIASEMANA.ToString().ToUpper() @Model.FECHA.Value.ToShortDateString() - @Model.HORA</b>
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseExploracion">
+                <i class="fa @iconExplo collapse-link-accordion"></i>
+            </a>
+            <span class="pull-right">
+                Estado Exploración: <span class=" ">@Model.ESTADODESCRIPCION</span> |
+                Facturación:
+                @(Model.FACTURADA == "T" ? "FACTURADO" : "NO FACTURADO") |
+                ID: @Model.OID
+
+            </span>
+        </h5>
+
+    </div>
+    <div id="collapseExploracion" class="panel-collapse collapse @estadoPanelExploracion" data-controlador="exploracion" data-objeto="fichaexploracion">
+        <div class="spiner-cargando-exploracion hide text-center" style="height: 500px; width: 100%;">
+            <br /><br />
+            <div class="sk-spinner sk-spinner-circle" style="height: 90px; width: 90px;">
+                <div class="sk-circle1 sk-circle"></div>
+                <div class="sk-circle2 sk-circle"></div>
+                <div class="sk-circle3 sk-circle"></div>
+                <div class="sk-circle4 sk-circle"></div>
+                <div class="sk-circle5 sk-circle"></div>
+                <div class="sk-circle6 sk-circle"></div>
+                <div class="sk-circle7 sk-circle"></div>
+                <div class="sk-circle8 sk-circle"></div>
+                <div class="sk-circle9 sk-circle"></div>
+                <div class="sk-circle10 sk-circle"></div>
+                <div class="sk-circle11 sk-circle"></div>
+                <div class="sk-circle12 sk-circle"></div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#DetailsExploracion"><i class="fa fa-2x fa-medkit"></i>EXPLORACION</a>
+                    </li>
+                    @if (Model.EXPLORAMISMODIA != null && Model.EXPLORAMISMODIA.Count > 0)
+                    {
+                        <li class="">
+                            <a data-toggle="tab" href="#ListOtrasHoy"><i class="fa fa-2x fa-plus"></i>OTRAS HOY</a>
+                        </li>
+                    }
+
+                    <li class="">
+                        <a data-toggle="tab" href="#ListInformesExploracion"><i class="fa fa-2x fa-file-pdf-o"></i>INFORMES</a>
+                    </li>
+
+                    <li>
+                        <a data-toggle="tab" href="#Inyectables"><i class="fa fa-2x fa-eyedropper"></i>INYECTABLES</a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#DocumentosExploracion"><i class="fa fa-2x fa-file-archive-o"></i>DOCUMENTOS</a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#Logs"><i class="fa fa-2x fa-pencil-square"></i>LOGS</a>
+                    </li>
+                </ul>
+                <div class="tab-content form-horizontal">
+                    <div id="DetailsExploracion" class="tab-pane  active">
+                        <div id="panelExploracion" class="panel-body">
+
+                            @using (Ajax.BeginForm("Details",
+"Exploracion",
+new AjaxOptions
+{
+HttpMethod = "POST",
+OnSuccess = "Success(data)",
+OnFailure = "OnFailure"
+}, new { @class = "form-horizontal" }))
+                            {
+
+                                @Html.HiddenFor(m => m.URLPREVIAEXPLORACION)
+                            <div class="row form-horizontal ">
+
+                                <input type="hidden" id="FECHA" name="FECHA" value="@Model.FECHA.Value.ToShortDateString()" />
+                                <input type="hidden" id="DIASEMANA" name="DIASEMANA" value="@Model.DIASEMANA" />
+                                <input type="hidden" id="IOR_EXPLORACION" name="IOR_EXPLORACION" value="@Model.OID" />
+                                <input type="hidden" id="IDCITAONLINE" name="IDCITAONLINE" value="@Model.IDCITAONLINE" />
+                                <input type="hidden" id="OTRASEXPLORACIONESRECOGIDAS" name="OTRASEXPLORACIONESRECOGIDAS" value="" />
+
+                                @Html.HiddenFor(m => m.OID)
+                                @Html.HiddenFor(m => m.IOR_PACIENTE)
+                                @Html.HiddenFor(m => m.PAGAR)
+                                @Html.HiddenFor(m => m.INFORMADA)
+                                @Html.HiddenFor(m => m.USERNAME)
+                                @Html.HiddenFor(m => m.IOR_MASTER)
+
+                                <div class="form-group pull-right" style="margin-bottom:0px;">
+                                    <div class="col-md-12">
+                                        @if (Model.DOCUMENTOSIMPRIMIBLES != null)
+            {
+                            @Html.DisplayFor(m => m.DOCUMENTOSIMPRIMIBLES, new { OID = Model.OID })
+}
+
+                                        <button type="submit" id="Guardar" data-toggle="tooltip" data-protect="true"
+                                                data-placement="top" title="Guardar" class="btn btn-primary WsAltaExploracion guardar"
+                                                onclick="javascript:$('#VOLVERTRASGUARDAREXPLORACION').val('F');">
+                                            <i class="fa fa-save" title="Guardar"></i> Guardar
+                                        </button>
+                                        @if (Model.URLPREVIAEXPLORACION != null)
+            {
+                            <button type="submit" id="GuardaryVolver" data-toggle="tooltip" data-placement="top"
+                                    title="Guardar y volver" onclick="javascript:$('#VOLVERTRASGUARDAREXPLORACION').val('T');"
+                                    class="btn  btn-success WsAltaExploracion ">
+                                <i class="fa fa-sign-in" title="Guardar y Volver"></i> Guardar y Volver
+                            </button>
+}
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <fieldset>
+                                        <legend><i class="fa fa-ambulance"></i> Datos Exploración</legend>
+                                        <div class="form-group">
+                                            <div class="col-md-1">
+                                                @Html.BootstrapLabelFor(m => m.HORA)
+                                                @Html.EditorFor(e => e.HORA, new
+                    {
+                        htmlAttributes = new { @class = "hora-mask text-center" },
+
+                    })
+                                                @Html.ValidationMessageFor(model => model.HORA, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.BootstrapLabelFor(m => m.IOR_ENTIDADPAGADORA)
+                                                @Html.EditorFor(model => model.IOR_ENTIDADPAGADORA, new { @disabled = deshabilitar })
+                                                @Html.ValidationMessageFor(model => model.IOR_ENTIDADPAGADORA, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.BootstrapLabelFor(m => m.IOR_APARATO)
+                                                @Html.EditorFor(model => model.IOR_APARATO, new { @disabled = deshabilitar })
+                                                @Html.ValidationMessageFor(model => model.IOR_APARATO, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.BootstrapLabelFor(m => m.IOR_TIPOEXPLORACION)
+                                                @Html.EditorFor(model => model.IOR_TIPOEXPLORACION,
+                                 new
+                                 {
+                                     IOR_APARATO = Model.IOR_APARATO,
+                                     IOR_MUTUA = Model.IOR_ENTIDADPAGADORA,
+                                     @disabled = deshabilitar
+                                 })
+                                                @Html.ValidationMessageFor(model => model.IOR_TIPOEXPLORACION, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label for="CANTIDAD" class="control-label  @((oUsuarioLogeado.VECANTIDADES == 0) ? "hide" : "")">PRECIO</label>
+                                                @if (oUsuarioLogeado.VECANTIDADES != 0)
+                    {
+                            @Html.EditorFor(model => model.CANTIDAD, (deshabilitar ? new { SIMBOLO = Model.MONEDA.SIMBOLO, htmlAttributes = new { @readonly = "readonly", SIMBOLO = Model.MONEDA.SIMBOLO } } as object : new { SIMBOLO = Model.MONEDA.SIMBOLO }))
+
+}
+else
+{
+                            @Html.HiddenFor(model => model.CANTIDAD)
+
+}
+
+                                                @Html.ValidationMessageFor(model => model.CANTIDAD, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="col-sm-3">
+                                                @Html.BootstrapLabelFor(m => m.IOR_COLEGIADO)
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon">
+                                                        <a id="copiarColegiado" title="Copiar a exploraciones mismo dia" href="#">
+                                                            <i class="fa fa-copy"></i>
+                                                        </a>
+                                                    </span>
+                                                    <select class="form-control" id="IOR_COLEGIADO" name="IOR_COLEGIADO">
+                                                        <option value="@Model.IOR_COLEGIADO">
+                                                            @Model.COLEGIADO.NOMBRE
+                                                        </option>
+                                                    </select>
+                                                </div>
+
+
+
+                                            </div>
+                                            <div class="col-md-2">
+                                                @Html.BootstrapLabelFor(m => m.IOR_MEDICO)
+                                                @Html.EditorFor(model => model.IOR_MEDICO, new { @disabled = deshabilitarInformadas })
+
+                                                @Html.ValidationMessageFor(model => model.IOR_MEDICO, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-sm-3">
+                                                @Html.BootstrapLabelFor(m => m.FECHAMAXENTREGA)
+                                                @Html.EditorFor(model => model.FECHAMAXENTREGA, (deshabilitarInformadas ? new { htmlAttributes = new { @readonly = "readonly", autocomplete = "off" } } as object : new { htmlAttributes = new { autocomplete = "off" } } as object))
+                                                @Html.ValidationMessageFor(model => model.FECHAMAXENTREGA, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                @Html.BootstrapLabelFor(m => m.IOR_TECNICO)
+                                                @Html.EditorFor(model => model.IOR_TECNICO, new { disabled = deshabilitarInformadas })
+                                                @Html.ValidationMessageFor(model => model.IOR_TECNICO, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                @Html.BootstrapLabelFor(m => m.IOR_ESTUDIANTE)
+                                                @Html.EditorFor(model => model.IOR_ESTUDIANTE, new { disabled = deshabilitarInformadas })
+                                                @Html.ValidationMessageFor(model => model.IOR_ESTUDIANTE, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-3">
+                                                @Html.BootstrapLabelFor(m => m.IOR_CENTROEXTERNO)
+                                                @Html.EditorFor(model => model.IOR_CENTROEXTERNO, new { disabled = deshabilitar })
+                                            </div>
+
+                                            <div class="col-sm-3">
+                                                @Html.BootstrapLabelFor(m => m.RECOGIDO)
+                                                <div class="input-group m-b">
+
+                                                    @Html.EditorFor(model => model.RECOGIDO)
+                                                    <span class="input-group-addon">
+                                                        <span class="badge " id="countOtrasExploraciones" title="Otras Exploraciones Recogidas">0</span>
+                                                    </span>
+                                                </div>
+
+                                                @*<label for="FECHADERIVACION" class="control-label">RECOGIDA INFORME</label>
+            <div class="input-group m-b">
+                <span class="input-group-addon">
+                    <input type="checkbox" class="recogido" name="RECOGIDO" id="RECOGIDO" @( Model.RECOGIDO == "T" ? "checked" : "")>
+                </span>
+
+                <input type="text" name="FECHADERIVACION" id="FECHADERIVACION" autocomplete="off" value="@( Model.FECHADERIVACION.HasValue ? Model.FECHADERIVACION.Value.ToShortDateString() : "")" class="form-control fecha-picker ">
+
+                <span class="input-group-addon">
+                    <span class="badge " id="countOtrasExploraciones" title="Otras Exploraciones Recogidas">0</span>
+                </span>
+            </div>*@
+
+
+                                            </div>
+                                            <div class="col-sm-1">
+                                                @Html.BootstrapLabelFor(m => m.PESO)
+                                                @Html.TextBoxFor(model => model.PESO, new { @class = "form-control" })
+                                                @* <input type="text" name="PESO" id="PESO" value="@Model.PESO" class="form-control ">*@
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label for="IDCITAONLINE" class="control-label">CITA EXTERNA</label>
+                                                <input type="text" @((Model.IOR_ENTIDADPAGADORA == 11042 || Model.IOR_ENTIDADPAGADORA == 139) && !String.IsNullOrEmpty(Model.IDCITAONLINE) ? "readonly = \"true\"" : "") value="@(!String.IsNullOrEmpty( Model.IDCITAONLINE) ? Model.IDCITAONLINE : "")"
+                                                       class="form-control " id="IDCITAONLINE" name="IDCITAONLINE">
+                                            </div>
+                                            <div class="col-sm-1">
+                                                @Html.BootstrapLabelFor(m => m.TICKET_KIOSKO)
+                                                @Html.TextBoxFor(model => model.TICKET_KIOSKO, new { @class = "form-control" })
+                                            </div>
+
+
+
+                                            <div class="col-sm-2">
+                                                <br />
+                                                <div class="alert alert-@(Model.INFORMADA=="T"?"success":"danger")">
+                                                    <p class="text-center">@(Model.INFORMADA == "T" ? "" : "NO ")INFORMADA </p>
+                                                    @if (Model.RECOGIDO == "T")
+                                                    {
+                                                        <p class="text-center">RECOGIDO PRESENCIALMENTE EL @Model.FECHADERIVACION.Value.ToShortDateString() </p>
+
+                                                    }
+                                                    @if (Model.RECOGIDO == "L")
+                                                    {
+                                                        <p class="text-center">RECOGIDO ONLINE EL @Model.FECHADERIVACION.Value.ToShortDateString()  </p>
+
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+</fieldset>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <fieldset>
+                                        <legend><i class="fa fa-pencil"></i> Textos</legend>
+                                        <div class="form-group">
+                                            <div class="col-md-6">
+                                                <label for="TEXTO" class="control-label">Texto:</label>
+                                                @Html.EditorFor(model => model.TEXTO, new { rows = "3" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="MOTIVO" class="control-label">Motivo Consulta:</label>
+                                                @Html.EditorFor(model => model.MOTIVO, new { rows = "3" })
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <fieldset style="margin-top:0;">
+                                        <legend><i class="fa fa-money"></i> Datos Facturación</legend>
+                                        <div class="form-group">
+                                            <div class="col-sm-2 text-left">
+                                                @Html.BootstrapLabelFor(m => m.IOR_GPR)
+                                                <div class="editor-field" style="padding-top:5px;">
+                                                    <label>
+                                                        <input type="radio" value="PRI" name="radio1" class="TipoExploracion i-checks " @(Model.ENTIDAD_PAGADORA.OWNER == 1 ? "checked=\"checked\"" : "")>
+                                                        PRI
+                                                    </label>
+
+                                                    <label>
+                                                        <input type="radio" value="MUT" class="TipoExploracion i-checks" name="radio1" @(Model.ENTIDAD_PAGADORA.OWNER == 2 ? "checked=\"checked\"" : "")>
+                                                        MUT
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-offset-6 col-sm-4" id="accionesExploracion">
+
+                                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                                    <div class="editor-label">
+                                                        @Html.BootstrapLabelFor(m => m.PERMISO)
+                                                    </div>
+                                                    <div class="editor-field">
+                                                        @Html.EditorFor(model => model.PERMISO)
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                                    <div class="editor-label">
+                                                        @Html.BootstrapLabelFor(m => m.PAGADO)
+                                                    </div>
+                                                    <div class="editor-field">
+                                                        @Html.DisplayFor(model => model.PAGADO)
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                                    <div class="editor-label">
+                                                        @Html.BootstrapLabelFor(m => m.GDS)
+                                                    </div>
+                                                    <div class="editor-field">
+                                                        @Html.EditorFor(model => model.GDS)
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-3" style="padding-left:0px;padding-right:0px;">
+                                                    <div class="editor-label">
+                                                        @Html.BootstrapLabelFor(m => m.FIRMA_CONSEN)
+                                                    </div>
+                                                    <div class="editor-field">
+                                                        @Html.DisplayFor(model => model.FIRMA_CONSEN)
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group ">
+                                            @if (Model.ENTIDAD_PAGADORA.OWNER == 2)
+                {
+
+                            <div class="col-sm-2">
+                                @Html.BootstrapLabelFor(m => m.NHCAP)
+                                @Html.EditorFor(model => model.NHCAP, (deshabilitar && !String.IsNullOrEmpty(Model.NHCAP) ? new { htmlAttributes = new { @readonly = "readonly" } } as object : null))
+                                @Html.ValidationMessageFor(model => model.NHCAP, "", new { @class = "text-danger" })
+                            </div>
+}
+                                            <div class="col-sm-2">
+                                                @Html.BootstrapLabelFor(m => m.FECHA_FAC)
+                                                @Html.EditorFor(model => model.FECHA_FAC, (deshabilitar ? new { htmlAttributes = new { @readonly = "readonly" } } as object : null))
+
+                                                @Html.ValidationMessageFor(model => model.FECHA_FAC, "", new { @class = "text-danger" })
+                                            </div>
+                                            @if (Model.ENTIDAD_PAGADORA.OWNER == 2)
+                {
+                            <div class="col-sm-2">
+                                <label for="Q_ALFA" class="control-label">DESCUENTO</label>
+                                @Html.DropDownListFor(m => Model.Q_ALFA,
+new SelectList(Model.Q_ALFAS, "CODIGO", "DESCRIPCION"),
+!deshabilitar ? new { @class = "form-control select2" } as object : new { @class = "form-control select2", @disabled = "disabled" } as object)
+                            </div>
+}
+                                            @if (Model.ENTIDAD_PAGADORA.OWNER == 2)
+                {
+                            <div class="col-sm-2">
+                                <label for="inputDeposito" class=" control-label">DEPOSITO</label>
+                                @Html.TextBoxFor(model => model.DEPOSITO, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.DEPOSITO, "", new { @class = "text-danger" })
+
+                            </div>
+}
+
+
+                                            <div class="col-sm-2">
+                                                <label for="REGISTRE" class=" control-label">REGISTRE</label>
+                                                <input id="REGISTRE" name="REGISTRE" placeholder="Nº REGISTRE" type="text" class="form-control" value="@Model.REGISTRE" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                @Html.BootstrapLabelFor(m => m.IOR_CIRUJANO)
+                                                @Html.EditorFor(model => model.IOR_CIRUJANO, new { disabled = deshabilitarInformadas })
+                                                @Html.ValidationMessageFor(model => model.IOR_CIRUJANO, "", new { @class = "text-danger" })
+                                            </div>
+
+
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                @Html.BootstrapLabelFor(m => m.IOR_CONDICION)
+                                                @Html.EditorFor(model => model.IOR_CONDICION, new { idCondicion = "1" })
+                                                @Html.ValidationMessageFor(model => model.IOR_CONDICION, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div class="form-group pull-right">
+                                    <div class="col-md-12">
+                                        @if (Model.DOCUMENTOSIMPRIMIBLES != null && Model.DOCUMENTOSIMPRIMIBLES.Count > 0)
+            {
+                            @Html.DisplayFor(m => m.DOCUMENTOSIMPRIMIBLES, new { OID = Model.OID })
+}
+
+                                        <button type="submit" id="Guardar" data-toggle="tooltip" data-protect="true"
+                                                data-placement="top" title="Guardar" class="btn btn-primary  guardar"
+                                                onclick="javascript:$('#VOLVERTRASGUARDAREXPLORACION').val('F');">
+                                            <i class="fa fa-save" title="Guardar"></i> Guardar
+                                        </button>
+                                        @if (Model.URLPREVIAEXPLORACION != null)
+            {
+                            <button type="submit" id="GuardaryVolver" data-toggle="tooltip" data-placement="top"
+                                    title="Guardar y volver" onclick="javascript:$('#VOLVERTRASGUARDAREXPLORACION').val('T');"
+                                    class="btn  btn-success">
+                                <i class="fa fa-sign-in" title="Guardar y Volver"></i> Guardar y Volver
+                            </button>
+}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <div class="col-sm-12" style="text-align: center; margin-top: 10px;">
+                                            @*<h3 style="color:@color">@Model.ESTADODESCRIPCION </h3>*@
+                                            @if (Model.INTOCABLE == "T")
+                {
+                            <span class="label label-danger">INTOCABLE</span>
+
+}
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            }
+
+                        </div>
+                    </div>
+                    @if (Model.EXPLORAMISMODIA != null && Model.EXPLORAMISMODIA.Count > 0)
+                    {
+                        <div id="ListOtrasHoy" class="tab-pane " data-oid="@Model.OID">
+                            <div class="panel-body">
+                                @{ Html.RenderPartial("_ExploracionesPaciente", Model.EXPLORAMISMODIA); }
+
+                            </div>
+                        </div>
+                    }
+
+                    <div id="ListInformesExploracion" class="tab-pane " data-oid="@Model.OID">
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+                    <div id="Logs" class="tab-pane ">
+                        <div class="panel-body">
+                            <div class="form-group">
+
+                                <div class="col-lg-12">
+                                    <h5>Log Usuario</h5>
+                                    <div style="height: 150px; overflow-y: scroll;">
+                                        <table id="tblLog" class="table table-striped table-hover">
+                                            @if (Model.LOGUSUARIOS != null)
+                                            {
+                                                foreach (LOGUSUARIOS item in Model.LOGUSUARIOS)
+                                                {
+                                                    <tr class='LogUSuarios'>
+                                                        <td>@item.FECHA</td>
+                                                        <td>@item.USUARIO</td>
+                                                        <td>@item.TEXTO</td>
+                                                        <td>@item.MUTUA</td>
+                                                        <td>@item.COD_FIL</td>
+                                                    </tr>
+                                                }
+                                            }
+
+                                        </table>
+                                    </div>
+
+                                    <hr />
+
+                                    <h5>Log VidSigner</h5>
+
+                                    <div style="height: 150px; overflow-y: scroll;">
+                                        <table id="tblLog" class="table table-striped table-hover">
+                                            @if (Model.LOGVIDSIGNER != null)
+                                            {
+                                                foreach (LOGVIDSIGNER item in Model.LOGVIDSIGNER)
+                                                {
+                                                    <tr class='LogVid'>
+
+                                                        <td>@item.ACCION</td>
+                                                        <td>@item.USUARIO</td>
+                                                        <td>@item.PLANTILLA</td>
+                                                        <td>@item.TEXTO.Substring(0, 20)</td>
+                                                        <td>@item.FECHA</td>
+
+                                                    </tr>
+                                                }
+                                            }
+                                        </table>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="Inyectables" class="tab-pane" data-oid="@Model.OID">
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+                    <div id="DocumentosExploracion" data-oid="@Model.OID" class="tab-pane">
+                        <div class="panel-body" id="modalDocsContentEntrada">
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+            <div>
+
+
+
+
+            </div>
+        </div>
+        <div class="panel-footer">
+            Creada:  @Model.USERNAME @( Model.FECHA_IDEN.HasValue ? Model.FECHA_IDEN.Value.ToShortDateString() : "")  @Model.HORA_IDEN
+            | Última Mod: @Model.USERMOD @Model.HORAMOD
+
+        </div>
+    </div>
+
+
+</div>
+
+
+<div id="modal-recogida-informes" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Cerrar</span></button>
+                <h4 class="modal-title">Clic sobre las exploraciones que también se entregan informe</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <table id="tblRecogidaMultiple" class="table  table-hover ">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Mutua</th>
+                            <th>Apa</th>
+                            <th>Explo</th>
+                        </tr>
+                    </thead>
+                    @if (Model.LOGVIDSIGNER != null)
+    {
+                foreach (LISTADIA item in Model.EXPLORAMISMODIA)
+{
+                <tr data-oid="@item.OID" data-hora="@item.HORA" data-fil="@item.COD_FIL">
+
+                    <td>@item.FECHA.ToShortDateString()</td>
+                    <td>@item.HORA</td>
+                    <td>@item.COD_MUT</td>
+                    <td>@item.COD_FIL</td>
+                    <td>@item.EXPLO</td>
+                </tr>
+}
+
+}
+
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button data-dismiss="modal" id="GuardarRecogidaMultiple" class="btn btn-primary" type="button">Guardar</button>
+
+                <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

@@ -1,0 +1,99 @@
+﻿@model RadioWeb.Utils.RecuentoPorGrupo
+<div class="spinner-example">
+    <div class="spiner-recuentoMensual hide" style="min-height: 200px;">
+        <div class="sk-spinner sk-spinner-circle">
+            <div class="sk-circle1 sk-circle"></div>
+            <div class="sk-circle2 sk-circle"></div>
+            <div class="sk-circle3 sk-circle"></div>
+            <div class="sk-circle4 sk-circle"></div>
+            <div class="sk-circle5 sk-circle"></div>
+            <div class="sk-circle6 sk-circle"></div>
+            <div class="sk-circle7 sk-circle"></div>
+            <div class="sk-circle8 sk-circle"></div>
+            <div class="sk-circle9 sk-circle"></div>
+            <div class="sk-circle10 sk-circle"></div>
+            <div class="sk-circle11 sk-circle"></div>
+            <div class="sk-circle12 sk-circle"></div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>Detalle</h5>
+            <div class="pull-right">
+                <div class="btn-group">
+                    <button class="btn btn-xs btn-white active" type="button">Today</button>
+                    <button class="btn btn-xs btn-white" type="button">Monthly</button>
+                    <button class="btn btn-xs btn-white" type="button">Annual</button>
+                </div>
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="flot-chart">
+                        <div id="flot-dashboard-chart" class="flot-chart-content" style="padding: 0px; position: relative;">
+                            <canvas class="flot-base" width="772" height="200"></canvas>
+                            
+                        </div>
+                        <div class="col-lg-3">
+                            <ul class="stat-list">
+                                <li>
+                                    <h2 class="no-margins">2,346</h2>
+                                    <small>Total orders in period</small>
+                                    <div class="stat-percent">48% <i class="fa fa-level-up text-navy"></i></div>
+                                    <div class="progress progress-mini">
+                                        <div class="progress-bar" style="width: 48%;"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <h2 class="no-margins ">4,422</h2>
+                                    <small>Orders in last month</small>
+                                    <div class="stat-percent">60% <i class="fa fa-level-down text-navy"></i></div>
+                                    <div class="progress progress-mini">
+                                        <div class="progress-bar" style="width: 60%;"></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <h2 class="no-margins ">9,180</h2>
+                                    <small>Monthly income from orders</small>
+                                    <div class="stat-percent">22% <i class="fa fa-bolt text-navy"></i></div>
+                                    <div class="progress progress-mini">
+                                        <div class="progress-bar" style="width: 22%;"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+@*<div class="row text-center">
+
+    <input type="hidden" id="MesRecuentoPorMes" value="@System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(int.Parse(Model.Mes)) -  @Model.Anyo" />
+    @foreach (string key2 in Model.RecuentoPorMes.Keys)
+    {
+        <div class="col-xs-4">
+            <small class="stats-label">@key2</small>
+            <h4>@Model.RecuentoPorMes[key2].ToString()</h4>
+        </div>
+    }
+
+
+
+
+
+</div>
+<div class="row">
+    <div class="btn-group pull-right">
+        <button data-mes="@DateTime.Parse("01/" + Model.Mes + "/" + Model.Anyo).AddMonths(-1).ToString("MM/yyyy")" class="btn btn-white btn-sm"><i class="fa fa-arrow-left"></i></button>
+        @if (!(Model.Mes == DateTime.Now.Month.ToString() && Model.Anyo == DateTime.Now.Year.ToString())) { 
+        <button data-mes="@DateTime.Parse("01/" + Model.Mes + "/" + Model.Anyo).AddMonths(1).ToString("MM/yyyy")" class="btn btn-white btn-sm"><i class="fa fa-arrow-right"></i></button>
+        }
+        
+
+    </div>
+</div>*@

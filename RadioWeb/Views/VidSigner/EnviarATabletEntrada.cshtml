@@ -1,0 +1,118 @@
+﻿@model RadioWeb.ViewModels.VidSigner.VWEnviarAFirmar
+
+@using (Html.BeginForm("EnviarTablet", "VidSigner", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+
+
+    <div id="contenedorVidSigner">
+
+        @Html.HiddenFor(m => m.OIDEXPLORACION)
+        <div class="form-group">
+
+            <div class="col-sm-3">
+                <label class="control-label">Tableta</label>
+                @Html.DropDownListFor(m => Model.DeviceSelected, new SelectList(Model.Devices, "TABLETA_NAME", "TABLETA"), new { @id = "TABLETA_NAME", @class = "form-control" })
+                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.DeviceSelected)</p>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">D.N.I.</label>
+                @Html.TextBoxFor(m => Model.DNI, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "D.N.I." })
+                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.DNI)</p>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">Responsable</label>
+                @Html.TextBoxFor(m => Model.DNIRESPOSABLE, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "Nombre RESPONSABLE" })
+                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.DNIRESPOSABLE)</p>
+            </div>
+            <div class="col-sm-3">
+                <label class="control-label">D.N.I. Responsable</label>
+                @Html.TextBoxFor(m => Model.RESPONSABLE, new { @class = "form-control", @style = "text-transform:uppercase", placeHolder = "DNI RESPONSABLE" })
+                <p class="help-block text-danger"> @Html.ValidationMessageFor(m => Model.RESPONSABLE)</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="col-sm-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Titulo</th>
+                            <th>Fecha </th>
+                            <th>Grupo</th>
+                            @* <th>Acción</th>*@
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var docu in Model.Documents)
+                        {
+
+                            <tr data-oidexploracion="@docu.OIDEXPLORACION">
+                                <td>
+                                    @if (docu.STATUS == "FIRMADO")
+                                    {
+                                        if (docu.RUTADOCUMENTO.Contains("LOPD"))
+                                        {
+                                            <a target="_blank" href="/Exploracion/DownloadLopd?OID=@Model.IOR_PACIENTE">
+                                                <i class="fa fa-smile-o fa-2x" style=" color: green;" title="LOPD FIRMADA"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a target="_blank" href="/Exploracion/Download?Ruta=@docu.RUTADOCUMENTO">
+                                                <i class="fa fa fa-lightbulb-o fa-2x" style=" color: green;" title="CI FIRMADO"></i>
+                                            </a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <input data-oidexploracion="@docu.OIDEXPLORACION" data-tipo="@docu.TIPODOCUMENTO" data-oid="@docu.OID" type="checkbox" checked class="i-checks idDocumento" name="@docu.OID">
+
+                                    }
+
+                                </td>
+                                <td>@docu.TITULO</td>
+                                <td>@docu.FECHA.Value.ToShortDateString()</td>
+                                <td>@docu.GRUPO_APARATO</td>
+
+                                <td>
+                                    @Html.EditorFor(u => docu.STATUS,
+new
+{
+id = string.Format("Status{0}",
+docu.OID.ToString())
+})
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary" data-oid="@Model.OIDEXPLORACION" id="EnviarAFirmar" type="submit">Enviar</button>
+            <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+}

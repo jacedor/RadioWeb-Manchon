@@ -1,0 +1,184 @@
+﻿@model IEnumerable<RadioWeb.Models.Estadistica.ItemResumen>
+
+
+
+<table id="tbltotales" class="table table-bordered table-striped margin bottom" data-click-to-select="true" data-search="true">
+    <thead>
+        <tr>
+
+            <th data-sortable="true">Grupo</th>
+            <th align="right" data-type="numeric" class="text-right">Media @ViewBag.Comparado</th>
+            <th align="right" data-type="numeric" class="text-right">Exp @ViewBag.Comparado</th>
+            <th align="right" data-type="numeric" class="text-right">Consu @ViewBag.Comparado</th>
+            <th align="right" data-type="numeric" class="text-right">Total @ViewBag.Comparado</th>
+            <th align="right" data-type="numeric" class="text-right">Media @ViewBag.Actual</th>
+            <th align="right" data-type="numeric" class="text-right">Exp @ViewBag.Actual</th>
+            <th align="right" data-type="numeric" class="text-right">Consu @ViewBag.Actual</th>
+            <th align="right" data-type="numeric" class="text-right">Total @ViewBag.Actual</th>
+            <th class="text-right">Dif. </th>
+            <th class="text-right">Dif. %</th>
+            <th class="text-right">Actividad @ViewBag.Comparado</th>
+            <th class="text-right">Actividad @ViewBag.Actual</th>
+            <th class="text-right">Dif. </th>
+            <th class="text-right">Dif. %</th>
+        </tr>
+    </thead>
+
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+
+            <tr class="@(item.Grupo=="TOTAL" ? "totalStats" : "")">
+                <td class="totalResumen">
+                    @if (item.Grupo == "TOTAL")
+                    {
+                        @:TOTALES
+                    }
+                    else
+                    {
+                        @item.Grupo
+                        <input type="hidden" value="@item.Grupo"
+                               class="grupoAcumulado" />
+                    }
+                </td>
+                <td align="right">
+                    @*@string.Format("{0:C}", item.Venta2)*@
+                    @Html.CurrencyWithCulture(item.PromedioVentas2)
+                </td>
+                <td align="right">
+                    @*@string.Format("{0:C}", item.Venta2)*@
+                    @Html.CurrencyWithCulture(item.Venta2)
+                </td>
+                <td align="right">
+                    @Html.CurrencyWithCulture(item.Venta2Consum)
+                    @* @string.Format("{0:C}", item.Venta2Consum)*@
+                </td>
+                <td style="@(item.Grupo=="TOTAL"? "color:black;":"")" class="totalResumen" align="right">
+                    @if (item.Grupo == "TOTAL")
+                    {
+                        <input type="hidden" value="@item.Venta2Total" class="totalAnualValorAnteriorAcumulado" />
+                    }
+                    else
+                    {
+                        <input type="hidden" value="@item.Venta2Total" class="totalValorAnteriorAcumulado" />
+
+                    }
+                    @Html.CurrencyWithCulture(item.Venta2Total)
+                    @* @string.Format("{0:C}", item.Venta2Total)*@
+                </td>
+                <td align="right">
+                    @*@string.Format("{0:C}", item.Venta2)*@
+                    @Html.CurrencyWithCulture(item.PromedioVentas)
+                </td>
+                <td align="right">
+                    @* @string.Format("{0:C}", item.Ventas)*@
+                    @Html.CurrencyWithCulture(item.Ventas)
+                </td>
+                <td align="right">
+                    @*    @string.Format("{0:C}", item.VentaConsum)*@
+                    @Html.CurrencyWithCulture(item.VentaConsum)
+
+                </td>
+                <td style="@(item.Grupo=="TOTAL"? "color:black;":"")" class="totalResumen" align="right">
+                    @if (item.Grupo == "TOTAL")
+                    {
+                        <input type="hidden" value="@item.VentaTotal" class="totalAnualValorActualAcumulado" />
+                    }
+                    else
+                    {
+                        <input type="hidden" value="@item.VentaTotal" class="totalValorActualAcumulado" />
+
+                    }
+                    @*  @string.Format("{0:C}", item.VentaTotal)*@
+                    @Html.CurrencyWithCulture(item.VentaTotal)
+
+                </td>
+
+                <td>
+                    @if (item.DiferenciaVentas > 0)
+                    {
+
+                        <div class="stat-percent font-bold text-navy">
+                            @*   @string.Format("{0:C}", item.DiferenciaVentas)*@
+                            @Html.CurrencyWithCulture(item.DiferenciaVentas)
+
+                        </div>
+                    }
+                    else
+                    {
+                        @*<div class="stat-percent font-bold text-danger">
+                @string.Format("{0:C}", item.DiferenciaVentas)
+                    </div>*@
+                        <div class="stat-percent font-bold text-danger">
+                            @* @string.Format("{0:C}", item.DiferenciaVentas)*@
+                            @Html.CurrencyWithCulture(item.DiferenciaVentas)
+
+                        </div>
+                    }
+                </td>
+                <td>
+                    @if (item.DiferenciaVentasPorc > 0)
+                    {
+
+                        <div class="stat-percent font-bold text-navy">
+                            @Math.Round(item.DiferenciaVentasPorc, 2) %
+
+                            <i class="fa fa-level-up"></i>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="stat-percent font-bold text-danger">  @Math.Round(item.DiferenciaVentasPorc, 2) %<i class="fa fa-level-down"></i></div>
+                    }
+                </td>
+                <td class="text-right"> <input type="hidden" value="@item.Cuenta2" class="totalCuentaAnteriorAcumulado" />@item.Cuenta2 </td>
+                <td class="text-right totalResumen"><input type="hidden" value="@item.Cuenta" class="totalCuentaActualAcumulado" /> @item.Cuenta </td>
+
+                <td>
+                    @if (item.DiferenciaCuenta > 0)
+                    {
+
+                        <div class="stat-percent font-bold text-navy">
+                            @item.DiferenciaCuenta
+
+                            <i class="fa fa-level-up"></i>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="stat-percent font-bold text-danger"> @item.DiferenciaCuenta  <i class="fa fa-level-down"></i></div>
+                    }
+                </td>
+
+
+                <td>
+
+                    @if (item.DiferenciaCuentaPorc > 0)
+                    {
+
+                        <div class="stat-percent font-bold text-navy">
+                            @Math.Round(item.DiferenciaCuentaPorc, 2) %
+
+                            <i class="fa fa-level-up"></i>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="stat-percent font-bold text-danger">
+                            @Math.Round(item.DiferenciaCuentaPorc, 2) %
+                            <i class="fa fa-level-down"></i>
+                        </div>
+                    }
+                </td>
+            </tr>
+
+
+        }
+
+
+    </tbody>
+
+
+</table>

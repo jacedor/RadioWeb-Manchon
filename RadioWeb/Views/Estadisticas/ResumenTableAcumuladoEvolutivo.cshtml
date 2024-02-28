@@ -1,0 +1,99 @@
+﻿@model IEnumerable<RadioWeb.Models.Estadistica.ItemResumen>
+
+
+
+<table id="totalesEvolutivo" class="table table-bordered table-striped margin bottom" data-search="true">
+    <thead>
+        <tr>
+
+            <th data-sortable="true">Año</th>
+            <th data-sortable="true">Grupo</th>
+            <th align="right" data-type="numeric" class="text-right">Exp</th>
+            <th align="right" data-type="numeric" class="text-right">Consu </th>
+            <th align="right" data-type="numeric" class="text-right">Total</th>
+            <th class="text-right">Actividad</th>
+
+        </tr>
+    </thead>
+
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+
+            <tr class="@(item.Grupo=="TOTAL" ? "totalStats" : "")">
+                <td class="totalResumen">
+                    @if (item.Grupo == "TOTAL")
+                    {
+                        <input type="hidden" value="@item.Anyo"
+                               class="evolutivoAnyo" />
+                    }
+                    else
+                    {
+                        <input type="hidden" value="@String.Concat(item.Grupo,"-", item.Anyo)"
+                               class="evolutivoAnyoFiltrado" />
+                    }
+                    @item.Anyo
+                </td>
+                <td>
+                    @if (item.Grupo == "TOTAL")
+                    {
+                        @:TOTALES
+                    }
+                    else
+                    {
+                        @item.Grupo
+
+                    }
+
+                </td>
+                <td align="right">
+
+                    @Html.CurrencyWithCulture(item.Ventas)
+
+                </td>
+                <td align="right">
+                    @Html.CurrencyWithCulture(item.VentaConsum)
+
+                </td>
+                <td style="@(item.Grupo=="TOTAL"? "color:black;":"")" class="totalResumen" align="right">
+                    @if (item.Grupo == "TOTAL")
+    {
+                <input type="hidden" value="@item.VentaTotal"
+                       class="TotalEvolutivo" />
+}
+else
+{
+                <input type="hidden" value="@item.VentaTotal"
+                       class="TotalEvolutivoFiltrado" />
+}
+                    @Html.CurrencyWithCulture(item.VentaTotal)
+
+                </td>
+
+                <td class="text-right totalResumen">
+                    @if (item.Grupo == "TOTAL")
+                    {
+                        <input type="hidden" value="@item.Cuenta"
+                               class="TotalEvolutivoCuenta" />
+                    }
+                    else
+                    {
+                        <input type="hidden" value="@item.Cuenta"
+                               class="TotalEvolutivoCuentaFiltrado" />
+                    }
+                    @item.Cuenta
+                </td>
+
+
+            </tr>
+
+
+        }
+
+
+    </tbody>
+
+
+</table>

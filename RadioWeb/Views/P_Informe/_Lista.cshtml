@@ -1,0 +1,120 @@
+﻿@model IEnumerable<RadioWeb.Models.P_INFORMES>
+
+
+
+<table id="PlantillaList" class="table table-stripped  "
+       data-filter-position="left" data-filtering="true" data-paging="true"
+       data-sorting="true" data-search="true" data-filter-placeholder="Buscar">
+    <thead>
+        <tr>
+            <th data-sortable="true">TITULO</th>
+            <th>ESPECIALIDAD</th>
+            <th>MEDICO</th>
+            <th data-type="date" data-format-string="dd/MM/YYYY">Fecha</th>
+            <th>...</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            <tr data-oid="@item.OID">
+                <td>
+                    @item.TITULO
+                </td>
+                <td>
+                    @if (!String.IsNullOrEmpty(item.TITULO))
+                    {
+                        if (item.TITULO.StartsWith("RM"))
+                        {
+                            <span class="label label-primary">Resonancia</span>
+                        }
+                        if (item.TITULO.StartsWith("TAC"))
+                        {
+                            <span class="label label-sucess">TAC</span>
+                        }
+                        if (item.TITULO.StartsWith("RX"))
+                        {
+                            <span class="label label-warning">RX</span>
+                        }
+                        if (item.TITULO.StartsWith("ECO"))
+                        {
+                            <span class="label label-defaul">Ecografía</span>
+                        }
+                    }
+
+
+                </td>
+
+                <td>
+                    <a href="#">
+                        @item.DESC_MEDICO
+                    </a>
+                </td>
+
+                <td>
+                    @if (item.FECHA.HasValue)
+                    {
+                        @item.FECHA.Value.ToShortDateString()
+                    }
+
+                </td>
+
+                <td class="text-right">
+
+
+
+                    <button class="btn btn-white btn-xs previsualizar" data-oid="@item.OID" data-toggle="modal" data-target="#modal-form-previsualizar"> Previsualizar</button>
+                    @* es una plantilla*@
+                    @{
+                        var controllerName = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString();
+                    }
+                    @if (controllerName=="P_informe")
+                    {
+                        @Html.ActionLink(
+                                                   linkText: "Seleccionar",
+                                                   actionName: "Edit",
+                                                   controllerName: "P_Informe",
+                                                   routeValues: new
+                                                   {
+                                                       oid = @item.OID,
+                                                       urlPrevia = ViewBag.urlPrevia
+                                                   },
+                                                   htmlAttributes: new
+                                                   {
+                                                       @class = "btn btn-primary btn-xs"
+
+                                                   }
+                                           )
+                    }
+                    else
+                    {
+                        @Html.ActionLink(
+                                                   linkText: "Seleccionar",
+                                                   actionName: "Create",
+                                                   controllerName: "Informe",
+                                                   routeValues: new
+                                                   {
+                                                       oidOrigen = @item.OID,
+                                                       oidExploracion = @ViewBag.OidExploracion,
+                                                       oidInforme = 0,
+                                                       titulo = @item.TITULO,
+                                                       urlPrevia = ViewBag.urlPrevia
+
+                                                   },
+                                                   htmlAttributes: new
+                                                   {
+                                                       @class = "btn btn-primary btn-xs",
+                                                       data_oidexploracion = @ViewBag.OidExploracion,
+                                                       data_titulo = @item.TITULO
+                                                   }
+                                           )
+
+                    }
+                </td>
+            </tr>
+
+        }
+
+    </tbody>
+</table>

@@ -1,0 +1,15 @@
+﻿@using RadioWeb.Utils
+@model short?
+@{
+
+    var modelValue = Model.HasValue ? Model : -1;
+    var tratamientos = DataBase.Tratamientos().Select(u => new SelectListItem
+    {
+        Text = u.Value,
+        Value = u.Key.ToString(),
+        Selected = u.Key == modelValue.ToString()
+    }).ToArray();
+}
+
+@Html.DropDownList("", tratamientos, new { @class = "form-control select2" })
+

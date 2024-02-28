@@ -1,0 +1,29 @@
+﻿@model List<REFRACTOMETROS>
+
+@{
+
+
+
+    if (Model!= null && Model.Count > 0)
+    {
+      
+       
+        <div class="btn-group">
+            <button data-toggle="dropdown" type="button" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false">Imprimir <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                @foreach (RadioWeb.Models.REFRACTOMETROS doc in Model)
+                {
+                    <li><a onclick="imprimirDocumento(@ViewData["OID"],@doc.OID)" href="#">@doc.NOMBRE</a></li>
+                }
+            </ul>
+        </div>
+
+    }
+    else
+    {
+        <button type="button" onclick="imprimirExploracion(@ViewData["OID"])" class="btn btn-sm btn-white" data-toggle="tooltip" data-placement="top" title="Imprimir" data-oid="@ViewData["OID"]">
+            <i class="fa fa-print" title="Imprimir"></i>
+        </button>
+
+    }
+}

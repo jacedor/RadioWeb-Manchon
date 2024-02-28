@@ -1,0 +1,170 @@
+﻿@model RadioWeb.Models.MUTUAS
+
+@{
+    ViewBag.Title = "Mantenimiento de Mutua";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.OID)
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+
+            <li class="active">
+                <a data-toggle="tab" href="#general">GENERAL</a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#contacto">CONTACTO</a>
+            </li>
+
+
+        </ul>
+
+        <div class="tab-content form-horizontal">
+            <div id="general" class="tab-pane  active">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.CODMUT)
+                            @Html.EditorFor(model => model.CODMUT)
+                            @Html.ValidationMessageFor(model => model.CODMUT, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.OWNER)
+                            @Html.EditorFor(model => model.OWNER)
+                            @Html.ValidationMessageFor(model => model.OWNER, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.BootstrapLabelFor(m => m.NOMBRE)
+                            @Html.EditorFor(model => model.NOMBRE)
+                            @Html.ValidationMessageFor(model => model.NOMBRE, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            @Html.BootstrapLabelFor(m => m.CONTACTO)
+                            @Html.EditorFor(model => model.CONTACTO)
+                            @Html.ValidationMessageFor(model => model.CONTACTO, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.NIF)
+                            @Html.EditorFor(model => model.NIF)
+                            @Html.ValidationMessageFor(model => model.NIF, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.COD_DAP)
+                            @Html.EditorFor(model => model.COD_DAP)
+                            @Html.ValidationMessageFor(model => model.COD_DAP, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.BootstrapLabelFor(m => m.NUM_CLI)
+                            @Html.EditorFor(model => model.NUM_CLI)
+                            @Html.ValidationMessageFor(model => model.NUM_CLI, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-2">
+                            @Html.BootstrapLabelFor(m => m.TIPOPAGO)
+                            @Html.EditorFor(model => model.TIPOPAGO)
+                            @Html.ValidationMessageFor(model => model.TIPOPAGO, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-2">
+                            @Html.BootstrapLabelFor(m => m.DIASCARENCIA)
+                            @Html.EditorFor(model => model.DIASCARENCIA)
+                            @Html.ValidationMessageFor(model => model.DIASCARENCIA, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.IOR_CENTRAL)
+                            @Html.EditorFor(model => model.IOR_CENTRAL)
+                            @Html.ValidationMessageFor(model => model.IOR_CENTRAL, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.MAILING)
+                            @Html.EditorFor(model => model.MAILING)
+                            @Html.ValidationMessageFor(model => model.MAILING, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            <div class="editor-label">
+                                @Html.BootstrapLabelFor(m => m.CENTRAL)
+                            </div>
+                            <div class="editor-field">
+                                <h2><b>@Model.CENTRAL</b></h2>
+                            </div>
+                        </div>
+                        <div class=" col-md-3">
+                            <div class="editor-label">
+                                @Html.BootstrapLabelFor(m => m.VERS)
+                            </div>
+                            <div class="editor-field">
+                                @Html.EditorFor(model => model.VERS)
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="editor-label">
+                                @Html.BootstrapLabelFor(m => m.CITAONLINE)
+                            </div>
+                            <div class="editor-field">
+                                @Html.EditorFor(model => model.CITAONLINE)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.LabelFor(m => m.TEXTO)
+                            <textarea id="TEXTO" name="TEXTO" class="form-control" rows="7" style="text-transform: none;">@Model.TEXTO</textarea>
+                            @Html.ValidationMessageFor(m => Model.TEXTO)
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+            <div id="contacto" class="tab-pane ">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(p => p.DIRECCIONES)
+                        </div>
+                        <div class="col-md-12">
+                            @Html.EditorFor(p => p.TELEFONOS)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="user-button ibox-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-default btn-sm btn-block"><i class="fa fa-backward">@Html.ActionLink("Volver a Mutuas", "Index", "Mutuas")</i></button>
+
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">
+                        <i class="fa fa-save"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+
+
+
+
+

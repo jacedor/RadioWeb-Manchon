@@ -1,0 +1,113 @@
+﻿@model IEnumerable<RadioWeb.Models.EXP_CONSUM>
+
+<input type="hidden" id="totalConsumibles" name="totalConsumibles" value="@ViewBag.CantidadTotalConsumibles" />
+
+<table class="table table-hover ConsumiblesList" data-totalpendiente="@ViewBag.TotalPendiente" 
+       data-pendienteexplos="@ViewBag.PendienteExplos"   >
+    <thead>
+        <tr>
+
+            <th>Estado</th>
+            <th>Mutua</th>
+            <th>Cod</th>
+            <th>Consumible</th>
+            <th>Cantidad</th>
+            <th>A</th>
+            <th>F</th>
+            <th>Dosis</th>
+            <th>...</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{string Activa = "ACTIVA";
+            foreach (var consumible in Model)
+            {
+
+                <tr class="@Activa" data-facturado="@consumible.FACTURADO" data-oid="@consumible.OID" data-factura="@consumible.IOR_FACTURA" data-pagar="@consumible.PAGAR" data-owner="@consumible.ENTIDADPAGADORA.OWNER" data-cantidad="@consumible.PRECIO" >
+                    @{Activa = "";                                    }
+                    <td>
+                        @if (consumible.PAGADO == "T")
+                        {
+
+                            <span class="label label-primary">Pagado</span>
+
+                        }
+                        else
+                        {
+
+                            <span class="label label-danger">Pendiente</span>
+
+                        }
+                    </td>
+
+                    <td>@consumible.CODMUT</td>
+                    <td>@consumible.CONSUMIBLE.COD_CONSUM</td>
+                    <td>@consumible.CONSUMIBLE.DES_CONSUM</td>
+                    <td>@consumible.PRECIO €</td>
+
+                    <td>
+                        @if (consumible.APLAZADO == "T")
+                        {
+                            <i style="color: #f70000; font-size: 1.2em;" title="Aplazado" class="fa fa-clock-o"></i>
+                        }
+
+                    </td>
+                    <td>
+                        @if (consumible.FACTURADO == "T")
+                    {
+                        <i style="color: black; font-size: 1.2em;" title="Facturado" class="fa fa-dollar"></i>
+                    }
+
+                </td>
+                <td>
+
+                    <a data-title="Dosis consumible" data-pk="@consumible.OID" data-type="text"
+                       id="@String.Concat(new string[] { "CONSUMIBLE[", @consumible.OID.ToString(), "].OID" })"
+                       href="#" class="editable editable-click textoXeditable"
+                       data-url="/Consumible/EditarCampo" data-value="@consumible.DOSIS">
+                        @if (String.IsNullOrEmpty(consumible.DOSIS))
+                        {
+                            @:...
+                         }
+                        else
+                        {
+                            @consumible.DOSIS
+                        }
+
+                    </a>
+
+
+                </td>
+
+                <td>
+                    @if (consumible.IOR_FACTURA < 0)
+                    {
+                        if (consumible.PAGAR == "T")
+                    {
+                            <a href="#">
+                                <i class="fa fa-check fa-2x text-navy marcarConsumible" data-oid="@consumible.OID"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#">
+                                <i class="fa fa-times fa-2x text-danger marcarConsumible" data-oid="@consumible.OID"></i>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <span class="label label-primary">Facturado</span>
+                    }
+
+                </td>
+
+
+
+
+
+            </tr>
+                        }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,23 @@
+﻿@model string
+@{
+    var recogido =(String.IsNullOrEmpty(Model)? "" : Model );
+
+    var tiposRecogida = new SelectList(
+new List<SelectListItem> {
+new SelectListItem {Text ="NO RECOGIDO",Value = "F",Selected = "F" ==recogido},
+new SelectListItem {Text ="PRESENCIAL",Value = "T",Selected = "T" == recogido},
+new SelectListItem {Text = "ON LINE",Value = "L", Selected = "L" == recogido
+}
+
+}, "Value", "Text", recogido
+);
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+@Html.DropDownList("",
+            tiposRecogida,
+            htmlAttributes)

@@ -1,0 +1,24 @@
+﻿@model string
+
+@{
+    // make use of MVC4 nullable class attribute values
+    var yesSelected = !String.IsNullOrEmpty(Model) && Model == "T" ? "btn-success active" : "btn-default";
+    var noSelected = String.IsNullOrEmpty(Model) || Model == "F" ? "btn-danger active" : "btn-default";
+
+    // get the name of the ID - this is to support multiple fields
+    var htmlField = ViewData.TemplateInfo.HtmlFieldPrefix.Replace(".","");
+
+    var defaultHtmlAttributesObject = new {};
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { @id = @htmlField};
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+
+
+    <div class="btn-group" data-toggle="buttons-radio">
+        @Html.HiddenFor(model => model, htmlAttributes)
+        <button type="button" class="btn  @yesSelected bool-@htmlField" onclick="javascript:$(this).siblings('input:hidden').val('T');$(this).removeClass('btn-default').addClass('btn-success').addClass('active');$(this).siblings().removeClass('btn-danger').removeClass('active').addClass('btn-default');$(this).parents('form').find('input[data-protect=true], button[data-protect=true]').attr('disabled', false);">S</button>
+        <button type="button" class="btn   @noSelected bool-@htmlField" onclick="javascript:$(this).siblings('input:hidden').val('F');$(this).removeClass('btn-default').addClass('btn-danger').addClass('active');$(this).siblings().removeClass('btn-success').removeClass('active').addClass('btn-default');$(this).parents('form').find('input[data-protect=true], button[data-protect=true]').attr('disabled', false);">N</button>
+
+    </div>

@@ -1,0 +1,62 @@
+@using RadioWeb.Models.Repos
+@model int?
+@{
+
+
+    var htmlField = ViewData.TemplateInfo.HtmlFieldPrefix;
+
+    var ior_mutua = Model.HasValue ? Model : -1;
+
+    var entidades = MutuasRepositorio.Lista(false);
+    //Si la mutua seleccionada no está en entidades
+    if (ior_mutua > 0 && entidades.Where(u => u.OID == ior_mutua).Count() == 0)
+    {
+        MUTUAS oMutuaObsoleta = MutuasRepositorio.Obtener(ior_mutua.Value);
+        //En caso de ser obsoleta, le concatenamos el texto "OBSOLETA" delante, para que se visualize.
+        //oMutuaObsoleta.NOMBRE = "OBSOLETA - " + oMutuaObsoleta.NOMBRE;
+        entidades.Add(oMutuaObsoleta);
+    }
+
+    //Si estamos en una ficha de exploracion solo tenemos que mostrar las mutuas de un determinado tipo
+    //pero si estamos creando una exploracion tenemos que mostrar todas (PRI y MUT)
+    if (ior_mutua > 0 && htmlField.ToUpper() != "PACIENTEALTA.CID" && htmlField.ToUpper()!= "FILTROS.IOR_ENTIDADPAGADORA")
+    {
+        var mutuaSeleccionada = MutuasRepositorio.Obtener(ior_mutua.Value);
+        entidades = entidades.Where(u => u.OWNER == mutuaSeleccionada.OWNER).ToList();
+    }
+
+    var entidadesDef = entidades.Select(u => new SelectListItem
+    {
+        Text =u.CODMUT + "-" +  u.NOMBRE,
+        Value = u.OID.ToString(),
+        Selected = u.OID == ior_mutua
+    }).ToArray();
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+
+}
+
+@if (ViewData["disabled"] != null && (bool)ViewData["disabled"])
+{
+    <input type="hidden" id="IOR_ENTIDADPAGADORA"
+           name="IOR_ENTIDADPAGADORA" value="@ior_mutua" />
+    var texto = entidadesDef.Single(t => t.Value == @ViewData.TemplateInfo.FormattedModelValue.ToString()).Text;
+    var mutuaTextoSoloLectura = "";
+    if (texto.IndexOf("-")>0)
+    {
+        mutuaTextoSoloLectura = texto.Split('-')[1];
+    }
+    @Html.Label("", mutuaTextoSoloLectura, new { @class = "form-control form-control-static", @readonly = "readonly" })
+}
+else
+{
+    @Html.DropDownList("", entidadesDef, htmlAttributes)
+}
+
+
+
+
+

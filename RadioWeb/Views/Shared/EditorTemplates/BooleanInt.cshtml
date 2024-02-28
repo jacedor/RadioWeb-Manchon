@@ -1,0 +1,23 @@
+﻿@model int?
+
+@{
+
+
+    // make use of MVC4 nullable class attribute values
+    var yesSelected = Model.HasValue && Model.Value==1 ? "btn-success active" : "btn-default";
+    var noSelected = !Model.HasValue ||( Model.HasValue && Model.Value==0) ? "btn-danger active" : "btn-default";
+
+    // get the name of the ID - this is to support multiple fields
+    var htmlField = ViewData.TemplateInfo.HtmlFieldPrefix;
+}
+
+@Html.HiddenFor(model => model)
+
+<div class="btn-group" data-toggle="buttons-radio">
+
+
+    <button type="button" class="btn  @yesSelected bool-@htmlField" onclick="javascript:$('#@htmlField').val('1');$(this).removeClass('btn-default').addClass('btn-success').addClass('active');$(this).siblings().removeClass('btn-danger').removeClass('active').addClass('btn-default')">S</button>
+    <button type="button" class="btn   @noSelected bool-@htmlField" onclick="javascript:$('#@htmlField').val('0');$(this).removeClass('btn-default').addClass('btn-danger').addClass('active');$(this).siblings().removeClass('btn-success').removeClass('active').addClass('btn-default');">N</button>
+
+
+</div>

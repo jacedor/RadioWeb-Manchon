@@ -1,0 +1,54 @@
+﻿@model List<RadioWeb.Models.PACIENTE>
+
+@foreach (var paciente in Model)
+{
+    <tr data-oid="@paciente.OID">
+        
+        <td>
+            @Html.ActionLink(
+                            linkText: paciente.PACIENTE1,
+                            actionName: "Details",
+                            controllerName: "Paciente",
+                            routeValues: new
+                            {
+                                oid = paciente.OID,
+                                TraerInformesYExplos = true,
+                                ReturnUrl="/Paciente/Index"
+                            },
+                            htmlAttributes: new { @style = "color:" + "font-weight:bold;"}
+                        )
+            
+           
+        </td>
+        <td>
+            @if (paciente.VIP == "T") { 
+            <i class="fa fa-star fa-2x" style="   color:yellow;"></i>
+            }
+            
+        </td>
+        <td>
+            @if(paciente.DIRECCIONES.Count > 0){
+             
+                @paciente.DIRECCIONES.First().DIRECCION1  @:-   @paciente.DIRECCIONES.First().POBLACION - ( @paciente.DIRECCIONES.First().PROVINCIA)
+           
+                 
+            }
+      
+
+        </td>
+        <td>
+
+            @( paciente.FECHAN.HasValue ? paciente.FECHAN.Value.ToShortDateString() : "")
+
+        </td>
+        <td>@paciente.EDAD
+        </td>
+        <td>@paciente.DNI
+        </td>
+        <td class="text-right">
+            <div class="btn-group">
+                <button  data-oid="@paciente.OID" class="btn-white btn btn-xs seleccionaPaciente">Seleccionar</button>                
+            </div>
+        </td>
+    </tr> 
+}

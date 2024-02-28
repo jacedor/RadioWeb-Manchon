@@ -1,0 +1,155 @@
+﻿@using RadioWeb.Models;
+@model RadioWeb.ViewModels.Exploracion.VWFiltrosHome
+@{
+    string diaSemana = System.Globalization.DateTimeFormatInfo.CurrentInfo.GetDayName(DateTime.Now.DayOfWeek);
+    RadioWeb.Models.USUARIO oUsuarioLogeado = (RadioWeb.Models.USUARIO)Session["Usuario"];
+    RadioWeb.Models.Logica.FiltrosBusquedaExploracion oFiltros = ((RadioWeb.Models.Logica.FiltrosBusquedaExploracion)Session["FiltrosBusqueda"]);
+    ViewBag.Title = "Calendario";
+
+}
+
+@section estilos{
+    <link href="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/css/plugins/calendario/FullCalendar.css")" rel="stylesheet">
+}
+
+<input type="hidden" id="norecargarcalendario" name="norecargarcalendario" value="F" />
+
+@section barraTop{
+    <div class="row">
+        <div class="col-lg-12">
+            @using (Ajax.BeginForm("Index",
+  "Calendario", null,
+  new AjaxOptions
+  {
+      UpdateTargetId = "calendario",
+      HttpMethod = "POST",
+      OnBegin = "BeginFiltros",
+      OnSuccess = "SuccessFiltros(data)",
+      OnFailure = "FailureFiltro",
+      OnComplete = "CompleteFiltros()"
+  }, new { @class = "form-horizontal" }))
+            {
+                @Html.EditorFor(m => m.FILTROS, new
+                {
+
+                    estadoExploracion = "true",
+                    botonBusqueda = "true",
+                    facturadoExploracion = "true"
+
+                })
+            }
+        </div>
+    </div>
+
+}
+
+
+<div class="row animated fadeInDown">
+    <div id="spiner-cargando-calendario" class="row hide" style="height: 600px;">
+
+        <div class="sk-spinner sk-spinner-circle" style="margin-top: 60px; height: 75px; width: 70px;">
+            <div class="sk-circle1 sk-circle"></div>
+            <div class="sk-circle2 sk-circle"></div>
+            <div class="sk-circle3 sk-circle"></div>
+            <div class="sk-circle4 sk-circle"></div>
+            <div class="sk-circle5 sk-circle"></div>
+            <div class="sk-circle6 sk-circle"></div>
+            <div class="sk-circle7 sk-circle"></div>
+            <div class="sk-circle8 sk-circle"></div>
+            <div class="sk-circle9 sk-circle"></div>
+            <div class="sk-circle10 sk-circle"></div>
+            <div class="sk-circle11 sk-circle"></div>
+            <div class="sk-circle12 sk-circle"></div>
+        </div>
+    </div>
+    <div id="ViewCalendario">
+
+        @{
+            var columnasCalendario = "";
+            //Si es una recepción de Tibidabo o Can mora
+            if ((oUsuarioLogeado != null) && (oUsuarioLogeado.PERFIL == 6 || oUsuarioLogeado.PERFIL == 163))
+            {
+                columnasCalendario = "12";
+            }
+            else
+            {
+                columnasCalendario = "7";
+
+            }
+        }
+        <div class="col-lg-@columnasCalendario">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Calendario</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" id="calendario">
+                </div>
+            </div>
+        </div>
+        @if (columnasCalendario == "7")
+        {
+            <div class="col-lg-5">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Resumen </h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                    <div class="ibox-content " id="resumen" style="height: 300px;">
+                    </div>
+                </div>
+
+            </div>
+        }
+
+
+    </div>
+
+</div>
+
+
+
+
+
+@section scripts{
+
+
+    <script src="~/js/jquery.touchSwipe.min.js"></script>
+    <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/plugins/validate/jquery.validate.min.js"></script>
+    <!-- Ladda -->
+
+
+    <script src="@RadioWeb.Helpers.UrlExtender.ContentLastWrite(@Url, "~/js/custom/calendario/Calendario.js")"></script>
+
+
+
+
+
+
+    <script type="text/javascript">
+                //var selDiv = "";
+                //var storedFiles = [];
+
+
+
+
+
+
+
+    </script>
+
+}
+

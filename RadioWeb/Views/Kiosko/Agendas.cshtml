@@ -1,0 +1,91 @@
+﻿
+
+@{
+    ViewBag.Title = "Mantenimiento de Agendas - TV";
+}
+
+<div class="ibox-title">
+    <h5>
+        <strong>
+            Mantenimiento de Agendas - TV
+        </strong>
+    </h5>
+
+</div>
+<div class="ibox-content ">
+
+    <div class="kanban-demo">
+        <div class="board">
+            <div class="board-column sinasignar">
+                <div class="board-column-header">AGENDAS</div>
+                <div class="board-column-content-wrapper">
+                    <div class="board-column-content">
+
+                        @foreach (DAPARATOS aparato in ViewBag.aparatos)                        {
+
+                            <div class="board-item" data-id="@aparato.OID" data-nombre="@aparato.OID">
+                                <div class="board-item-content">
+                                    <span>@aparato.DES_FIL</span>
+                                </div>
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+ 
+            @foreach (KIOSKO_TV pantalla in ViewBag.pantallas)
+            {
+
+                <div class="board-column pantallas">
+                    <div class="board-column-header">@pantalla.NOMBRE</div>
+                    <div class="board-column-content-wrapper">
+                        <div class="board-column-content" id="@pantalla.OID">
+
+                            @foreach (DAPARATOS aparatoTv in ViewBag.aparatosAsignados)
+                            {
+                                if (pantalla.OID == aparatoTv.SALA) { 
+                                    <div class="board-item" data-id="@aparatoTv.OID">
+                                        <div class="board-item-content">
+                                            <span>@aparatoTv.DES_FIL</span>
+                                        </div>
+                                    </div>
+                                }                                                                
+                            }
+
+                         </div>
+                    </div>
+                              
+                </div>
+            }
+
+
+
+
+        </div>
+    </div>
+
+
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("li[data-view]").removeClass('active');
+            $("[data-view=viewTVAgendas]").addClass("active");
+            $("[data-view=viewTVAgendas]").parents("ul").removeClass("collapse");
+        });
+
+    </script>
+
+    <link rel="stylesheet" href="~/css/plugins/muuri/muuri.css">
+    <script src="~/js/plugins/muuri/muuri.js"></script>
+    <script src="~/js/custom/Kiosko/agendas.js"></script>
+    <!--<script src="~/js/plugins/muuri/web-animations.min.js"></script>-->
+}
+
+

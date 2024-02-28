@@ -1,0 +1,33 @@
+﻿@model RadioWeb.ViewModels.Permisos.VMMenus
+
+
+<select class="dual_select" id="menusselect" name="menusselect" style="width:100% !important;" multiple>
+    @{
+
+        foreach (var item in Model.TodosLosMenus.Where(t => t.IDPARENT == -1).OrderBy(t => t.ID))
+        {
+
+
+            <option @(Model.MenusPermitidos.SingleOrDefault(i => i.ID == item.ID) != null ? "selected" : "") value="@item.ID">
+               -- @item.DESCRIPCION.ToUpper()
+            </option>
+
+            foreach (var submenu in Model.TodosLosMenus.Where(s => s.IDPARENT == item.ID))
+            {
+            <option @(Model.MenusPermitidos.SingleOrDefault(i => i.ID == submenu.ID) != null ? "selected" : "") value="@submenu.ID">
+               ---- @submenu.DESCRIPCION.ToUpper()
+            </option>
+            }
+
+        }
+
+    }
+  
+</select>
+<div class="hr-line-dashed"></div>
+<button class="btn btn-primary btn-block" type="submit">Guardar</button>
+
+
+
+
+

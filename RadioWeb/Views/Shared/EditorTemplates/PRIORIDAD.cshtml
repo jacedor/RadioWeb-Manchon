@@ -1,0 +1,22 @@
+﻿@model string
+@{
+    var ior_prioridad =(String.IsNullOrEmpty(Model)? "" : Model );
+
+    var tipos = new SelectList(
+new List<SelectListItem> {
+new SelectListItem {Text ="NORMAL",Value = "NORMAL",Selected = "NORMAL" ==ior_prioridad},
+new SelectListItem {Text ="ALTA",Value = "ALTA",Selected = "ALTA" == ior_prioridad.ToString()},
+new SelectListItem {Text = "URGENTE",Value = "URGENTE", Selected = "URGENTE" == ior_prioridad.ToString() }
+
+}, "Value", "Text", ior_prioridad
+);
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+@Html.DropDownList("",
+            tipos,
+            htmlAttributes)

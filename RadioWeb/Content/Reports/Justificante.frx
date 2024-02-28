@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="06/20/2009 23:03:47" ReportInfo.Modified="04/06/2017 22:16:44" ReportInfo.CreatorVersion="2015.3.8.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+	public class ReportScript
+	{
+
+   
+  
+
+
+    
+	}
+}
+</ScriptText>
+  <Dictionary>
+    <BusinessObjectDataSource Name="EXPLORACION" ReferenceName="EXPLORACION" DataType="null" Enabled="true">
+      <Column Name="APARATO" Enabled="false" DataType="System.String"/>
+      <Column Name="COD_PAC" Enabled="false" DataType="System.String"/>
+      <Column Name="COD_GRUP" Enabled="false" DataType="System.String"/>
+      <Column Name="CENTROEXTERNOOID" Enabled="false" DataType="System.Int64"/>
+      <Column Name="CENTROEXTERNO" Enabled="false" DataType="System.String"/>
+      <Column Name="COD_GRUP" Enabled="false" DataType="System.String"/>
+      <Column Name="DES_FIL" Enabled="false" DataType="System.String"/>
+      <Column Name="DNI" Enabled="false" DataType="System.String"/>
+      <Column Name="EDAD" Enabled="false" DataType="System.Int64"/>
+      <Column Name="EMAIL" Enabled="false" DataType="System.String"/>
+      <Column Name="FECHA" DataType="System.DateTime"/>
+      <Column Name="FECHAN" Enabled="false" DataType="System.DateTime"/>
+      <Column Name="HORA" DataType="System.String"/>
+      <Column Name="HORA_LL" DataType="System.String"/>
+      <Column Name="IOR_PACIENTE" Enabled="false" DataType="System.Int32"/>
+      <Column Name="OID" Enabled="false" DataType="System.String"/>
+      <Column Name="PACIENTE" DataType="System.String"/>
+      <Column Name="PROFESION" Enabled="false" DataType="System.String"/>
+      <Column Name="SEXO" Enabled="false" DataType="System.String"/>
+      <Column Name="EXPLO" DataType="System.String"/>
+      <Column Name="TRAC" DataType="System.Int16"/>
+      <Column Name="OWNER" Enabled="false" DataType="System.Int16"/>
+      <Column Name="TEXTO" DataType="System.String"/>
+      <Column Name="CODMUT" Enabled="false" DataType="System.String"/>
+      <Column Name="NOMBRE" Enabled="false" DataType="System.String"/>
+      <Column Name="POLIZA" Enabled="false" DataType="System.String"/>
+      <Column Name="TRATA" DataType="System.String"/>
+      <Column Name="NOMBRE1" Enabled="false" DataType="System.String"/>
+      <Column Name="COD_MED" Enabled="false" DataType="System.String"/>
+      <Column Name="ESPECIALIDAD" Enabled="false" DataType="System.String"/>
+      <Column Name="ESPEC" Enabled="false" DataType="System.String"/>
+      <Column Name="DIRECCION" DataType="System.String"/>
+      <Column Name="CP" DataType="System.String"/>
+      <Column Name="POBLACION" DataType="System.String"/>
+      <Column Name="PROVINCIA" DataType="System.String"/>
+      <Column Name="NUMERO" Enabled="false" DataType="System.String"/>
+      <Column Name="esMamo" Enabled="false" DataType="System.String"/>
+      <BusinessObjectDataSource Name="EXPLOSASOCIADAS" Enabled="false" DataType="null">
+        <Column Name="OID" DataType="System.String"/>
+        <Column Name="HORA" DataType="System.String"/>
+        <Column Name="COD_FIL" DataType="System.String"/>
+        <Column Name="COD_MUT" DataType="System.String"/>
+        <Column Name="FIL" DataType="System.String"/>
+        <Column Name="DES_FIL" DataType="System.String"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" FirstPageSource="15" OtherPagesSource="15">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="160.65">
+      <PictureObject Name="Picture1" Left="-37.8" Width="340.2" Height="94.5" ImageLocation="https://radioibweb.cdpi.es:4433/img/Logo%20Grup%20Manchon.jpg"/>
+      <CheckBoxObject Name="CheckBox1" Left="-9450" Top="-9450" Width="18.9" Height="18.9"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="166.06" Width="718.2" Height="434.7" DataSource="EXPLORACION">
+      <TextObject Name="Tratamiento" Top="113.4" Width="727.65" Height="103.95" Text="El [IIf([EXPLORACION.TRAC]==5,&quot;Sra.&quot;,&quot;Sr.&quot;)] [EXPLORACION.PACIENTE] ha estat en el nostre centre practicant-se diverses proves radiològiques." HorzAlign="Justify" Font="Arial, 16pt"/>
+      <TextObject Name="txtHoraSortida" Top="302.4" Width="415.8" Height="18.9" Text="Hora sortida         [EXPLORACION.HORA]" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text2" Top="396.9" Width="689.85" Height="18.9" Text="Atentament," Font="Arial, 15.75pt, style=Bold"/>
+      <TextObject Name="Text6" Left="255.15" Top="56.7" Width="453.6" Height="28.35" Text="Barcelona, [TitleCase(FormatDateTime([EXPLORACION.FECHA],&quot;Short Date&quot;))] " Format="Date" Format.Format="d" HorzAlign="Right" Font="Arial, 15.75pt, style=Bold"/>
+      <TextObject Name="txtTexto" Top="217.35" Width="718.2" Height="37.8" CanGrow="true" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="txtHoraRealizada" Top="274.05" Width="415.8" Height="18.9" Text="Hora realitzada    [EXPLORACION.HORA_LL]" Font="Arial, 12pt, style=Bold"/>
+    </DataBand>
+  </ReportPage>
+</Report>

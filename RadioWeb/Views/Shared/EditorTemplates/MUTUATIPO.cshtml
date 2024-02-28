@@ -1,0 +1,20 @@
+﻿@model int?
+@{
+    var tipos = new SelectList(
+        new List<SelectListItem> {
+new SelectListItem {Text ="-",Value = "-1",Selected = "-1" == Model.ToString()},
+new SelectListItem {Text ="PRIVADO",Value = "1",Selected = "1" == Model.ToString()},
+new SelectListItem {Text = "MUTUA",Value = "2", Selected = "2" == Model.ToString() },
+new SelectListItem {Text = "ICS",Value = "3", Selected = "3" == Model.ToString()}
+        }, "Value", "Text", Model
+        );
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+}
+
+@Html.DropDownList("",
+            tipos,
+            htmlAttributes)

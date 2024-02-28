@@ -1,0 +1,320 @@
+﻿@model RadioWeb.ViewModels.Informes.VMDuplicarInforme
+@{
+  
+    ViewBag.Title = "Informes";
+}
+
+
+@section barraTop{
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>
+                @Model.EXPLORACINOAINFORMAR.PACIENTE.PACIENTE1 @Model.EXPLORACINOAINFORMAR.DAPARATO.COD_FIL <br />
+                <small>@Model.EXPLORACINOAINFORMAR.APARATO.DES_FIL - @Model.EXPLORACINOAINFORMAR.FECHA.Value.ToShortDateString() @Model.EXPLORACINOAINFORMAR.HORA</small>
+            </h2>
+
+        </div>
+
+        <div class="col-lg-2">
+            <br />
+            <a target="_blank" style="margin-top:5px;" class="btn btn-warning btn-outline btn-block  btn-sm" href="@Model.URL_PACS" data-original-title="Ver Pacs">
+                <i class="fa fa-external-link"></i>Abrir PACS
+            </a>
+        </div>
+    </div>
+}
+<input type="hidden" id="oidExploracion" name="oidExploracion" value="@Model.EXPLORACINOAINFORMAR.OID" />
+<div class="row ">
+    <div class="col-lg-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a data-toggle="tab" href="#tab-anteriores">
+                        Informes Anteriores
+                        <span class="label label-warning">@Model.INFORMESPACIENTE.Count()</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#tab-plantillas">
+                        Informe sobre plantilla
+                        <span class="label label-warning">@Model.PLANTILLASINFORMES.Count()</span>
+                    </a>
+                </li>
+
+                
+
+
+                @if (Model.UsuarioLogeado.ESMEDICO)
+                {
+                <li class="rightside" style="float:right; line-height: 34px;" role="presentation">
+                    @Html.ActionLink(
+                                                                                   linkText: "Nuevo Informe",
+                                                                                   actionName: "Create",
+                                                                                   controllerName: "Informe",
+                                                                                   routeValues: new
+                                                                                   {
+                                                                                       oidOrigen = 0,
+                                                                                       oidExploracion = @Model.EXPLORACINOAINFORMAR.OID
+                                                                                   },
+                                                                                   htmlAttributes: new
+                                                                                   {
+                                                                                       @class = "btn btn-w-m btn-primary",
+                                                                                       data_oidexploracion = @Model.EXPLORACINOAINFORMAR.OID,
+                                                                                       style = "color:white",
+                                                                                       ReturnUrl = Model.UrlPreviaDuplicar
+                                                                                   }
+                                                                         )
+
+                </li>
+                }
+            </ul>
+            <div class="tab-content">
+                <div id="tab-anteriores" class="tab-pane active">
+                    <div class="panel-body ">
+
+                        @if (Model.EXPLORACINOAINFORMAR.PACIENTE.CONSULTA_PREVIA != "T")
+                        {
+                            <div class="alert alert-danger text-center" role="alert"><strong>El paciente no permite el acceso a informes anteriores.</strong></div>
+                        }
+
+                        <div class="table-responsive">
+                            <table id="InformesList" class="table clicable  table-stripped" data-pagination="true" data-search="true" data-page-size="10" data-page-list="[10,15,20]">
+                                <thead>
+                                    <tr>
+                                        <th data-sortable="true" data-format-string="dd/MM/YYYY">Fecha</th>
+                                        <th><span title="Titulo">Título</span></th>
+                                        <th><span title="Centro">Centro</span></th>
+                                        <th><span title="Médico">Med</span></th>
+                                        <th><span title="Revisado">Revisado</span></th>
+                                        <th><span title="Validado">Val</span></th>
+                                        <th><span title="Modificado">Ultima modificación</span></th>
+                                        <th><span title="Fecha Revisión/Validación">Fecha Rev</span></th>
+                                        <th><span title="Fecha Exploracion">Fecha Visita</span></th>
+                                        <th>...</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.INFORMESPACIENTE)
+                                    {
+                                        var color = "";
+                                        var clase = "";
+
+
+                                        if (item.OWNER == @Model.EXPLORACINOAINFORMAR.OID && item.VALIDACION == "T")
+                                        {
+                                            clase = "ACTIVA";
+                                        }
+
+                                        <tr data-oid="@item.OID" data-exploracion="@item.OWNER" style="color:@color;" class="@clase">
+                                            <td>
+                                                <span style="display:none">@item.FECHA.ToString("yyyyMMdd")</span>
+                                                <span>@item.FECHA.ToString("dd/MM/yyyy") - @item.HORA</span>
+                                            </td>
+                                            <td><span>@item.TITULO</span></td>
+                                            <td><span>@item.CENTRO</span></td>
+                                            <td><span>@item.LOGINMEDICOINFORMANTE</span></td>
+                                            <td><span>@item.LOGINMEDICOREVISOR</span></td>
+
+                                            <td>
+                                                @if (item.BORRADO == "T")
+                                                {
+                                                    <span class="label label-danger"><b>BORRADO</b></span>
+                                                }
+                                                else
+                                                {
+                                                    if (item.VALIDACION == "T")
+                                                    {
+                                                        <i class="fa fa-check" style="color: green;" title="Validado"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fa fa-times" style="color: red;" title="Validado"></i>
+                                                    }
+                                                }
+
+                                            </td>
+                                            <td>
+                                                @item.MODIF
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    @if (item.FECHAREVISION != null)
+                                                    {
+                                                        @String.Concat(item.FECHAREVISION.Value.ToString("dd/MM/yyyy"), " ", item.HORAREV)
+                                                    }
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                <span>
+                                                    @if (@item.FECHAEXPLORACION != null)
+                                                    {
+                                                        @item.FECHAEXPLORACION.Value.ToString("dd/MM/yyyy HH:mm")
+                                                    }
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-white btn-xs previsualizarInforme"
+                                                        data-oid="@item.OID" data-toggle="modal"
+                                                        data-target="#modal-form-previsualizar">
+                                                    Previa
+                                                </button>
+
+                                                @{
+                                                    var accion = "Editar";
+
+                                                    if (item.VALIDACION == "T")
+                                                    {
+                                                        accion = "Leer";
+                                                    }
+                                                }
+
+                                                @if (item.OWNER == Model.EXPLORACINOAINFORMAR.OID)
+                                                {
+                                                    @Html.ActionLink(linkText: @accion,
+actionName: "Edit",
+controllerName: "Informe",
+routeValues: new
+{
+OID = @item.OID,
+urlPrevia = Model.UrlPreviaDuplicar
+},
+htmlAttributes: new
+{
+@class = "btn btn-warning btn-xs ",
+data_oidexploracion = Model.EXPLORACINOAINFORMAR.OID
+})
+                                                }
+                                                else
+                                                {
+                                                    if (Model.UsuarioLogeado.ESMEDICO)
+                                                    {
+                                                        @Html.ActionLink(linkText: "Duplicar",
+                                                                    actionName: "Create",
+                                                                    controllerName: "Informe",
+                                                                    routeValues: new
+                                                                    {
+                                                                        oidOrigen = @item.OID,
+                                                                        oidExploracion = Model.EXPLORACINOAINFORMAR.OID,
+                                                                        urlPrevia = Model.UrlPreviaDuplicar
+                                                                    }, htmlAttributes: new
+                                                                    {
+                                                                        @class = "btn btn-primary btn-xs  btn-outline duplicar",
+                                                                        data_oidexploracion = Model.EXPLORACINOAINFORMAR.OID
+                                                                    })
+                                                    }
+
+                                                }
+                                            </td>
+
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="tab-plantillas" class="tab-pane">
+                    <div class="panel-body">
+
+                        <div class="m-b-lg col-lg-8">
+
+                            <label for="oidPlantilla" class="control-label">Plantillas </label>
+                            <select id="oidPlantilla" name="oidPlantilla" class="select2 form-control disabled">
+                                @{
+                                    List<PERSONAL> oListTemp = (List<PERSONAL>)System.Web.HttpContext.Current.Application["Medicos"];
+                                    foreach (PERSONAL item in oListTemp)
+                                    {
+                                        if (item.OID == ViewBag.oidMedico)
+                                        {
+                                            <option selected="selected" value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                        }
+                                    }
+                                }
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-lg-12" id="PlantillaListContainer">
+
+                            @Html.Partial("~/Views/P_Informe/_Lista.cshtml", Model.PLANTILLASINFORMES)
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contenedorModalImagenes">
+    <div id="modal-form-previsualizar" class="modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+
+                    <h4 class="modal-title">Previsualización</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="contenedorPlantilla">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts
+    {
+
+
+    <script src="~/js/custom/Informe/duplicar.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            makeBootstrapTable('PlantillaList');
+            makeBootstrapTable('InformesList');
+
+        });
+    </script>
+
+
+}

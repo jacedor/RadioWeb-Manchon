@@ -1,0 +1,135 @@
+﻿@model IEnumerable<RadioWeb.Models.INFORMES>
+@{
+    //radioweb2.0
+    RadioWeb.Models.Usuario oUsuarioLogeado = (RadioWeb.Models.Usuario)ViewData["oUsuario"];
+}
+<div class="row m-b-sm">
+
+    @*<div class="col-md-4">
+        <label class="font-noraml">Informe nuevo sobre plantilla</label>
+        <select  class="cargarPlantilla" >
+            @{
+                List<RadioWeb.Models.P_INFORMES> oListTemp = ((List<RadioWeb.Models.P_INFORMES>)Session["P_Informes"]);
+                var Group = "";
+
+
+                foreach (RadioWeb.Models.P_INFORMES informePlantilla in oListTemp)
+                {
+                    if (Group != @informePlantilla.DESC_MEDICO)
+                    {
+                        <optgroup label="@informePlantilla.DESC_MEDICO" />
+                        Group = @informePlantilla.DESC_MEDICO;
+                    }
+
+                    <option data-medico="@informePlantilla.DESC_MEDICO" data-titulo="@informePlantilla.TITULO" value="@informePlantilla.OID">@informePlantilla.TITULO  </option>
+                }
+            }
+        </select>
+
+    </div>*@
+
+    <div class="col-md-12">
+        @Html.ActionLink(
+                            linkText: "Nuevo Informe",
+                            actionName: "Create",
+                            controllerName: "Informe",
+                            routeValues: new
+                            {
+                                oid = 0,
+                                oidExploracion = @ViewBag.OidExploracion
+                            },
+                            htmlAttributes: new { @class = "btn  btn-primary btn-xs pull-right btn-outline nuevoinforme", data_oidexploracion= @ViewBag.OidExploracion }
+                        )
+        
+    </div>
+    
+</div>
+
+<table id="InformesList" class="table clicable  table-stripped">
+    <thead>
+        <tr>
+            <th data-type="date" data-format-string="dd/MM/YYYY" class="clicable">Fecha</th>
+            <th><span title="Médico">Med</span></th>
+            <th><span title="Revisado">Rev</span></th>
+            <th><span title="Titulo">Título</span></th>
+            <th><span title="Patologico">Pat</span></th>
+            <th><span title="Fecha Exploracion">Fecha Visita</span></th>
+            <th><span title="Validado">Val</span></th>
+            <th><span>PDF</span></th>
+            <th><span>Email</span></th>
+         
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var color = "";
+            if (item.BORRADO == "T")
+            {
+                color = "red";
+            }
+
+            <tr data-oid="@item.OID" data-exploracion="@item.OWNER" style="color:@color;">
+                <td><span>@item.FECHA.ToString("dd/MM/yyyy")</span></td>
+                <td><span>@item.IOR_MEDINFORME</span></td>
+                <td><span>@item.IOR_MEDREVISION</span></td>
+                <td><span>@item.TITULO</span></td>
+                <td><span>@item.PATOLOGICO</span></td>
+                <td>
+                    <span>
+                        @if (@item.FECHAEXPLORACION != null)
+                        {
+                            @item.FECHAEXPLORACION.Value.ToString("dd/MM/yyyy")
+                        }
+                    </span>
+                </td>
+                <td>
+                    @if (item.VALIDACION == "T")
+                    {
+                        <i class="fa fa-check" style="color: green;" title="Validado"></i>
+                    }
+                    else
+                    {
+                        <i class="fa fa-times" style="color: red;" title="Validado"></i>
+                    }
+                </td>
+
+                <td>
+                    @if (item.VALIDACION == "T")
+                    {
+                        <a href="#" data-oid="@item.OID" class="generarPDFSinClave"><i class="fa fa-file-pdf-o" style="color: red;" title="Generar PDF"></i></a>
+                    }
+                </td>
+               
+              
+                <td class="project-actions">            
+                    @Html.ActionLink(
+                            linkText: "Duplicar",
+                            actionName: "Create",
+                            controllerName: "Informe",
+                            routeValues: new
+                            {
+                                oid = @item.OID,
+                                oidExploracion = @ViewBag.OidExploracion
+                            },
+                            htmlAttributes: new { @class = "btn btn-primary btn-xs pull-right btn-outline duplicar",
+                                                    data_oidexploracion = @ViewBag.OidExploracion }
+                        )
+
+        
+                   
+                </td>
+            </tr>
+        }
+
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="10">
+                <ul class="pagination pull-right"></ul>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+

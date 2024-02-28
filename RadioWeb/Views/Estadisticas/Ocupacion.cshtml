@@ -1,0 +1,155 @@
+﻿@{
+    ViewBag.Title = "Ocupacion";
+}
+@model RadioWeb.Models.Estadistica.ItemEstadisticoOcupacion
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Ocupación Aparatos </h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+
+
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-12 m-b-xs">
+                        <div class="form-group">
+                            <div class="col-sm-3 col-md-3">
+                                @Html.BootstrapLabelFor(m => m.Grupo)
+                                @Html.EditorFor(model => model.Grupo, new
+                                {
+                                    htmlAttributes = new { data_filter_calendar = "true" }
+                                })
+                            </div>
+                            <div class="col-sm-3 col-md-3">
+
+                                @Html.BootstrapLabelFor(m => m.Fecha_Inicio)
+                                @Html.EditorFor(model => model.Fecha_Inicio, new
+                                {
+                                    htmlAttributes = new { autocomplete = "off", @class = "fecha-picker" }
+                                })
+                            </div>
+                            <div class="col-sm-3 col-md-3">
+
+                                @Html.BootstrapLabelFor(m => m.Fecha_Fin)
+                                @Html.EditorFor(model => model.Fecha_Fin, new
+                                {
+                                    htmlAttributes = new { autocomplete = "off", @class = "fecha-picker" }
+                                })
+                            </div>
+
+                            <div class="col-sm-3">
+
+                                <label class="control-label" style="color:white">f</label><br />
+                                <button id="btnBuscar" class="btn btn-sm btn-primary" type="button">Buscar!</button>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="tablaOcupacion" data-search="true">
+                        <thead>
+                            <tr>
+                                <th data-sortable="true">Fecha </th>
+                                <th data-sortable="true">Aparato </th>
+                                <th data-sortable="true">Huecos Horario</th>
+                                <th data-sortable="true">Huecos Ocupados</th>
+                                <th data-sortable="true">Porcentage Ocupación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ListaOcupacion"></tbody>
+                    </table>
+                </div>
+                <div class="spiner-example hide" id="spiner-facturacionMensualDiaria">
+                    <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                        <div class="sk-circle1 sk-circle"></div>
+                        <div class="sk-circle2 sk-circle"></div>
+                        <div class="sk-circle3 sk-circle"></div>
+                        <div class="sk-circle4 sk-circle"></div>
+                        <div class="sk-circle5 sk-circle"></div>
+                        <div class="sk-circle6 sk-circle"></div>
+                        <div class="sk-circle7 sk-circle"></div>
+                        <div class="sk-circle8 sk-circle"></div>
+                        <div class="sk-circle9 sk-circle"></div>
+                        <div class="sk-circle10 sk-circle"></div>
+                        <div class="sk-circle11 sk-circle"></div>
+                        <div class="sk-circle12 sk-circle"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="contenedorHorasOcupadas">
+    <div id="modal-form-HorasOcupacion" class="modal" aria-hidden="true">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Ocupación Por Horas</h4>
+                    <div class="spiner-cargando-horasOcupacion hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body" id="modalCargandoOcupacion">
+                  
+                    <table id="tblOcupacionHoras" class="table "
+                           data-search="true" data-height="700" data-filter-control="true">
+                        <thead>
+                            <tr>
+                                <th data-sortable="true"  data-field="HORA">HORA</th>
+                                <th data-sortable="true"  data-field="NUMERO_HORALIBRE">NºLIBRES</th>
+                                <th data-sortable="true" data-field="RECUENTO_TOTALHORAS">NºHORAS</th>
+                                <th data-sortable="true" data-class="stat-list"  data-field="PORCENTAJE" data-formatter="porcentajeFormat" style="min-width:400px;"  >PORCENTAJE</th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+
+
+
+                </div>
+              
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+    <script src="~/js/custom/estadisticas/ocupacion.js"></script>
+}
