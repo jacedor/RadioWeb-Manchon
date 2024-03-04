@@ -151,7 +151,7 @@ namespace RadioWeb.Controllers
 
             IEnumerable<LISTADIA2> oResult;
             
-            string query = "select E.*, l.colegiado,  l.mutua,l.explo,l.cantidad,l.paciente,l.fecha,l.medico,c.NOMBRE as CENTROD,g.COD_GRUP GRUPO,l.cirujano ,";
+            string query = "select E.*, l.colegiado,  l.mutua,l.explo,l.cantidad,l.paciente,l.fecha,l.medico,c.NOMBRE as CENTROD,g.COD_GRUP GRUPO,l.cirujano,l.aparato,";
             query += "  case l.ESTADO";
             query += " when 0 then 'PENDIENTE'";
             query += " when 1 then 'BORRADO'";
@@ -159,9 +159,11 @@ namespace RadioWeb.Controllers
             query += " when 3 then 'CONFIRMADO'";
             query += " when 4 then 'LLAMA ANULANDO'";
             query += " when 5 then 'NO PRESENTADO'";
-            query += " else '' end ESTADO, l.FACTURADA ";
+            query += " else '' end ESTADO,l.PAGADO, l.FACTURADA, CEN.NOMBRE AS CENTROEXTERNO, l.INFORMADA,l.TECNICO,tec.login as LOGINTECNICO ";
             query += "from listadia l left join CENTROS c on l.centro=c.OID ";
             query += "LEFT JOIN GAPARATOS G ON G.OID=L.grupoapa ";
+            query += "LEFT JOIN CENTROSEXTERNOS CEN ON CEN.OID=l.IOR_CENTROEXTERNO ";
+            query += "left join personal tec on tec.COD=l.TECNICO ";
             query += "JOIN EXPLORACION E ON E.OID=L.OID";
             
             query += " where l.fecha between " + DateTime.Parse(FECHA_INICIO).ToString("MM/dd/yyyy").QuotedString()
@@ -176,18 +178,23 @@ namespace RadioWeb.Controllers
                            FECHA=explo.FECHA.ToString("dd/MM/yyyy"),
                            FECHA_CREACION = explo.FECHA_IDEN.ToString("dd/MM/yyyy"),
                            USERNAME=explo.USERNAME,
+                           CENTROEXTERNO = explo.CENTROEXTERNO,
                            MUTUA = explo.MUTUA,
+                           LOGINTECNICO=explo.LOGINTECNICO,
                            EXPLO = explo.EXPLO,
                            explo.CANTIDAD,
                            PACIENTE = explo.PACIENTE,
                            MES = explo.FECHA.Month + " - " + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(explo.FECHA.Month)),
                            CENTROD = explo.CENTROD,
-                           MEDINF = explo.MEDICO,
-                           CIRU = explo.CIRUJANO,
+                           MEDINF = explo.MEDICO,                          
                            explo.ESTADO,
                            FACT = explo.FACTURADA,
+                           PAGADO=explo.PAGADO,
                            GRUPO = explo.GRUPO,
-                           REFERIDOR=explo.COLEGIADO
+                           REFERIDOR=explo.COLEGIADO,
+                           APARATO = explo.APARATO,
+                           INFORMADA = explo.INFORMADA,                        
+                           TECNICO = explo.TECNICO
 
                        };
 

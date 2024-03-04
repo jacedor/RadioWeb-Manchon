@@ -20,6 +20,7 @@ namespace RadioWeb.Models
 
      
         public int CENTRO { get; set; }
+        public string LOGINTECNICO { get; set; }
 
         public string CENTROD { get; set; }
         public string GRUPO { get; set; }
@@ -135,7 +136,7 @@ namespace RadioWeb.Models
         public string MEDICO { get; set; }
         public string COLEGIADO { get; set; }
 
-       
+        public string CENTROEXTERNO { get; set; }
         public string VIP { get; set; }
 
 
@@ -185,5 +186,7 @@ namespace RadioWeb.Models
 
        
         public List<PAGOS> PAGOS { get; set; }
+
+        public string APARATO { get; set; }
     }
 }
