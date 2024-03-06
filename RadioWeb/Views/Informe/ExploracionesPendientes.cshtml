@@ -47,42 +47,44 @@
                                 <table id="explosNoInformadas" class="table table-bordered footable" data-search="true" data-height="600">
                                     <thead>
                                         <tr>
-                                            <th data-sortable="true" >
+                                            <th data-sortable="true">
                                                 @Html.DisplayNameFor(model => model.FECHA)
                                             </th>
-                                           
-                                            <th data-sortable="true" >
+
+                                            <th data-sortable="true">
                                                 @Html.DisplayNameFor(model => model.PACIENTE)
                                             </th>
-                                            <th>
+                                            <th data-sortable="true">
                                                 @Html.DisplayNameFor(model => model.NOM_MED)
                                             </th>
-                                            <th data-sortable="true" >
+                                            <th data-sortable="true">
                                                 @Html.DisplayNameFor(model => model.INFORMADO)
                                             </th>
                                             <th>
                                                 @Html.DisplayNameFor(model => model.MEDREV)
                                             </th>
-                                            <th>
+                                            <th data-sortable="true">
                                                 @Html.DisplayNameFor(model => model.FECHAMAXIMA)
                                             </th>
-                                            <th>
+                                            <th data-sortable="true">
                                                 @Html.DisplayNameFor(model => model.DIAS_ENTREGA)
                                             </th>
-
+                                            <th data-sortable="true">
+                                                @Html.DisplayNameFor(model => model.FECHA_RECOGIDA)
+                                            </th>
                                             <th>
                                                 @Html.DisplayNameFor(model => model.OID)
                                             </th>
                                             <th>
                                                 @Html.DisplayNameFor(model => model.IOR_PACIENTE)
                                             </th>
-                                            <th>
+                                            <th data-sortable="true">
                                                 @Html.DisplayNameFor(model => model.COD_MUT)
                                             </th>
-                                          
-                                            <th>
+
+                                            <th data-sortable="true">
                                                 @Html.DisplayNameFor(model => model.FIL)
-                                            </th>                                           
+                                            </th>
                                             <th>
                                                 ...
                                             </th>
@@ -92,107 +94,118 @@
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
-                                            <tr data-oidPaciente="@item.IOR_PACIENTE" data-oidExploracion="@item.OID">
-                                                <td>
-                                                    <span style="display:none">@item.FECHA.Value.ToString("yyyyMMdd")</span>
+                                        <tr data-oidPaciente="@item.IOR_PACIENTE" data-oidExploracion="@item.OID">
+                                            <td>
+                                                <span style="display:none">@item.FECHA.Value.ToString("yyyyMMdd")</span>
 
-                                                    @Html.DisplayFor(modelItem => item.FECHA)
-                                                </td>                                               
+                                                @Html.DisplayFor(modelItem => item.FECHA)
+                                            </td>
 
-                                                <td>
-                                                    @Html.DisplayFor(modelItem => item.PACIENTE)
-                                                </td>
-                                                <td>
-                                                    @Html.DisplayFor(modelItem => item.NOM_MED)
-                                                </td>
-                                                <td width="10">
-                                                   @if (item.IOR_MASTER > 0)
-                                                   {
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PACIENTE)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.NOM_MED)
+                                            </td>
+                                            <td width="10">
+                                                @if (item.IOR_MASTER > 0)
+                                                {
                                                     <a href="/Informe/Duplicar/@item.IOR_MASTER">
                                                         <i class="fa fa-clipboard" style="font-size: 12px;   color:#ffb400;"
                                                            title="Ir a Informe exploración relacionada"></i>
                                                     </a>
-                                                   }
-                                                   else
-                                                   {
-                                                       if (item.INFORMADO)
-                                                       {
+                                                }
+                                                else
+                                                {
+                                                    if (item.INFORMADO)
+                                                    {
                                                         <a href="/Informe/Duplicar/@item.OID">
                                                             <i class="fa fa-clipboard" style="font-size: 12px; color: green;"
                                                                title="Informada"></i>
                                                         </a>
-                                                       }
-                                                       else
-                                                       {
+                                                    }
+                                                    else
+                                                    {
                                                         <a href="/Informe/Duplicar/@item.OID">
                                                             <i class="fa fa-clipboard" style="font-size: 12px; color: red;"
                                                                title="No Informada"></i>
                                                         </a>
-                                                       }
+                                                    }
 
-                                                   }
-                                                </td>
-                                                <td>
-                                                    @Html.DisplayFor(modelItem => item.MEDREV)
-                                                </td>
-                                                <td>
-                                                    @Html.DisplayFor(modelItem => item.FECHAMAXIMA)
-                                                </td>
-                                                <td>
-                                                    @if (item.FECHAMAXIMA.HasValue)
+                                                }
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.MEDREV)
+                                            </td>
+                                            <td>
+                                                @if (item.FECHAMAXIMA.HasValue)
+                                                {
+                                                    <span style="display:none">@item.FECHAMAXIMA.Value.ToString("yyyyMMdd")</span>
+                                                }
+                                                @Html.DisplayFor(modelItem => item.FECHAMAXIMA)
+                                            </td>
+                                            <td>
+                                                @if (item.FECHAMAXIMA.HasValue)
+                                                {
+                                                    if (item.DIAS_ENTREGA <= 0)
                                                     {
-                                                        if (item.DIAS_ENTREGA <= 0)
-                                                        {
-                                                            <span class="badge badge-danger">Hace @Math.Abs(@item.DIAS_ENTREGA) días</span>
-                                                        }
-                                                        else if (item.DIAS_ENTREGA == 0)
-                                                        {
-                                                            <span class="badge badge-warning">HOY</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="badge badge-primary">Dentro de @Math.Abs(@item.DIAS_ENTREGA) días</span>
-                                                        }
-                                                    }                                                  
-                                                
-                                                </td>
-                                                <td>
-                                                    @Html.DisplayFor(modelItem => item.OID)
-                                                </td>
-                                                <td>
-                                                    @Html.DisplayFor(modelItem => item.IOR_PACIENTE)
-                                                </td>
-                                                <td>
-                                                    @if (ViewBag.CampoMutua == "NOMBRE")
+                                                        <span class="badge badge-danger">Hace @Math.Abs(@item.DIAS_ENTREGA) días</span>
+                                                    }
+                                                    else if (item.DIAS_ENTREGA == 0)
                                                     {
-                                                        @Html.DisplayFor(modelItem => item.DES_MUT)
+                                                        <span class="badge badge-warning">HOY</span>
                                                     }
                                                     else
                                                     {
-                                                        @Html.DisplayFor(modelItem => item.COD_MUT)
+                                                        <span class="badge badge-primary">Dentro de @Math.Abs(@item.DIAS_ENTREGA) días</span>
                                                     }
-                                                   
-                                                </td>
-                                               
-                                                <td>
-                                                    @Html.DisplayFor(modelItem => item.FIL)
-                                                </td>
+                                                }
 
-                                               
-                                                <td class="text-right">
-                                                    <a data-oid="@item.OID" class="btn btn-white btn-bitbucket btnVerFoto">
-                                                        <i class="fa fa-camera"></i>
-                                                    </a>
-                                                    @*@if (item.IOR_INFORME > 0)
-                                                    {
-                                                        <a href="/Informe/Edit/@item.IOR_INFORME" data-exploracion="@item.OID" class="btn btn-white btn-bitbucket">
-                                                            <i class="fa fa-edit"></i>
-                                                        </a>
-                                                    }*@
+                                            </td>
+                                            <td>
+                                                @if (item.FECHA_RECOGIDA.HasValue)
+                                                {
+                                                    <span style="display:none">@item.FECHA_RECOGIDA.Value.ToString("yyyyMMdd")</span>
+                                                }
+                                                @Html.DisplayFor(modelItem => item.FECHA_RECOGIDA)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.OID)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.IOR_PACIENTE)
+                                            </td>
+                                            <td>
+                                                @if (ViewBag.CampoMutua == "NOMBRE")
+                                                {
+                                                    @Html.DisplayFor(modelItem => item.DES_MUT)
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(modelItem => item.COD_MUT)
+                                                }
+
+                                            </td>
+
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FIL)
+                                            </td>
 
 
-                                                </td>
-                                            </tr>
+                                            <td class="text-right">
+                                                <a data-oid="@item.OID" class="btn btn-white btn-bitbucket btnVerFoto">
+                                                    <i class="fa fa-camera"></i>
+                                                </a>
+                                                @*@if (item.IOR_INFORME > 0)
+            {
+                <a href="/Informe/Edit/@item.IOR_INFORME" data-exploracion="@item.OID" class="btn btn-white btn-bitbucket">
+                    <i class="fa fa-edit"></i>
+                </a>
+            }*@
+
+
+                                            </td>
+                                        </tr>
                                         }
                                     </tbody>
                                     

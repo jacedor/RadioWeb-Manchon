@@ -1,0 +1,452 @@
+﻿@model IEnumerable<RadioWeb.ViewModels.Informes.VMExploNoInformadas>
+@{
+    ViewBag.Title = "Exploraciones Pendientes";
+}
+
+
+@using (Html.BeginForm("Duplicar", "Informe", FormMethod.Post, new { @id = "myForm", @name = "myForm" }))
+{
+
+    <div class="row animated fadeInDown">
+        <input type="hidden" id="OID" name="OID" />
+        <input type="hidden" name="ReturnUrl" id="ReturnUrl" value="/Informe/ExploracionesPendientes" />
+        <div class="col-lg-12">
+            <div class="tabs-container" style="min-height:400px;">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a data-toggle="tab" href="#tab-explos">
+                            Exploraciones No Informadas
+                            <span class="label label-warning" id="cuentaNoInformadas">0</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="#tab-pendientesRevisar">
+                            Pendientes de Revisar
+                            <span class="label label-warning" id="cuentaPendientesRevisar">@ViewBag.PendientesRevisar</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-explos" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="spiner-cargando-no-informadas hide">
+                                <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+
+                            <div class="m-b-lg">
+
+                                <label for="oidPersonalNoInformadas" class="control-label">Médico responsable</label>
+                                <select id="oidPersonalNoInformadas" name="oidPersonalNoInformadas" class="selectpicker form-control">
+                                    @{
+                                        List<PERSONAL> oListTemp = (List<PERSONAL>)System.Web.HttpContext.Current.Application["Medicos"];
+                                        foreach (PERSONAL item in oListTemp)
+                                        {
+                                            if (item.OID == ViewBag.oidMedico)
+                                            {
+                                                <option selected="selected" value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                            }
+                                        }
+                                    }
+                                </select>
+
+                                <label for="oidNoPersonalNoInformadas" class="control-label">Sólo exploraciones sin médico responsable asignado</label>
+                                <input type="checkbox" id="oidNoPersonalNoInformadas" />
+
+                            </div>
+
+                            <div class="table-responsive contenedorNoInformadas"></div>
+
+                        </div>
+                    </div>
+
+                    <div id="tab-pendientesRevisar" class="tab-pane">
+                        <div class="panel-body">
+                            <div class="spiner-cargando hide">
+                                <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                                    <div class="sk-circle1 sk-circle"></div>
+                                    <div class="sk-circle2 sk-circle"></div>
+                                    <div class="sk-circle3 sk-circle"></div>
+                                    <div class="sk-circle4 sk-circle"></div>
+                                    <div class="sk-circle5 sk-circle"></div>
+                                    <div class="sk-circle6 sk-circle"></div>
+                                    <div class="sk-circle7 sk-circle"></div>
+                                    <div class="sk-circle8 sk-circle"></div>
+                                    <div class="sk-circle9 sk-circle"></div>
+                                    <div class="sk-circle10 sk-circle"></div>
+                                    <div class="sk-circle11 sk-circle"></div>
+                                    <div class="sk-circle12 sk-circle"></div>
+                                </div>
+                            </div>
+                            <div class="m-b-lg">
+
+                                <label for="oidPersonalRevisar" class="control-label">Médico Revisión </label>
+                                <select id="oidPersonalRevisar" name="oidPersonalRevisar" class="selectpicker form-control">
+                                    @{
+                                        List<PERSONAL> oListTempNoInformadas = (List<PERSONAL>)System.Web.HttpContext.Current.Application["Medicos"];
+                                        foreach (PERSONAL item in oListTempNoInformadas)
+                                        {
+                                            if (item.OID == ViewBag.oidMedico)
+                                            {
+                                                <option selected="selected" value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.OID">@item.COD - @item.NOMBRE </option>
+                                            }
+                                        }
+                                    }
+                                </select>
+
+                            </div>
+                            <div class="table-responsive contenedorPendientesRevisar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="contenedorModalImagenes">
+    <div id="modal-form-imagenes" class="modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+
+                    <h4 class="modal-title">Imágenes</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="spiner-cargando hide">
+                        <div class="sk-spinner sk-spinner-circle" style="height: 60px; width: 60px;">
+                            <div class="sk-circle1 sk-circle"></div>
+                            <div class="sk-circle2 sk-circle"></div>
+                            <div class="sk-circle3 sk-circle"></div>
+                            <div class="sk-circle4 sk-circle"></div>
+                            <div class="sk-circle5 sk-circle"></div>
+                            <div class="sk-circle6 sk-circle"></div>
+                            <div class="sk-circle7 sk-circle"></div>
+                            <div class="sk-circle8 sk-circle"></div>
+                            <div class="sk-circle9 sk-circle"></div>
+                            <div class="sk-circle10 sk-circle"></div>
+                            <div class="sk-circle11 sk-circle"></div>
+                            <div class="sk-circle12 sk-circle"></div>
+                        </div>
+                    </div>
+                    <div id="contenedorCarrousel">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button data-dismiss="modal" id="ImprimirImagen" class="btn btn-white" type="button">Imprimir</button>
+                    <button data-dismiss="modal" class="btn btn-white" type="button">Cerrar</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts
+    {
+
+    <script type="text/javascript">
+
+        $(document).on('change', '#oidPersonalRevisar', function myfunction() {
+
+            var oidPersonal = $(this).val();
+
+            var ContenedorPendientesRevisar = $('.contenedorPendientesRevisar');
+            $.ajax({
+                type: 'GET',
+                url: '/Informe/PendientesRevisar',
+                data: {
+                    oidPersonal: oidPersonal
+                },
+                beforeSend: function () {
+                    $(".spiner-cargando").removeClass('hide');
+                    ContenedorPendientesRevisar.html('');
+                },
+                success: function (data) {
+
+                    ContenedorPendientesRevisar.html(data);
+                    // $(".footable").footable();
+                },
+                complete: function () {
+                    $(".spiner-cargando").addClass('hide');
+                    $("#cuentaPendientesRevisar").html($("#InformesRevisar tbody tr").length);
+                    makeBootstrapTable('InformesRevisar');
+                    //$('#InformesRevisar').footable();
+                }
+            });
+        });
+
+        $(document).on('change', '#oidPersonalNoInformadas', function myfunction() {
+
+            var oidPersonal = $(this).val();
+
+            var ContenedorNoInformadas = $('.contenedorNoInformadas');
+            $.ajax({
+                type: 'GET',
+                url: '/Informe/NoInformadas',
+                data: {
+                    oidPersonal: oidPersonal,
+                    oidNoPersonalNoInformadas: false
+                },
+                beforeSend: function () {
+                    $(".spiner-cargando-no-informadas").removeClass('hide');
+                    ContenedorNoInformadas.html('');
+                },
+                success: function (data) {
+
+                    ContenedorNoInformadas.html(data);
+                    // $(".footable").footable();
+                },
+                complete: function () {
+                    $(".spiner-cargando-no-informadas").addClass('hide');
+                    $("#cuentaNoInformadas").html($("#NoInformadas tbody tr").length);
+                    makeBootstrapTable('NoInformadas');
+                    //$('#NoInformadas').footable();
+                }
+            });
+        });
+
+        $(document).on('change', '#oidNoPersonalNoInformadas', function myfunction() {
+
+            var boolean = false;
+
+            if ($(this).prop('checked')) {
+                boolean = true;
+            }
+
+            var oidPersonal = 0;
+            if ($('#oidPersonalNoInformadas').val() != '') {
+                oidPersonal = $('#oidPersonalNoInformadas').val();
+            }
+
+            buscarNoInformadas(oidPersonal, boolean);
+        });
+
+        $(document).on("shown.bs.tab", "a[data-toggle='tab']", function (e) {
+            var target = $(e.target).attr("href") // activated tab
+            switch (target) {
+                case "#tab-pendientesRevisar":
+                    var ContenedorPendientesRevisar = $('.contenedorPendientesRevisar');
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Informe/PendientesRevisar',
+                        data: {
+                            oidPersonal: $("#oidPersonalRevisar").val()
+                        },
+                        beforeSend: function () {
+                            $(".spiner-cargando").removeClass('hide');
+                            ContenedorPendientesRevisar.html('');
+                        },
+                        success: function (datosLista) {
+                            $(".spiner-cargando").addClass('hide');
+                            ContenedorPendientesRevisar.html(datosLista);
+                        },
+                        complete: function () {
+                            $(".spiner-cargando").addClass('hide');
+                            $("#cuentaPendientesRevisar").html($("#InformesRevisar tbody tr").length);
+                            $('#InformesRevisar').footable();
+                        }
+                    });
+
+                    break;
+            }
+
+        });
+
+        $(document).on("click", ".btnVerFoto", function myfunction(e) {
+            e.stopPropagation();
+            var oidExploracion = $(this).data('oid');
+            //var ContenedorModalImagenes = $('#contenedorModalImagenes');
+            var ContenedorModalImagenes = $('#contenedorCarrousel');
+            $.ajax({
+                type: 'POST',
+                url: '/Imagenes/ListaPartial',
+                data: { oid: oidExploracion },
+                beforeSend: function () {
+
+                    $(".spiner-cargando").removeClass('hide');
+                    ContenedorModalImagenes.html('');
+                    $('#modal-form-imagenes').modal('show');
+                },
+                success: function (data) {
+                    $(".spiner-cargando").addClass('hide');
+                    ContenedorModalImagenes.html(data);
+                },
+                complete: function () {
+                    $('.slick_demo_3').slick({
+                        infinite: true,
+                        speed: 500,
+                        fade: true,
+                        cssEase: 'linear',
+                        adaptiveHeight: true
+                    });
+                }
+            });
+        });
+
+
+        $(document).on('click', '#NoInformadas tbody tr', function () {
+            $(this).siblings().removeClass('ACTIVA');
+            $(this).addClass('ACTIVA');
+            $("#OID").val($(this).data('oidexploracion'));
+            //$("#myForm").submit();
+        });
+
+        $(document).on("click", ".generarPDFSinClave", function () {
+            var oidInforme = $(this).data('oid');
+            var url = "/Informe/Imprimir?oid=" + oidInforme; //The Url to the Action  Method of the Controller
+            window.open(url, 'popup', 'width=900,height=500');
+            return false;
+        });
+
+
+        $(document).ready(function () {
+            $("li[data-view]").removeClass('active');
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewInformesPendientes]").addClass("active");
+            $("[data-view=ViewInformesPendientes]").parents("ul").removeClass("collapse");
+            $("[data-view=ViewInformesPendientes]").parents("ul").removeClass("collapse");
+
+            var oidPersonal = $("#oidPersonalNoInformadas").val();
+            buscarNoInformadas(oidPersonal, false);
+        });
+
+        function buscarNoInformadas(oidPersonal, oidNoPersonalNoInformadas) {
+            var ContenedorNoInformadas = $('.contenedorNoInformadas');
+
+            $.ajax({
+                type: 'GET',
+                url: '/Informe/NoInformadas',
+                data: {
+                    oidPersonal: oidPersonal,
+                    oidNoPersonalNoInformadas: oidNoPersonalNoInformadas
+                },
+                beforeSend: function () {
+                    $(".spiner-cargando-no-informadas").removeClass('hide');
+                    ContenedorNoInformadas.html('');
+                },
+                success: function (data) {
+
+                    ContenedorNoInformadas.html(data);
+                    // $(".footable").footable();
+                },
+                complete: function () {
+                    $(".spiner-cargando-no-informadas").addClass('hide');
+                    $("#cuentaNoInformadas").html($("#NoInformadas tbody tr").length);
+                    makeBootstrapTable('NoInformadas');
+                    //$('#NoInformadas').footable();
+                    $(".fecha-picker").datepicker({
+                        format: "dd/mm/yyyy",
+                        todayBtn: true,
+                        language: "es",
+                        autoclose: true,
+                        todayHighlight: true
+                    });
+                }
+            });
+        }
+
+        $(document).on('change', '#NoInformadas tbody tr.ACTIVA #item_IOR_MEDICO', function () {
+
+            var oidMedico = $(this).val();
+            var oidExploracion = $('#NoInformadas tbody tr.ACTIVA').data('oidexploracion');
+
+            $.ajax({
+                type: 'GET',
+                url: '/Informe/AsignarMedicoExploracion',
+                data: {
+                    oidMedico: oidMedico,
+                    oidExploracion: oidExploracion
+                },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success('El médico se ha asignado correctamente', 'Asignar médico', { timeOut: 5000 });
+                    } else {
+                        toastr.error(data.message, 'Asignar médico', { timeOut: 5000 });
+                    }
+                },
+                complete: function () {
+
+                    var oidPersonal = 0;
+                    if ($('#oidPersonalNoInformadas').val() != '') {
+                        oidPersonal = $('#oidPersonalNoInformadas').val();
+                    }
+
+                    var boolean = false;
+
+                    if ($('#oidNoPersonalNoInformadas').prop('checked')) {
+                        boolean = true;
+                    }
+
+                    buscarNoInformadas(oidPersonal, boolean);
+                }
+            });
+        });
+
+        $(document).on('changeDate', '#NoInformadas tbody tr.ACTIVA #item_FECHAMAXIMAADMIN', function () {
+
+            var fecha = $(this).val();
+            var oidExploracion = $('#NoInformadas tbody tr.ACTIVA').data('oidexploracion');
+
+            if (fecha != "") {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Informe/ModificarFechaMaxima',
+                    data: {
+                        fecha: fecha,
+                        oidExploracion: oidExploracion
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            toastr.success('La fecha máxima se ha modificado correctamente', 'Modificar fecha máxima', { timeOut: 5000 });
+                        } else {
+                            toastr.error(data.message, 'Modificar fecha máxima', { timeOut: 5000 });
+                        }
+                    },
+                    complete: function () {
+
+                        var oidPersonal = 0;
+                        if ($('#oidPersonalNoInformadas').val() != '') {
+                            oidPersonal = $('#oidPersonalNoInformadas').val();
+                        }
+
+                        var boolean = false;
+
+                        if ($('#oidNoPersonalNoInformadas').prop('checked')) {
+                            boolean = true;
+                        }
+
+                        buscarNoInformadas(oidPersonal, boolean);
+                    }
+                });
+            }
+        });
+
+    </script>
+}

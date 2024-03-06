@@ -1857,6 +1857,113 @@ namespace RadioWeb.Models.Repos
             return oResult;
         }
 
+        public static List<VMExploNoInformadas> ObtenerMedicoInformante(int oidMedicoInformante, bool oidNoPersonalNoInformadas = false)
+        {
+            FbConnection oConexion = new FbConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString);
+            oConexion.Open();
+
+            string queryInformes = "select  rr.cod as medRev,  m.NOMBRE, a.DES_FIL,e.ior_master, e.oid, e.ior_empresa, e.ior_GPR, e.ior_paciente, e.intocable, e.fecha, e.hora, e.hora_ll, e.hora_ex, e.informada,";
+            queryInformes += "i.cod as lkp_medinfo, l.cod as lkp_medrevision,i.nombre as nommedico, p.paciente, e.privado, e.numeros, m.codmut,";
+            queryInformes += "d.cod_fil,a.fil,c.cod_med,e.cantidad,o.simbolo,e.aplazado,";
+            queryInformes += "e.pagado, e.facturada,  e.num_fac, e.estado, d.owner, e.haycomen, e.ior_colegiado, e.nofacturab, e.ior_medico,";
+            queryInformes += "e.ior_aparato, e.ior_tipoexploracion, e.ior_entidadpagadora, m.ior_dap, e.ior_grupo, e.ior_codigorx, x.owner, e.hayconsumible, e.borrado, e.cid, e.fechamaxentrega,e.fecha_fac,e.fecha_iden, substring(t.texto from 1 for 200) as comentario, e.fecha_recogida ";
+            queryInformes += "from exploracion e left join paciente p on p.oid = e.ior_paciente left join mutuas m on m.oid = e.ior_entidadpagadora left join daparatos d on d.oid = e.ior_aparato ";
+            queryInformes += "left join aparatos a on a.oid = e.ior_tipoexploracion left join colegiados c on c.oid = e.ior_colegiado left join monedas o on o.oid = e.ior_moneda left join rx x on x.oid = e.ior_codigorx left join personal i on i.oid = e.ior_medico ";
+            queryInformes += "left join personal l on l.oid = e.cid left join textos t on t.owner = e.oid ";
+            queryInformes += "left join personal rr on rr.oid = e.ior_medrevision ";
+            queryInformes += " WHERE e.IOR_EMPRESA = 4 and ((e.FECHA<CURRENT_TIMESTAMP AND e.ESTADO='3') OR (e.FECHA>=CURRENT_TIMESTAMP)) AND (e.FECHA>CURRENT_TIMESTAMP-90) and (e.INFORMADA <> 'T' or e.INFORMADA IS NULL) AND e.ESTADO='3' AND (e.IOR_MOTDESPROG<1 or e.IOR_MOTDESPROG is null) ";
+
+            if (oidNoPersonalNoInformadas)
+            {
+                queryInformes += " and (e.ior_medico < 1 or e.ior_medico is null) and (not e.ior_aparato in (226176,226182,226181)) ";
+            }
+            else
+            {
+                if (oidMedicoInformante > 0)
+                {
+                    queryInformes += " and e.IOR_MEDICO = " + oidMedicoInformante;
+                }
+                else
+                {
+                    //si no nos han pasado ningun médico para firmar debemos filtar por aquellas 
+                    //explocariones que les han asignado algun medico pero no han sido informadas
+                    queryInformes += " and (not (e.ior_aparato in (226176,226182,226181,226180) and (((e.ior_medico<1) or (e.ior_medico is null)) or (e.ior_medico=252516)))) ";
+                }
+            }
+
+            queryInformes += " order by e.FECHAMAXENTREGA, e.fecha ASC";
+
+            FbCommand oCommand = new FbCommand(queryInformes, oConexion);
+            FbDataReader oReader = oCommand.ExecuteReader();
+
+            List<VMExploNoInformadas> oResult = new List<VMExploNoInformadas>();
+
+            try
+            {
+                while (oReader.Read())
+                {
+                    VMExploNoInformadas oExploracion =
+                        new VMExploNoInformadas
+                        {
+                            OID = DataBase.GetIntFromReader(oReader, "OID"),
+                            COD_FIL = DataBase.GetStringFromReader(oReader, "COD_FIL"),
+                            FIL = DataBase.GetStringFromReader(oReader, "DES_FIL"),
+                            COD_MED = DataBase.GetStringFromReader(oReader, "COD_MED"),
+                            NOM_MED = DataBase.GetStringFromReader(oReader, "nommedico"),
+                            COD_MUT = DataBase.GetStringFromReader(oReader, "CODMUT"),
+                            DES_MUT = DataBase.GetStringFromReader(oReader, "NOMBRE"),
+                            FECHA = DataBase.GetDateTimeFromReader(oReader, "FECHA"),
+                            HAYCONSUMIBLE = DataBase.GetBoolFromReader(oReader, "HAYCONSUMIBLE"),
+                            HORA = DataBase.GetStringFromReader(oReader, "HORA"),
+                            MEDINFO = DataBase.GetStringFromReader(oReader, "LKP_MEDINFO"),
+                            MEDREV = DataBase.GetStringFromReader(oReader, "medRev"),
+                            IOR_MASTER = DataBase.GetIntFromReader(oReader, "IOR_MASTER"),
+                            PACIENTE = DataBase.GetStringFromReader(oReader, "PACIENTE"),
+                            TEXTO = DataBase.GetStringFromReader(oReader, "COMENTARIO"),
+                            BORRADO = DataBase.GetBoolFromReader(oReader, "BORRADO"),
+                            INFORMADO = DataBase.GetBoolFromReader(oReader, "INFORMADA"),
+                            FECHAMAXIMA = DataBase.GetDateTimeFromReader(oReader, "fechamaxentrega"),
+                            IOR_PACIENTE = DataBase.GetIntFromReader(oReader, "IOR_PACIENTE"),
+                            IOR_MEDICO = DataBase.GetIntFromReader(oReader, "IOR_MEDICO"),
+                            FECHAMAXIMAADMIN = DataBase.GetDateTimeFromReader(oReader, "fechamaxentrega"),
+                            FECHA_RECOGIDA = DataBase.GetDateTimeFromReader(oReader, "fecha_recogida"),
+                        };
+                    if (oExploracion.FECHAMAXIMA.HasValue)
+                    {
+                        oExploracion.DIAS_ENTREGA = (oExploracion.FECHAMAXIMA.Value - DateTime.Now).Days + 1;
+
+                        //var fechaMaximaAdmin = oExploracion.FECHAMAXIMA.Value.ToString("dd/MM/yyyy");
+                        //oExploracion.FECHAMAXIMAADMIN = fechaMaximaAdmin;
+                    }
+
+
+                    oResult.Add(oExploracion);
+
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                if (oConexion.State == System.Data.ConnectionState.Open)
+                {
+                    oConexion.Close();
+                    if (oCommand != null)
+                    {
+                        oCommand.Dispose();
+                    }
+                }
+
+            }
+
+
+
+            return oResult;
+        }
 
         public static List<VMExploNoInformadas> ObtenerMedicoInformante(int oidMedicoInformante)
         {

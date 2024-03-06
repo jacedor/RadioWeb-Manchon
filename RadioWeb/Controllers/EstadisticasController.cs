@@ -482,6 +482,7 @@ namespace RadioWeb.Controllers
                 _Filtrosrepository.Guardar(usuarioAutenticated.IDUSER, "ESTADISTICAS", "FECHA", fecha, "string");
 
             }
+            ViewBag.EsconderPromedio = false; 
             return View("Resumen", oViewModel);
         }
 
@@ -503,6 +504,7 @@ namespace RadioWeb.Controllers
                 anyo = anyo
             };
             List<ItemResumen> oRecuento = EstadisticaRepositorio.GetResumenFacturacionPorGrupo(fechaInicial, fechaFinal, oFiltros);
+            ViewBag.EsconderPromedio = true; 
             ViewBag.Actual = DateTime.Parse(fechaInicial).Year.ToString();
             ViewBag.Comparado = (DateTime.Parse(fechaInicial).Year - anyo).ToString();
             return PartialView("ResumenTable", oRecuento);

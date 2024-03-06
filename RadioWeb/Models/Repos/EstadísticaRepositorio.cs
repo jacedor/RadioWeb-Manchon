@@ -876,11 +876,11 @@ namespace RadioWeb.Models.Repos
 
                     oItem.Grupo = oReader["COD_GRUP"].ToString();
                     oItem.Ventas = DataBase.GetDecimalFromReader(oReader, "sActual");
-                    oItem.PromedioVentas = DataBase.GetDecimalFromReader(oReader, "pActual");
+                   // oItem.PromedioVentas = DataBase.GetDecimalFromReader(oReader, "pActual");
                     oItem.VentaConsum = DataBase.GetDecimalFromReader(oReader, "sActualConsum");
                     oItem.VentaTotal = DataBase.GetDecimalFromReader(oReader, "sActualTOTAL");
                     oItem.Venta2 = DataBase.GetDecimalFromReader(oReader, "sAnterior");
-                    oItem.PromedioVentas2 = DataBase.GetDecimalFromReader(oReader, "pAnterior");
+                   // oItem.PromedioVentas2 = DataBase.GetDecimalFromReader(oReader, "pAnterior");
                     oItem.Venta2Consum = DataBase.GetDecimalFromReader(oReader, "SANTERIORCONSUM");
                     oItem.Venta2Total = DataBase.GetDecimalFromReader(oReader, "SANTERIORTOTAL");
                     oItem.DiferenciaVentas = DataBase.GetDecimalFromReader(oReader, "difCantidad");//Double.Parse(DataBase.GetDoubleFromReader(oReader, "difCantidad").ToString());
@@ -969,7 +969,7 @@ namespace RadioWeb.Models.Repos
 
                 string query = "SELECT * " +
                         " FROM FACTURACION  ('" + fechaInicialAnyoActual + "', '" + fechaFinallAnyoActual + "', " + anyo + "," +
-                        ior_mutua + "," + centro + "," + pagado + "," + ior_gpr + "," + ior_colegiado + "," + ior_medico + "," + facturado + " ) p";
+                        ior_mutua + "," + centro + "," + pagado + "," + ior_gpr + "," + ior_colegiado + "," + ior_medico + "," + facturado + " ) p ";
 
                 if (oFiltros.oidGrupoAparato > 0)
                 {

@@ -1983,6 +1983,7 @@
     <Content Include="Views\Kiosko\TV.cshtml" />
     <Content Include="Views\Kiosko\TVForm.cshtml" />
     <Content Include="Views\Kiosko\Agendas.cshtml" />
+    <Content Include="Views\Informe\ExploracionesPendientesAdmin.cshtml" />
     <None Include="Views\Pagos\PagoRapido.cshtml" />
     <Content Include="Views\P_Informe\Editor.cshtml" />
     <Content Include="Views\P_Informe\Admin.cshtml" />

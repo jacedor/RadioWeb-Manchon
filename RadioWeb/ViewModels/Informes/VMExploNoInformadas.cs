@@ -96,7 +96,18 @@ namespace RadioWeb.ViewModels.Informes
 
         public static List<VMInformesNoRevisados> PENDIENTESREVISAR { get; set; }
 
+        [DisplayName("Médico responsable")]
+        [DataType("MEDICO")]
+        public int IOR_MEDICO { get; set; }
 
+        [DisplayName("D. Entrega")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [DataType("FECHAPICKER")]
+        public Nullable<System.DateTime> FECHAMAXIMAADMIN { get; set; }
+
+        [DisplayName("F. Recogida")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        public Nullable<System.DateTime> FECHA_RECOGIDA { get; set; }
 
     }
 }

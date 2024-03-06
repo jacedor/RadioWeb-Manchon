@@ -138,56 +138,83 @@ namespace RadioWeb.Controllers
             WebConfigRepositorio oConfig = new WebConfigRepositorio();
             ViewBag.CampoMutua = oConfig.ObtenerValor("ComboMutuas").ToUpper();
 
-            ViewBag.oidMedico = oPersonal.OID;
-
-            List<VMExploNoInformadas> listaInformesPendientes = new List<VMExploNoInformadas>(); ;
+            List<VMExploNoInformadas> listaInformesPendientes = new List<VMExploNoInformadas>();
             List<VMExploNoInformadas> listaInformesTemp = null;
-            //INFORMES PENDIENTES
-            if (usuario.PERFIL == 10 || usuario.PERFIL == 2)
+
+            if (oPersonal != null)
             {
-                VMExploNoInformadas.ULTIMOSINFORMES = new List<INFORMES>();
-                int personalInformante = oPersonal.OID;
-                if (filter == "all")
+                ViewBag.oidMedico = oPersonal.OID;
+
+                if (usuario.PRIVILEGIADO == -1 || usuario.PRIVILEGIADO == 1)
                 {
-                    personalInformante = 0;
+                    return View("ExploracionesPendientesAdmin", listaInformesPendientes);
                 }
-                //Obtenemos los informes pendientes 
-                listaInformesPendientes = ExploracionRepositorio.ObtenerMedicoInformante(personalInformante);
+
+                //INFORMES PENDIENTES
+                if (usuario.ESMEDICO)
+                {
+                    VMExploNoInformadas.ULTIMOSINFORMES = new List<INFORMES>();
+                    int personalInformante = oPersonal.OID;
+                    if (filter == "all")
+                    {
+                        personalInformante = 0;
+                    }
+                    //Obtenemos los informes pendientes 
+                    listaInformesPendientes = ExploracionRepositorio.ObtenerMedicoInformante(personalInformante);
+                }
+                else
+                {
+                    //Si hemos llegado a esta pantalla y no somos medico informante enseñamos todos los                 
+                    listaInformesPendientes = ExploracionRepositorio.ObtenerMedicoInformante(0);
+                }
+
+                if (usuario.ESMEDICO)
+                {
+                    VMExploNoInformadas.ULTIMOSINFORMES = db.Informes
+                            .Where(t => t.IOR_MEDINFORME == oPersonal.OID)
+                            .OrderByDescending(t => t.OID)
+                            .Take(20);
+
+                    foreach (var item in VMExploNoInformadas.ULTIMOSINFORMES)
+                    {
+                        LISTADIA oExplo = ListaDiaRepositorio.Obtener(item.OWNER.Value);
+                        item.PACIENTE = oExplo.PACIENTE;
+                        if (item.IOR_MEDREVISION == 0)
+                        {
+                            item.IOR_MEDREVISION = -1;
+                        }
+                        PERSONAL oPersonalRevisor = db.Personal.Where(p => p.OID == item.IOR_MEDREVISION)
+                                                    .FirstOrDefault();
+                        item.MEDICOREVISOR = (oPersonalRevisor != null ? oPersonalRevisor.LOGIN : "");
+                        item.FECHAEXPLORACION = oExplo.FECHA;
+                        if (oExplo.FECHAMAXENTREGA.HasValue)
+                        {
+                            item.FECHAMAXIMAENTREGA = oExplo.FECHAMAXENTREGA.Value.ToShortDateString();
+                        }
+
+                    }
+                }
+
+                return View(listaInformesPendientes);
             }
             else
             {
-                //Si hemos llegado a esta pantalla y no somos medico informante enseñamos todos los                 
-                listaInformesPendientes = ExploracionRepositorio.ObtenerMedicoInformante(0);
-            }
-
-            if (usuario.ESMEDICO)
-            {
-                VMExploNoInformadas.ULTIMOSINFORMES = db.Informes
-                        .Where(t => t.IOR_MEDINFORME == oPersonal.OID)
-                        .OrderByDescending(t => t.OID)
-                        .Take(20);
-
-                foreach (var item in VMExploNoInformadas.ULTIMOSINFORMES)
+                if (usuario.PRIVILEGIADO == -1 || usuario.PRIVILEGIADO == 1)
                 {
-                    LISTADIA oExplo = ListaDiaRepositorio.Obtener(item.OWNER.Value);
-                    item.PACIENTE = oExplo.PACIENTE;
-                    if (item.IOR_MEDREVISION == 0)
-                    {
-                        item.IOR_MEDREVISION = -1;
-                    }
-                    PERSONAL oPersonalRevisor = db.Personal.Where(p => p.OID == item.IOR_MEDREVISION)
-                                                .FirstOrDefault();
-                    item.MEDICOREVISOR = (oPersonalRevisor != null ? oPersonalRevisor.LOGIN : "");
-                    item.FECHAEXPLORACION = oExplo.FECHA;
-                    if (oExplo.FECHAMAXENTREGA.HasValue)
-                    {
-                        item.FECHAMAXIMAENTREGA = oExplo.FECHAMAXENTREGA.Value.ToShortDateString();
-                    }
-
+                    return View("ExploracionesPendientesAdmin", listaInformesPendientes);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
                 }
             }
+        }
 
-            return View(listaInformesPendientes);
+        public ActionResult NoInformadas(int oidPersonal, bool oidNoPersonalNoInformadas)
+        {
+             List<VMExploNoInformadas> oResult = ExploracionRepositorio.ObtenerMedicoInformante(oidPersonal, oidNoPersonalNoInformadas);
+
+            return PartialView("_NoInformadas", oResult);
         }
 
         //paso 2 realización de informes
