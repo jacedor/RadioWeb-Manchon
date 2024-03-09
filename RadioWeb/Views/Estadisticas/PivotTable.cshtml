@@ -54,22 +54,22 @@ new AjaxOptions
 
                             @Html.BootstrapLabelFor(m => m.FECHA_INICIO)
                             @Html.EditorFor(model => model.FECHA_INICIO, new
-        {
-            htmlAttributes = new { autocomplete = "off", @class = "fecha-mask"  }
-        })
+                       {
+                           htmlAttributes = new { autocomplete = "off", @class = "fecha-mask fecha-picker" }
+                       })
                         </div>
                         <div class="col-sm-2 col-md-2">
 
                             @Html.BootstrapLabelFor(m => m.FECHA_FIN)
                             @Html.EditorFor(model => model.FECHA_FIN, new
         {
-            htmlAttributes = new { autocomplete = "off", @class = "fecha-mask" }
+            htmlAttributes = new { autocomplete = "off", @class = "fecha-mask fecha-picker" }
         })
                         </div>
 
                         <div class="col-sm-2 col-md-2" style="margin-top:5px;">
                             <br />
-                            <button class="btn btn-primary btn-block" type="submit">Buscar</button>
+                            <button class="btn btn-primary btn-block" id="btnBuscar" type="submit">Buscar</button>
                         </div>
 
                         <div class="col-sm-4 col-md-4 text-right" style="margin-top:5px;">
@@ -78,7 +78,7 @@ new AjaxOptions
                         </div>
                         <div class="col-sm-2 col-md-2 text-right" style="margin-top:5px;">
                             <br />
-                            <button class="btn btn-warning " onclick="tableToExcel('testTable', 'W3C Example Table')" type="button" id="ExcelExport">Excel</button>
+                            <button class="btn btn-warning " onclick="tableToExcel('ExportaPivotTable', 'W3C Example Table')" type="button" id="ExcelExport">Excel</button>
                         </div>
                     </div>
 
@@ -92,7 +92,10 @@ new AjaxOptions
              
                 <div class="ibox-content" >
                     <h2>
-                        <span class="text-navy">@ViewBag.PivotTitulo</span>
+                       
+                        <a href="#" data-type="text" class="textoXeditable" data-url="/Estadisticas/EditarCampoPivot" id="NOMBRE" data-pk="@Model.OIDACTIVA" data-value="@ViewBag.PivotTitulo" data-title="Editar @ViewBag.PivotTitulo">
+                        
+                        </a>
                     </h2>
                     <div id="ContentTable">
 
@@ -113,7 +116,7 @@ new AjaxOptions
         <script src="~/js/custom/c3/c3.js"></script>
     <script src="https://cdn.plot.ly/plotly-basic-latest.min.js"></script>
     <script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="~/js/plugins/jquery-ui/jquery-ui.js"></script>
+ @*   <script src="~/js/plugins/jquery-ui/jquery-ui.js"></script>*@
 
     <script src="~/js/plugins/pivottable/pivot.js"></script>
     <script src="~/js/plugins/pivottable/pivot.es.js"></script>

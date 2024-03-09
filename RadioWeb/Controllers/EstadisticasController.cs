@@ -145,6 +145,20 @@ namespace RadioWeb.Controllers
             return RedirectToAction("ListPivotTable", "Estadisticas");
         }
 
+        string GetEstadoText(string estado)
+        {
+            switch (estado)
+            {
+                case "0": return "PENDIENTE";
+                case "1": return "BORRADO";
+                case "2": return "PRESENCIA";
+                case "3": return "REALIZADO";
+                case "4": return "NO PRESENTADO";
+                case "5": return "LLAMA ANULANDO";
+                default: return "DESCONOCIDO"; // En caso de un valor no esperado
+            }
+        }
+
         public ActionResult PivotTableData(string FECHA_INICIO, string FECHA_FIN)
         {
             //  RellenarCombos();
@@ -187,7 +201,7 @@ namespace RadioWeb.Controllers
                            MES = explo.FECHA.Month + " - " + CultureInfo.CurrentCulture.TextInfo.ToTitleCase(System.Globalization.DateTimeFormatInfo.CurrentInfo.GetMonthName(explo.FECHA.Month)),
                            CENTROD = explo.CENTROD,
                            MEDINF = explo.MEDICO,                          
-                           explo.ESTADO,
+                           ESTADO= GetEstadoText(explo.ESTADO),
                            FACT = explo.FACTURADA,
                            PAGADO=explo.PAGADO,
                            GRUPO = explo.GRUPO,
