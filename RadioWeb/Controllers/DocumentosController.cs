@@ -11,6 +11,7 @@ using RadioWeb.ViewModels.Documentos;
 using ADPM.Common.Web.DataAnnotations;
 using RadioWeb.Models.Logica;
 using System.Data.Entity;
+using System.Security.Cryptography;
 
 namespace RadioWeb.Controllers
 {
@@ -64,12 +65,18 @@ namespace RadioWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase file, int OIDEXPLORACIONDOCS)
+        public ActionResult Upload(HttpPostedFileBase file, int OIDEXPLORACIONDOCS=-1)
         {
             if (file != null && file.ContentLength > 0)
                 try
                 {
                     EXPLORACION oExplo = ExploracionRepositorio.Obtener(OIDEXPLORACIONDOCS);
+
+                    //SI LA EXPLORACION NO SE LOCALIZA SIGNIFICA QUE ESTAN ASOCIANDO UN DOCUMENTO AL PACIENTE
+                    if (oExplo.OID<0)
+                    {
+                        oExplo.IOR_PACIENTE = OIDEXPLORACIONDOCS;
+                    }
 
                     FileInfo oFileInfo = new FileInfo(file.FileName);
 
@@ -273,9 +280,12 @@ namespace RadioWeb.Controllers
         public ActionResult ListaPaciente(int oid)
         {
             VMDocumentosPaciente oViewModel = new VMDocumentosPaciente();
+            ViewBag.OIDEXPLORACIONDOCS = oid;
             oViewModel.DOCUMENTOS = db.Imagenes
                 .Where(p => p.IOR_PACIENTE == oid && p.BORRADO != "T")
-                .ToList();
+            .ToList();
+
+         
             foreach (var firmados in db.Vid_Documentos.Where(d => d.IOR_PACIENTE == oid))
             {
 

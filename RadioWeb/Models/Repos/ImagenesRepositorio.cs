@@ -178,6 +178,66 @@ namespace RadioWeb.Models.Repos
             }
         }
 
+        public static List<IMAGENES> ObtenerPorPaciente(int oidPaciente)
+        {
+
+            FbConnection oConexion = new FbConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString);
+            oConexion.Open();
+            List<IMAGENES> oImagenes = new List<IMAGENES>();
+
+            FbCommand oCommand = null;
+
+            try
+            {
+                string query = "select r.oid,r.descrip,r.username,r.cid,r.owner,r.ext,r.fecha,r.ior_paciente,r.path," +
+                    "r.nombre,r.ior_exploracion,a.nombre tipo, a.CANAL VIDSIGNER " +
+                    "from imagenes r left join refractometros a on  a.oid=r.owner where r.ior_paciente=" + oidPaciente;            
+
+
+                query = query + " and ( not (r.BORRADO='T') or r.BORRADO is null) order by r.fecha desc";
+                oCommand = new FbCommand(query, oConexion);
+
+                FbDataReader oReader = oCommand.ExecuteReader();
+
+
+                while (oReader.Read())
+                {
+                    IMAGENES oImagen = new IMAGENES();
+                    oImagen.OID = DataBase.GetIntFromReader(oReader, "OID");
+                    oImagen.CID = DataBase.GetIntFromReader(oReader, "CID");
+                    oImagen.OWNER = DataBase.GetIntFromReader(oReader, "OWNER");
+                    oImagen.EXT = DataBase.GetStringFromReader(oReader, "EXT");
+                    oImagen.USERNAME = DataBase.GetStringFromReader(oReader, "USERNAME");
+                    oImagen.FECHA = DataBase.GetDateTimeFromReader(oReader, "FECHA");
+                    oImagen.TIPO = DataBase.GetStringFromReader(oReader, "TIPO");
+                    oImagen.IOR_PACIENTE = DataBase.GetIntFromReader(oReader, "IOR_PACIENTE");
+                    oImagen.PATH = DataBase.GetStringFromReader(oReader, "PATH");
+                    oImagen.NOMBRE = DataBase.GetStringFromReader(oReader, "NOMBRE");
+                    oImagen.FIRMABLEENTABLET = (DataBase.GetStringFromReader(oReader, "VIDSIGNER") == "1" ? true : false);
+                    oImagen.IOR_EXPLORACION = DataBase.GetIntFromReader(oReader, "IOR_EXPLORACION");
+                    oImagen.RUTACOMPLETA = oImagen.PATH + oImagen.NOMBRE + "." + oImagen.EXT;
+                    oImagenes.Add(oImagen);
+                }
+                return oImagenes;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                if (oConexion.State == System.Data.ConnectionState.Open)
+                {
+                    oConexion.Close();
+                    if (oCommand != null)
+                    {
+                        oCommand.Dispose();
+                    }
+                }
+            }
+        }
+
         public static List<IMAGENES> Obtener(int oidExploracion, int tipoDocumento )
         {
 

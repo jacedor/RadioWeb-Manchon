@@ -293,12 +293,13 @@ namespace RadioWeb.Controllers
                 oPersonal = db.Personal.Where(p => p.OID <= 0).FirstOrDefault();
             }
 
-            if (oInforme.TEXTOHTML.Contains("Firma M&eacute;dico") || oInforme.TEXTOHTML.Contains("Firma Médico") || oInforme.TEXTOHTML.Contains("Firma Medico"))
+            if (oInforme.TEXTOHTML.Contains("FirmaMedico") || oInforme.TEXTOHTML.Contains("Firma M&eacute;dico") || oInforme.TEXTOHTML.Contains("Firma Médico") || oInforme.TEXTOHTML.Contains("Firma Medico"))
             {
 
                 oInforme.TEXTOHTML.Replace("Firma M&eacute;dico", "<img src='/img/" + usuario.LOGIN + ".jpg>");
-                oInforme.TEXTOHTML.Replace("Firma Médico", " < img src='/img/" + usuario.LOGIN + ".jpg>");
-                oInforme.TEXTOHTML.Replace("Firma Médico", " < img src='/img/" + usuario.LOGIN + ".jpg>");
+                oInforme.TEXTOHTML.Replace("Firma M&eacute;dico", "<img src='/img/" + usuario.LOGIN + ".jpg>");
+                oInforme.TEXTOHTML.Replace("Firma Médico", " <img src='/img/" + usuario.LOGIN + ".jpg>");
+                oInforme.TEXTOHTML.Replace("FirmaMédico", " <img src='/img/" + usuario.LOGIN + ".jpg>");
             }
             oInforme.TEXTOHTML = oInforme.TEXTOHTML.Replace("@MI", oPersonal.DESCRIPCION);
             oInforme.TEXTOHTML = oInforme.TEXTOHTML.Replace("@NU", oPersonal.NUMERO);

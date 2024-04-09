@@ -10,6 +10,8 @@ namespace TuoTempo.Models
     {
         public string email { get; set; }
         public string mobile_phone { get; set; }
+        public string preparation { get; set; }
+        public string reminder { get; set; }
 
     }
     

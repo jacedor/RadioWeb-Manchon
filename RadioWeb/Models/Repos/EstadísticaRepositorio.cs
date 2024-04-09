@@ -984,27 +984,50 @@ namespace RadioWeb.Models.Repos
                 oReader = oCommand.ExecuteReader();
                 while (oReader.Read())
                 {
-
                     ItemResumen oItem = new ItemResumen();
-                    oItem.Grupo = oReader["COD_GRUP"].ToString();
-                    oItem.Ventas = DataBase.GetDecimalFromReader(oReader, "sActual"); //(decimal)oReader["sActual"];
-                    oItem.PromedioVentas = DataBase.GetDecimalFromReader(oReader, "pAnterior"); //(decimal)oReader["sActual"];
-                    oItem.VentaTotal = DataBase.GetDecimalFromReader(oReader, "sActualTOTAL");
-                    oItem.VentaConsum = DataBase.GetDecimalFromReader(oReader, "SACTUALCONSUM"); //(decimal)oReader["SACTUALCONSUM"];
-                    oItem.Venta2 = DataBase.GetDecimalFromReader(oReader, "sAnterior"); //(decimal)oReader["sAnterior"];
-                    oItem.PromedioVentas2 = DataBase.GetDecimalFromReader(oReader, "pActual"); //(decimal)oReader["sActual"];
+                    oItem.Grupo = oReader.IsDBNull(oReader.GetOrdinal("COD_GRUP")) ? string.Empty : oReader["COD_GRUP"].ToString();
+                    oItem.Ventas = oReader.IsDBNull(oReader.GetOrdinal("sActual")) ? 0 : DataBase.GetDecimalFromReader(oReader, "sActual");
+                    oItem.PromedioVentas = oReader.IsDBNull(oReader.GetOrdinal("pAnterior")) ? 0 : DataBase.GetDecimalFromReader(oReader, "pAnterior");
+                    oItem.VentaTotal = oReader.IsDBNull(oReader.GetOrdinal("sActualTOTAL")) ? 0 : DataBase.GetDecimalFromReader(oReader, "sActualTOTAL");
+                    oItem.VentaConsum = oReader.IsDBNull(oReader.GetOrdinal("SACTUALCONSUM")) ? 0 : DataBase.GetDecimalFromReader(oReader, "SACTUALCONSUM");
+                    oItem.Venta2 = oReader.IsDBNull(oReader.GetOrdinal("sAnterior")) ? 0 : DataBase.GetDecimalFromReader(oReader, "sAnterior");
+                    oItem.PromedioVentas2 = oReader.IsDBNull(oReader.GetOrdinal("pActual")) ? 0 : DataBase.GetDecimalFromReader(oReader, "pActual");
 
-                    oItem.Venta2Consum = DataBase.GetDecimalFromReader(oReader, "SANTERIORCONSUM");// (decimal)oReader["SANTERIORCONSUM"];
-                    oItem.Venta2Total = DataBase.GetDecimalFromReader(oReader, "SANTERIORTOTAL");
-                    oItem.DiferenciaVentas = DataBase.GetDecimalFromReader(oReader, "difCantidad"); //(decimal)oReader["difCantidad"];//Double.Parse(DataBase.GetDoubleFromReader(oReader, "difCantidad").ToString());
-                    oItem.DiferenciaVentasPorc = DataBase.GetDecimalFromReader(oReader, "difCantidadPorc"); //(decimal)oReader["difCantidadPorc"];// Double.Parse(DataBase.GetDoubleFromReader(oReader, "difCantidadPorc").ToString());
-                    oItem.Cuenta2 = int.Parse(oReader["cAnterior"].ToString());
-                    oItem.Cuenta = int.Parse(oReader["cActual"].ToString());
-                    oItem.DiferenciaCuenta = int.Parse(oReader["difCuenta"].ToString());
-                    oItem.DiferenciaCuentaPorc = DataBase.GetDecimalFromReader(oReader, "difCuentaPorc");// (decimal)oReader["difCuentaPorc"];//((oItem.Cuenta - oItem.Cuenta2) / oItem.Cuenta2) * 100;
+                    oItem.Venta2Consum = oReader.IsDBNull(oReader.GetOrdinal("SANTERIORCONSUM")) ? 0 : DataBase.GetDecimalFromReader(oReader, "SANTERIORCONSUM");
+                    oItem.Venta2Total = oReader.IsDBNull(oReader.GetOrdinal("SANTERIORTOTAL")) ? 0 : DataBase.GetDecimalFromReader(oReader, "SANTERIORTOTAL");
+                    oItem.DiferenciaVentas = oReader.IsDBNull(oReader.GetOrdinal("difCantidad")) ? 0 : DataBase.GetDecimalFromReader(oReader, "difCantidad");
+                    oItem.DiferenciaVentasPorc = oReader.IsDBNull(oReader.GetOrdinal("difCantidadPorc")) ? 0 : DataBase.GetDecimalFromReader(oReader, "difCantidadPorc");
+                    oItem.Cuenta2 = oReader.IsDBNull(oReader.GetOrdinal("cAnterior")) ? 0 : int.Parse(oReader["cAnterior"].ToString());
+                    oItem.Cuenta = oReader.IsDBNull(oReader.GetOrdinal("cActual")) ? 0 : int.Parse(oReader["cActual"].ToString());
+                    oItem.DiferenciaCuenta = oReader.IsDBNull(oReader.GetOrdinal("difCuenta")) ? 0 : int.Parse(oReader["difCuenta"].ToString());
+                    oItem.DiferenciaCuentaPorc = oReader.IsDBNull(oReader.GetOrdinal("difCuentaPorc")) ? 0 : DataBase.GetDecimalFromReader(oReader, "difCuentaPorc");
+
                     result.Add(oItem);
-
                 }
+
+                //while (oReader.Read())
+                //{
+
+                //    ItemResumen oItem = new ItemResumen();
+                //    oItem.Grupo = oReader["COD_GRUP"].ToString();
+                //    oItem.Ventas = DataBase.GetDecimalFromReader(oReader, "sActual"); //(decimal)oReader["sActual"];
+                //    oItem.PromedioVentas = DataBase.GetDecimalFromReader(oReader, "pAnterior"); //(decimal)oReader["sActual"];
+                //    oItem.VentaTotal = DataBase.GetDecimalFromReader(oReader, "sActualTOTAL");
+                //    oItem.VentaConsum = DataBase.GetDecimalFromReader(oReader, "SACTUALCONSUM"); //(decimal)oReader["SACTUALCONSUM"];
+                //    oItem.Venta2 = DataBase.GetDecimalFromReader(oReader, "sAnterior"); //(decimal)oReader["sAnterior"];
+                //    oItem.PromedioVentas2 = DataBase.GetDecimalFromReader(oReader, "pActual"); //(decimal)oReader["sActual"];
+
+                //    oItem.Venta2Consum = DataBase.GetDecimalFromReader(oReader, "SANTERIORCONSUM");// (decimal)oReader["SANTERIORCONSUM"];
+                //    oItem.Venta2Total = DataBase.GetDecimalFromReader(oReader, "SANTERIORTOTAL");
+                //    oItem.DiferenciaVentas = DataBase.GetDecimalFromReader(oReader, "difCantidad"); //(decimal)oReader["difCantidad"];//Double.Parse(DataBase.GetDoubleFromReader(oReader, "difCantidad").ToString());
+                //    oItem.DiferenciaVentasPorc = DataBase.GetDecimalFromReader(oReader, "difCantidadPorc"); //(decimal)oReader["difCantidadPorc"];// Double.Parse(DataBase.GetDoubleFromReader(oReader, "difCantidadPorc").ToString());
+                //    oItem.Cuenta2 = int.Parse(oReader["cAnterior"].ToString());
+                //    oItem.Cuenta = int.Parse(oReader["cActual"].ToString());
+                //    oItem.DiferenciaCuenta = int.Parse(oReader["difCuenta"].ToString());
+                //    oItem.DiferenciaCuentaPorc = DataBase.GetDecimalFromReader(oReader, "difCuentaPorc");// (decimal)oReader["difCuentaPorc"];//((oItem.Cuenta - oItem.Cuenta2) / oItem.Cuenta2) * 100;
+                //    result.Add(oItem);
+
+                //}
 
 
                 return result;

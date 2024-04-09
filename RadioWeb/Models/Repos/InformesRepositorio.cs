@@ -931,15 +931,15 @@ namespace RadioWeb.Models.Repos
                 System.IO.File.WriteAllText(rutaFicheroCabeceraTemp, htmlCabecera);
 
                 string RutaMacrosPie = "";
-                //try
-                //{
-                //    RutaMacrosPie = oConfig.ObtenerValor("RutaMacroPieInformes");
-                //}
-                //catch (Exception)
-                //{
-                //    System.Threading.Thread.Sleep(1);
+                try
+                {
+                    RutaMacrosPie = oConfig.ObtenerValor("RutaMacroPieInformes");
+                }
+                catch (Exception)
+                {
+                    System.Threading.Thread.Sleep(1);
 
-                //}
+                }
                 if (!String.IsNullOrEmpty(RutaMacrosPie))
                 {
                     string pierUrl = HostingEnvironment.MapPath(RutaMacrosPie);
@@ -1117,9 +1117,13 @@ namespace RadioWeb.Models.Repos
             if (htmlText.Contains("FirmaMedico") ||htmlText.Contains("Firma M&eacute;dico") || htmlText.Contains("Firma Médico") || htmlText.Contains("Firma Medico"))
             {
                 PERSONAL oPersonal = PersonalRepositorio.Obtener(oInforme.IOR_MEDINFORME);
-              //  string cadenaImagen = "http://172.30.229.6/img/firmas/" + oPersonal.LOGIN + ".jpg";
-                 string cadenaImagen = "http://localhost:51839/img/firmas/" + oPersonal.LOGIN + ".jpg";
-                //string cadenaImagen = "/img/firmas/" + oPersonal.LOGIN + ".jpg";
+                //  string cadenaImagen = "http://172.30.229.6/img/firmas/" + oPersonal.LOGIN + ".jpg";
+                var request = HttpContext.Current.Request; // Asegúrate de tener 'using System.Web;' para acceder a HttpContext
+                string baseUrl = request.Url.GetLeftPart(UriPartial.Authority);
+
+                // Ahora construyes la cadena de la imagen usando la URL base dinámica
+                string cadenaImagen = $"{baseUrl}/img/firmas/{oPersonal.LOGIN}.jpg";
+
                 htmlText = htmlText.Replace("Firma M&eacute;dico", "<img bordeR='0' src='" + cadenaImagen + "'/>");
                 htmlText = htmlText.Replace("Firma Médico", "<img bordeR='0' src='" + cadenaImagen + "'/>");
                 htmlText = htmlText.Replace("Firma Medico", "<img bordeR='0' src='" + cadenaImagen + "'/>");

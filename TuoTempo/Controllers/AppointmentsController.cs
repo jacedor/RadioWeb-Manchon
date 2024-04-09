@@ -456,7 +456,7 @@ namespace TuoTempo.Controllers
                         // Ejecutar el comando
                         oPaciente.app_lid = (int)cmd.ExecuteScalar();
 
-                        // Usar el ID generado si es necesario
+
                     }
                 }
 
@@ -617,8 +617,348 @@ namespace TuoTempo.Controllers
 
 
         }
+
+
+
+        private AppointmentResponse CreateAppointmentResponseFromReader(IDataReader reader)
+        {
+            var appointmentReturn = new AppointmentResponse
+            {
+                app_lid = reader["APP_LID"].ToString(),
+                created = reader["created"] != DBNull.Value ? reader["created"].ToString() : "",
+                cancelled = reader["CANCElLED"] != DBNull.Value && reader["CANCElLED"].ToString() == "T",
+                modified = reader["modified"] != DBNull.Value ? reader["modified"].ToString() : "",
+                status = reader["status"].ToString(),
+                checkedin = reader["checkedin"] != DBNull.Value ? reader["checkedin"].ToString() : "",
+                start_visit = reader["start_visit"] != DBNull.Value ? reader["start_visit"].ToString() : "",
+                end_visit = reader["end_visit"] != DBNull.Value ? reader["end_visit"].ToString() : "",
+                communication = new communication
+                {
+                    preparation = reader["preparation"] != DBNull.Value ? reader["preparation"].ToString() : "",
+                    reminder = reader["reminder"] != DBNull.Value ? reader["reminder"].ToString() : "",
+                },
+                disable_reschedule = reader["disable_reschedule"] != DBNull.Value && reader["disable_reschedule"].ToString() == "T",
+                disable_cancel = reader["disable_cancel"] != DBNull.Value && reader["disable_cancel"].ToString() == "T"
+
+            };
+
+            Availabilities oHueco = new Availabilities
+            {
+                availability_lid = reader["availability_lid"] != DBNull.Value ? reader["availability_lid"].ToString() : "",
+                date = reader["adate"] != DBNull.Value ? reader["adate"].ToString() : "",
+                start_time = reader["start_time"] != DBNull.Value ? reader["start_time"].ToString() : "",
+                end_time = reader["end_time"] != DBNull.Value ? reader["end_time"].ToString() : "",
+                location_lid = reader["location_lid"] != DBNull.Value ? reader["location_lid"].ToString() : "",
+                activity_lid = reader["activity_lid"] != DBNull.Value ? reader["activity_lid"].ToString() : "",
+                insurance_lid = reader["insurance_lid"] != DBNull.Value ? reader["insurance_lid"].ToString() : "",
+                price = reader["price"] != DBNull.Value ? reader["price"].ToString() : "",
+                resource_lid = reader["resource_lid"] != DBNull.Value ? reader["resource_lid"].ToString() : "",
+            };
+
+            appointmentReturn.availability = oHueco;
+
+            string sexo = reader["GENDER"].ToString();
+
+
+            user oPaciente = new user();
+          
+            oPaciente.user_lid = reader["user_lid"] != DBNull.Value ? reader["user_lid"].ToString() : "";
+            oPaciente.first_name = reader["first_name"] != DBNull.Value ? reader["first_name"].ToString() : "";
+            oPaciente.second_name = reader["second_name"] != DBNull.Value ? reader["second_name"].ToString() : "";
+            oPaciente.third_name = reader["third_name"] != DBNull.Value ? reader["third_name"].ToString() : "";
+            oPaciente.birthdate = reader["birthdate"] != DBNull.Value ? reader["birthdate"].ToString() : "";
+            oPaciente.gender = sexo;
+
+            IdNumber idNumber = new IdNumber();
+            idNumber.number = reader["id_number"] != DBNull.Value ? reader["id_number"].ToString() : "";
+            idNumber.type = reader["id_type"] != DBNull.Value ? Convert.ToInt32(reader["id_type"]) : 1;
+            oPaciente.id_number = idNumber;
+
+            Contact contact = new Contact();
+            contact.email = reader["CONTACT_EMAIL"] != DBNull.Value ? reader["CONTACT_EMAIL"].ToString() : "";
+            contact.mobile = reader["CONTACT_MOBILE"] != DBNull.Value ? reader["CONTACT_MOBILE"].ToString() : "";
+            oPaciente.contact = contact;
+
+            Privacy privacy = new Privacy();
+            CommunicationPreferences communicationPreferences = new CommunicationPreferences();
+            communicationPreferences.SMS = reader["PSMS"] != DBNull.Value ? reader["PSMS"].ToString() == "T" : false;
+            communicationPreferences.email = reader["PEMAIL"] != DBNull.Value ? reader["PEMAIL"].ToString() == "T" : false;
+            communicationPreferences.phone = reader["PPHONE"] != DBNull.Value ? reader["PPHONE"].ToString() == "T" : false;
+            privacy.communication_preferences = communicationPreferences;
+
+            privacy.primary = reader["PPRIMARY"] != DBNull.Value ? reader["PPRIMARY"].ToString() == "T" : false;
+            privacy.promotions = reader["PPROMOTIONS"] != DBNull.Value ? reader["PPROMOTIONS"].ToString() == "T" : false;
+            privacy.review = reader["PREVIEW"] != DBNull.Value ? reader["PREVIEW"].ToString() == "T" : false;
+            privacy.dossier = reader["PDOSSIER"] != DBNull.Value ? reader["PDOSSIER"].ToString() == "T" : false;
+            oPaciente.privacy = privacy;
+
+
+
+            address userAddress = new address
+            {
+                street = reader["street"]?.ToString() ?? string.Empty,
+                street_number = reader["street_number"]?.ToString() ?? string.Empty,
+                city = reader["city"]?.ToString() ?? string.Empty,
+                province = reader["province"]?.ToString() ?? string.Empty,
+                country = reader["country"]?.ToString() ?? string.Empty,
+            };
+            oPaciente.address = userAddress;
+
+            appointmentReturn.user = oPaciente;
+
+
+
+            return appointmentReturn;
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("tuotempo/appointments/updates_since/{timestamp}")]
+        public IHttpActionResult Updates_since(string timestamp)
+        {
+
+            // Suponiendo que timestamp es una cadena que contiene el timestamp Unix, por ejemplo "1624633549"
+            long unixTimestamp = long.Parse(timestamp);
+            System.DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(unixTimestamp).ToLocalTime();
+
+            // Ahora tienes dateTime como DateTime y puedes formatearlo como desees
+            // Por ejemplo, para formatearlo como 'YYYY-MM-DD'
+            string fechaFormateada = dateTime.ToString("yyyy-MM-dd");
+            string fechaFormateadaFin = dateTime.AddYears(50).ToString("yyyy-MM-dd");
+
+
+
+
+            var appointmentReturnList = new List<AppointmentResponse>();
+
+            // Crea la conexión
+            using (var connection = new FbConnection(connectionString))
+            {
+                connection.Open();
+
+
+                string query = @"
+                    SELECT P.*
+                    FROM CITAS_TUOTEMPO('0', '0', '0', @fechainicio, null) p;
+                       ";
+
+                // Crea el comando
+                using (var command = new FbCommand(query, connection))
+                {
+                    // Añade el parámetro @Oid al comando
+                    command.Parameters.Add("@fechainicio", FbDbType.Date).Value = fechaFormateada;
+                    command.Parameters.Add("@fechafin", FbDbType.Date).Value = fechaFormateadaFin;
+
+                    // Ejecuta el comando y usa un FbDataReader para leer los resultados
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read()) // Si hay al menos un resultado
+                        {
+                            var appointmentReturn = CreateAppointmentResponseFromReader(reader);
+                            appointmentReturnList.Add(appointmentReturn);
+
+                        }
+                    }
+                }
+
+                // Crear una respuesta JSON
+                var response = new MyResponse
+                {
+                    result = "OK",
+                    returnObject = appointmentReturnList
+                };
+
+                return Ok(response);
+            }
+        }
+
+
+
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("tuotempo/appointments/resources/{resource_lid}")]
+        public IHttpActionResult GetAppointmentsByResource(string resource_lid, [FromUri] string start_date = null, [FromUri] string end_date = null)
+        {
+            {
+
+                // Ahora tienes dateTime como DateTime y puedes formatearlo como desees
+                // Por ejemplo, para formatearlo como 'YYYY-MM-DD'
+                string fechaFormateada = DateTime.Parse(start_date).ToString("yyyy-MM-dd");
+                string fechaFormateadaFin = DateTime.Parse(end_date).ToString("yyyy-MM-dd");
+
+
+
+
+                var appointmentReturnList = new List<AppointmentResponse>();
+
+                // Crea la conexión
+                using (var connection = new FbConnection(connectionString))
+                {
+                    connection.Open();
+
+
+                    string query = @"
+                    SELECT P.*
+                    FROM CITAS_TUOTEMPO('0', @oidaparato, '0', @fechainicio, @fechafin) p;
+                       ";
+
+                    // Crea el comando
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        // Añade el parámetro @Oid al comando
+                        command.Parameters.Add("@fechainicio", FbDbType.Date).Value = fechaFormateada;
+                        command.Parameters.Add("@fechafin", FbDbType.Date).Value = fechaFormateadaFin;
+                        command.Parameters.Add("@oidaparato", FbDbType.Integer).Value = resource_lid;
+
+                        // Ejecuta el comando y usa un FbDataReader para leer los resultados
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read()) // Si hay al menos un resultado
+                            {
+                                var appointmentReturn = CreateAppointmentResponseFromReader(reader);
+                                appointmentReturnList.Add(appointmentReturn);
+
+                            }
+                        }
+                    }
+
+                    // Crear una respuesta JSON
+                    var response = new MyResponse
+                    {
+                        result = "OK",
+                        returnObject = appointmentReturnList
+                    };
+
+                    return Ok(response);
+                }
+            }
+
+        }
+
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("tuotempo/appointments/users/{user_lid}")]
+        public IHttpActionResult GetAppointmentsByPatient(string user_lid, [FromUri] string start_date = null, [FromUri] string end_date = null)
+        {
+            {
+
+                // Ahora tienes dateTime como DateTime y puedes formatearlo como desees
+                // Por ejemplo, para formatearlo como 'YYYY-MM-DD'
+                string fechaFormateada = DateTime.Parse(start_date).ToString("yyyy-MM-dd");
+                string fechaFormateadaFin = "";
+
+                if (end_date==null)
+                {
+                    fechaFormateadaFin= DateTime.Now.AddYears(50).ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                    fechaFormateadaFin = DateTime.Parse(end_date).ToString("yyyy-MM-dd");
+
+                }          
+
+
+
+
+                var appointmentReturnList = new List<AppointmentResponse>();
+
+                // Crea la conexión
+                using (var connection = new FbConnection(connectionString))
+                {
+                    connection.Open();
+
+
+                    string query = @"
+                    SELECT P.*
+                    FROM CITAS_TUOTEMPO(@oidPaciente, '0', '0', @fechainicio, @fechafin) p;
+                       ";
+
+                    // Crea el comando
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        // Añade el parámetro @Oid al comando
+                        command.Parameters.Add("@fechainicio", FbDbType.Date).Value = fechaFormateada;
+                        command.Parameters.Add("@fechafin", FbDbType.Date).Value = fechaFormateadaFin;
+                        command.Parameters.Add("@oidPaciente", FbDbType.VarChar).Value = user_lid;
+
+                        // Ejecuta el comando y usa un FbDataReader para leer los resultados
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read()) // Si hay al menos un resultado
+                            {
+                                var appointmentReturn = CreateAppointmentResponseFromReader(reader);
+                                appointmentReturnList.Add(appointmentReturn);
+
+                            }
+                        }
+                    }
+
+                    // Crear una respuesta JSON
+                    var response = new MyResponse
+                    {
+                        result = "OK",
+                        returnObject = appointmentReturnList
+                    };
+
+                    return Ok(response);
+                }
+            }
+
+        }
+
+
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("tuotempo/appointments/{app_lid}")]
+        public IHttpActionResult GetAppointmentsById(string app_lid)
+        {
+                var appointmentReturnList = new List<AppointmentResponse>();
+
+                // Crea la conexión
+                using (var connection = new FbConnection(connectionString))
+                {
+                    connection.Open();
+
+
+                    string query = @"
+                    SELECT P.*
+                    FROM CITAS_TUOTEMPO('0', '0', @oidexplo, null,null) p;";
+
+                    // Crea el comando
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        // Añade el parámetro @Oid al comando
+                       
+                        command.Parameters.Add("@oidexplo", FbDbType.VarChar).Value = app_lid;
+
+                        // Ejecuta el comando y usa un FbDataReader para leer los resultados
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read()) // Si hay al menos un resultado
+                            {
+                                var appointmentReturn = CreateAppointmentResponseFromReader(reader);
+                                appointmentReturnList.Add(appointmentReturn);
+
+                            }
+                        }
+                    }
+
+                    // Crear una respuesta JSON
+                    var response = new MyResponse
+                    {
+                        result = "OK",
+                        returnObject = appointmentReturnList
+                    };
+
+                    return Ok(response);
+                }
+            }
+
+        }
+
     }
-}
+
+
 
 
 
