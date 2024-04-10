@@ -113,8 +113,76 @@ namespace TuoTempo.Controllers
         }
 
 
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("tuotempo/insurances/{id}/resources")]
+        public IHttpActionResult GetResourcesByInsurances(int id)
+        {
+            List<Insurance> insurances = new List<Insurance>();
 
-       
+            var startTime = DateTime.UtcNow; // Tiempo de inicio para calcular la duración
+            try
+            {
+
+                // Suponiendo que tienes una forma de obtener la IP y el ID del usuario
+                var clientIp = HttpContext.Current?.Request?.UserHostAddress;
+                var userId = User.Identity.IsAuthenticated ? User.Identity.Name : "Anónimo";
+
+                logger.Info($"Inicio de solicitud: {startTime}. IP del cliente: {clientIp}, Usuario: {userId}, Endpoint: /tuotempo/insurances/id/resources - GET");
+
+                // Tu lógica aquí...
+                List<string> resource_ids = new List<string>();
+                using (var connection = new FbConnection(connectionString))
+                {
+                    connection.Open();
+                    var query = @"select DISTINCT(D.OWNER)  
+                        from PRECIOS P 
+                        JOIN GAPARATOS G ON G.OID=P.IOR_GAPARATO 
+                        JOIN DAPARATOS D ON D.OWNER=G.OID 
+                        WHERE  G.TUOTEMPO='T' AND P.IOR_ENTIDADPAGADORA=@id AND P.CANTIDAD>0";
+
+                  
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                // Llamada al método MapToLocation                               
+                                resource_ids.Add((reader["OWNER"].ToString()));
+                            }
+                        }
+                    }
+                }
+
+                var duration = DateTime.UtcNow - startTime; // Calcular duración
+                logger.Info($"Solicitud completada en {duration.TotalMilliseconds} ms. Resources obtenidos: {insurances.Count}.");
+
+
+
+                // Crear la respuesta JSON
+                var response = new MyResponse
+                {
+                    result = "OK",
+                    returnObject = resource_ids
+                };
+
+                // Devolver la respuesta
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var duration = DateTime.UtcNow - startTime; // Calcular duración
+                logger.Error(ex, $"Error después de {duration.TotalMilliseconds} ms en /api/insurances - GET. Detalle: {ex.Message}");
+                return InternalServerError();
+
+            }
+
+        }
+
+
+
+
 
 
     }

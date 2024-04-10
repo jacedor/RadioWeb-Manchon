@@ -15,6 +15,7 @@ using RadioWeb.Models.Repos;
 using System.Globalization;
 using System.Data;
 using System.Data.Odbc;
+using System.Resources;
 
 namespace TuoTempo.Controllers
 {
@@ -92,9 +93,18 @@ namespace TuoTempo.Controllers
                 OTROS1='F',
                 TRAC=@TRAC,
                 EMAIL = @email
-                WHERE
-                DNI = @idNumber and FECHAN=@birthdate
-              RETURNING OID ";
+                WHERE ";
+
+                if (appointmentRequest.user.user_lid != null && !string.IsNullOrEmpty( appointmentRequest.user.user_lid))
+                {
+                    updateQuery += " oid= @OID RETURNING OID ";
+                }
+                else
+                {
+                    updateQuery += " upper(DNI) = @idNumber and FECHAN=@birthdate  RETURNING OID ";
+                }
+
+             
 
 
                 string sexo = (appointmentRequest.user.gender == "F") ? "M" : "H";
@@ -110,11 +120,19 @@ namespace TuoTempo.Controllers
 
                     command.Parameters.AddWithValue("@insuranceId", appointmentRequest.availability.insurance_lid);
                     command.Parameters.AddWithValue("@patientName", $"{RemoveDiacritics(appointmentRequest.user.second_name.ToUpper())}, {RemoveDiacritics(appointmentRequest.user.first_name.ToUpper())}");
-                    command.Parameters.AddWithValue("@birthdate", cadenaFechaN);
-                    command.Parameters.AddWithValue("@TRAC", trac);
-                    command.Parameters.AddWithValue("@gender", sexo);
-                    command.Parameters.AddWithValue("@idNumber", cleanedIdNumber);
                     command.Parameters.AddWithValue("@email", appointmentRequest.user.contact.email);
+                    command.Parameters.AddWithValue("@TRAC", trac);
+                    command.Parameters.AddWithValue("@gender", sexo);  
+                    command.Parameters.AddWithValue("@idNumber", cleanedIdNumber);
+                    command.Parameters.AddWithValue("@birthdate", cadenaFechaN);
+                    if (appointmentRequest.user.user_lid != null && !string.IsNullOrEmpty(appointmentRequest.user.user_lid))
+                    {
+                        command.Parameters.AddWithValue("@OID", appointmentRequest.user.user_lid);
+
+
+                    }
+                   
+
 
                     try
                     {
@@ -133,7 +151,7 @@ namespace TuoTempo.Controllers
                         // por lo tanto, realizar una inserción
                         string insertQuery = @"
                             INSERT INTO PACIENTE (COD_PAC, CID, PACIENTE, FECHAN, SEXO, USERNAME, AVISO, DNI, EMAIL,COMENTARIO)
-                            VALUES (gen_id(GENCODPAC, 1), @insuranceId, @patientName, @birthdate, @gender, 'TUOTEMPO', 'F', @idNumber, @email,@COMENTARIO)
+                            VALUES (gen_id(GENCODPAC, 1), @insuranceId, @patientName, @birthdate, @gender, 'TUOTEMPO', 'F', @idNumber, @email,'INSERTADO DESDE TUOTEMPO')
                             RETURNING OID;";
 
                         using (var insertCommand = new FbCommand(insertQuery, connection))
@@ -145,7 +163,8 @@ namespace TuoTempo.Controllers
                             insertCommand.Parameters.AddWithValue("@idNumber", cleanedIdNumber);
                             insertCommand.Parameters.AddWithValue("@email", appointmentRequest.user.contact.email);
                             insertCommand.Parameters.AddWithValue("@TRAC", trac);
-                            insertCommand.Parameters.AddWithValue("@COMENTARIO", "INSERTADO DESDE TUOTEMPO");
+
+                         
 
                             try
                             {
@@ -507,104 +526,35 @@ namespace TuoTempo.Controllers
 
             var appointmentReturn = new AppointmentResponse();
 
+
             // Crea la conexión
             using (var connection = new FbConnection(connectionString))
             {
                 connection.Open();
 
+
                 string query = @"
-                        SELECT d.*, t.*, r.*, e.*, pac.* 
-                        FROM LISTADIA r 
-                        JOIN EXPLORACION e ON e.oid = r.oid
-                        JOIN PACIENTE pac ON pac.oid = r.IOR_PACIENTE
-                        LEFT JOIN TELEFONO t ON t.OID = (
-                            SELECT FIRST 1 TT.OID 
-                            FROM TELEFONO TT 
-                            WHERE SUBSTRING(TT.NUMERO FROM 1 FOR 1) IN ('6','7') 
-                            AND tt.owner = r.ior_paciente
-                        )
-                        LEFT JOIN DIRECCION d ON d.OID = (
-                            SELECT FIRST 1 DD.OID 
-                            FROM DIRECCION DD 
-                            WHERE DD.owner = r.ior_paciente
-                        ) WHERE r.OID = @Oid";
+                    SELECT P.*
+                    FROM CITAS_TUOTEMPO('0', '0', @oidexplo, null,null) p;";
 
                 // Crea el comando
                 using (var command = new FbCommand(query, connection))
                 {
                     // Añade el parámetro @Oid al comando
-                    command.Parameters.Add("@Oid", FbDbType.Integer).Value = id;
+
+                    command.Parameters.Add("@oidexplo", FbDbType.VarChar).Value = id;
 
                     // Ejecuta el comando y usa un FbDataReader para leer los resultados
                     using (var reader = command.ExecuteReader())
                     {
-                        if (reader.Read()) // Si hay al menos un resultado
+                        while (reader.Read()) // Si hay al menos un resultado
                         {
-                            // Asigna las propiedades del reader al objeto appointmentReturn
-                            appointmentReturn.app_lid = reader["OID"].ToString(); // Asume que "ColumnaAppLid" es el nombre de la columna en LISTADIA
-                            appointmentReturn.tags = "";
-                            DateTime hora = DateTime.ParseExact(reader["HORA"].ToString(), "HH:mm", CultureInfo.InvariantCulture);
+                             appointmentReturn = CreateAppointmentResponseFromReader(reader);
+                            
 
-                            // Sumar 15 minutos
-                            DateTime horaFin = hora.AddMinutes(15);
-
-                            // Convertir de nuevo a string
-                            string horaFinStr = horaFin.ToString("HH:mm");
-
-                            Availabilities oHueco = new Availabilities
-                            {
-                                availability_lid = reader["CITAEXTERNA"] != DBNull.Value ? reader["CITAEXTERNA"].ToString() : "",
-                                date = reader["FECHA"] != DBNull.Value ? reader["FECHA"].ToString() : "",
-                                start_time = reader["HORA"] != DBNull.Value ? reader["HORA"].ToString() : "",
-                                end_time = horaFinStr,
-                                location_lid = reader["CENTRO"] != DBNull.Value ? reader["CENTRO"].ToString() : "",
-                                activity_lid = reader["e.IOR_TIPOEXPLORACION"] != DBNull.Value ? reader["e.IOR_TIPOEXPLORACION"].ToString() : "",
-                                insurance_lid = reader["e.IOR_ENTIDADPAGADORA"] != DBNull.Value ? reader["e.IOR_ENTIDADPAGADORA"].ToString() : "",
-                                price = reader["r.CANTIDAD"] != DBNull.Value ? reader["r.CANTIDAD"].ToString() : "",
-                                resource_lid = ""
-                            };
-
-                            appointmentReturn.availability = oHueco;
-
-                            string cadena = reader["r.PACIENTE"].ToString();
-
-                            // Separar la cadena por la coma
-                            string[] partes = cadena.Split(new string[] { ", " }, StringSplitOptions.None);
-                            string apellidos = partes[0];
-                            string nombre = partes[1];
-
-                            user oPaciente = new user
-                            {
-                                first_name = nombre,
-                                second_name = apellidos,
-                                birthdate = reader["R.FECHAN"] != DBNull.Value ? reader["R.FECHAN"].ToString() : "",
-                                id_number = new IdNumber
-                                {
-                                    number = reader["R.DNI"] != DBNull.Value ? reader["R.DNI"].ToString() : "",
-                                    type = 1
-                                },
-                                contact = new Contact
-                                {
-                                    email = reader["P.EMAIL"] != DBNull.Value ? reader["P.EMAIL"].ToString() : "",
-                                    mobile = reader["T.NUMERO"] != DBNull.Value ? reader["T.NUMERO"].ToString() : "",
-
-                                },
-                                address = new address
-                                {
-                                    city = reader["D.PROVINCIA"] != DBNull.Value ? reader["D.PROVINCIA"].ToString() : "",
-                                    country = reader["D.PAIS"] != DBNull.Value ? reader["D.PAIS"].ToString() : "",
-                                    street = reader["D.DIRECCION"] != DBNull.Value ? reader["D.DIRECCION"].ToString() : "",
-                                    zipcode = reader["D.CP"] != DBNull.Value ? reader["D.CP"].ToString() : ""
-                                }
-
-
-                            };
-
-                            appointmentReturn.user = oPaciente;
                         }
                     }
                 }
-
                 // Crear una respuesta JSON
                 var response = new MyResponse
                 {
@@ -614,6 +564,8 @@ namespace TuoTempo.Controllers
 
                 return Ok(response);
             }
+            // Crea la conexión
+     
 
 
         }
@@ -773,8 +725,6 @@ namespace TuoTempo.Controllers
         }
 
 
-
-
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("tuotempo/appointments/resources/{resource_lid}")]
         public IHttpActionResult GetAppointmentsByResource(string resource_lid, [FromUri] string start_date = null, [FromUri] string end_date = null)
@@ -914,8 +864,10 @@ namespace TuoTempo.Controllers
         {
                 var appointmentReturnList = new List<AppointmentResponse>();
 
-                // Crea la conexión
-                using (var connection = new FbConnection(connectionString))
+     
+
+            // Crea la conexión
+            using (var connection = new FbConnection(connectionString))
                 {
                     connection.Open();
 

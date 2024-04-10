@@ -201,7 +201,18 @@ namespace TuoTempo.Controllers
                 {
                     var duration = DateTime.UtcNow - startTime; // Calcular duración
                     logger.Info($"Solicitud completada en {duration.TotalMilliseconds} ms. Ubicacion obtenida: {location.name}.");
-                    return Ok(location); // Return the location if found
+
+
+                    // Crear la respuesta JSON
+                    var response = new MyResponse
+                    {
+                        result = "OK",
+                        returnObject = location
+                    };
+
+                    // Devolver la respuesta
+                    return Ok(response);
+                    
                 }
                 else
                 {
@@ -220,7 +231,74 @@ namespace TuoTempo.Controllers
             }
         }
 
-      
+        //[System.Web.Http.HttpGet]
+        //[System.Web.Http.Route("tuotempo/locations/{id}/resources")]
+        //public IHttpActionResult GetLocationPorCentro(int id)
+        //{
+        //    Location location = null;
+        //    var startTime = DateTime.UtcNow; // Tiempo de inicio para calcular la duración
+        //                                     // Suponiendo que tienes una forma de obtener la IP y el ID del usuario
+        //    var clientIp = HttpContext.Current?.Request?.UserHostAddress;
+        //    var userId = User.Identity.IsAuthenticated ? User.Identity.Name : "Anónimo";
+        //    try
+        //    {
+        //        using (var connection = new FbConnection(connectionString))
+        //        {
+        //            connection.Open();
+
+        //           string query= "select DISTINCT(D.OWNER),g.COD_GRUP,g.* " +
+        //                "from DAPARATOS D JOIN GAPARATOS G ON G.OID=D.OWNER " +
+        //                "WHERE G.TUOTEMPO='T' AND D.CID=@id ";
+
+        //            using (var command = new FbCommand(query, connection))
+        //            {
+        //                // Use parameterized queries to prevent SQL injection
+        //                command.Parameters.AddWithValue("@id", id);
+
+        //                using (var reader = command.ExecuteReader())
+        //                {
+        //                    if (reader.Read()) // Assumes ID is unique and only one record is returned
+        //                    {
+        //                        // Llamada al método MapToLocation
+        //                        location = MapToLocation(reader);
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        if (location != null)
+        //        {
+        //            var duration = DateTime.UtcNow - startTime; // Calcular duración
+        //            logger.Info($"Solicitud completada en {duration.TotalMilliseconds} ms. Ubicacion obtenida: {location.name}.");
+
+
+        //            // Crear la respuesta JSON
+        //            var response = new MyResponse
+        //            {
+        //                result = "OK",
+        //                returnObject = location
+        //            };
+
+        //            // Devolver la respuesta
+        //            return Ok(response);
+
+        //        }
+        //        else
+        //        {
+        //            var duration = DateTime.UtcNow - startTime; // Calcular duración
+        //            logger.Info($"Solicitud completada en {duration.TotalMilliseconds} ms. Ubicaciones no encontrada: {id}.");
+        //            return NotFound(); // Return an HTTP 404 if no location is found
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        var duration = DateTime.UtcNow - startTime; // Calcular duración
+        //        logger.Error(ex, $"Error después de {duration.TotalMilliseconds} ms en /api/locations/id - GET. Detalle: {ex.Message}");
+        //        return InternalServerError();
+
+        //    }
+        //}
     }
 }
 

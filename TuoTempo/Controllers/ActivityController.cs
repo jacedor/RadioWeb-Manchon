@@ -27,10 +27,12 @@ namespace TuoTempo.Controllers
 
         private Activity MapToActivity(FbDataReader reader)
         {
+
+            //var query = "SELECT * FROM APARATOS R JOIN GAPARATOS G ON G.OID=R.OWNER WHERE SALIDA_INTERNET='1'";
             // Definir la consulta SQL con un parámetro
             string query = @"
              SELECT M.OID, M.NOMBRE, P.CANTIDAD
-             FROM PRECIOS P
+             FROM PRECIOS P            
              JOIN MUTUAS M ON M.OID = P.IOR_ENTIDADPAGADORA
             WHERE P.IOR_TIPOEXPLORACION = @TipoExploracion AND M.TUOTEMPO = 'T'";
 
@@ -54,6 +56,41 @@ namespace TuoTempo.Controllers
                 }
             }
 
+            //var query = "SELECT * FROM APARATOS R JOIN GAPARATOS G ON G.OID=R.OWNER WHERE SALIDA_INTERNET='1'";
+            // Definir la consulta SQL con un parámetro
+            string query2 = @"
+            SELECT OID
+                FROM CENTROS WHERE CID=1 AND OID IN (
+
+                        select D.CID
+                        from APARATOS A 
+                        JOIN GAPARATOS G ON G.OID=A.OWNER 
+                        JOIN DAPARATOS D ON D.OWNER= A.OWNER
+                        WHERE G.IOR_EMPRESA=4 AND A.SALIDA_INTERNET='1'
+                        AND G.TUOTEMPO='T' 
+                        AND A.OID=@TipoExploracion)";
+
+            List<string> oListaCentros = new List<string>();
+
+            using (var connection = new FbConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = new FbCommand(query2, connection))
+                {
+                    // Asignar el valor del parámetro
+                    command.Parameters.AddWithValue("@TipoExploracion", reader["OID"]?.ToString());
+
+                    using (var fbReader = command.ExecuteReader())
+                    {
+                        while (fbReader.Read())
+                        {
+                            oListaCentros.Add(fbReader["OID"].ToString());
+                        }
+                    }
+                }
+            }
+
+
             return new Activity
             {
                 activity_lid = reader["OID"]?.ToString() ?? string.Empty,
@@ -67,7 +104,8 @@ namespace TuoTempo.Controllers
                 type="presential",                
                 related =  new related
                 {
-                    insurance_lids= oListaMutuaCobertura
+                    insurance_lids= oListaMutuaCobertura,
+                    resource_lids= oListaCentros
                 },
                 duration ="15",                
                 web_enabled = true,
@@ -106,7 +144,7 @@ namespace TuoTempo.Controllers
                 using (var connection = new FbConnection(connectionString))
                 {
                     connection.Open();
-                    var query = "SELECT * FROM APARATOS R JOIN GAPARATOS G ON G.OID=R.OWNER WHERE SALIDA_INTERNET='1'";
+                    var query = "SELECT R.*,G.DES_GRUP,G.OWNER FROM APARATOS R JOIN GAPARATOS G ON G.OID=R.OWNER WHERE SALIDA_INTERNET='1'";
 
 
                     using (var command = new FbCommand(query, connection))
@@ -117,7 +155,11 @@ namespace TuoTempo.Controllers
                             {
                                 // Llamada al método MapToActivity
                                 Activity TipoDeExploracion = MapToActivity(reader);
-                                activities.Add(TipoDeExploracion);
+                                if (TipoDeExploracion.related.insurance_lids.Count>0)
+                                {
+                                    activities.Add(TipoDeExploracion);
+                                }
+                                
                             }
                         }
                     }
@@ -171,7 +213,7 @@ namespace TuoTempo.Controllers
                 {
                     connection.Open();
 
-                    string query = "SELECT * FROM PRECIOS P";
+                    string query = "SELECT APA.*,G.DES_GRUP,G.OWNER FROM PRECIOS P";
                     query += " JOIN MUTUAS M ON M.OID = P.IOR_ENTIDADPAGADORA";
                     query += " JOIN APARATOS APA ON APA.OID = P.IOR_TIPOEXPLORACION";
                     query += "  JOIN GAPARATOS G ON G.OID = APA.OWNER";
@@ -188,9 +230,48 @@ namespace TuoTempo.Controllers
                             {
                                 // Llamada al método MapToActivity
                                 Activity TipoDeExploracion = MapToActivity(reader);
-                                activities.Add(TipoDeExploracion);
+                              
+                                    activities.Add(TipoDeExploracion);
+                                
+
                             }
                         }
+                    }
+
+                    foreach (var item in activities)
+                    {
+                        string query2 = @"
+                      SELECT OID
+                        FROM CENTROS WHERE CID=1 AND OID IN (
+                            select D.CID
+                            from APARATOS A 
+                            JOIN GAPARATOS G ON G.OID=A.OWNER 
+                            JOIN DAPARATOS D ON D.OWNER= A.OWNER
+                            WHERE G.IOR_EMPRESA=4 AND A.SALIDA_INTERNET='1'
+                            AND G.TUOTEMPO='T' 
+                            AND A.OID=@TipoExploracion)";
+
+                        List<string> oListaCentros = new List<string>();
+
+                        using (var connection2 = new FbConnection(connectionString))
+                        {
+                            connection2.Open();
+                            using (var command = new FbCommand(query2, connection))
+                            {
+                                // Asignar el valor del parámetro
+                                command.Parameters.AddWithValue("@TipoExploracion", item.activity_lid);
+
+                                using (var fbReader = command.ExecuteReader())
+                                {
+                                    while (fbReader.Read())
+                                    {
+                                        oListaCentros.Add(fbReader["OID"].ToString());
+                                    }
+                                }
+                                item.related.resource_lids = oListaCentros;
+                            }
+                        }
+
                     }
                 }
 
@@ -242,7 +323,7 @@ namespace TuoTempo.Controllers
                 {
                     connection.Open();
 
-                    var query = "SELECT * FROM APARATOS R JOIN GAPARATOS G ON G.OID=R.OWNER WHERE R.OWNER=@OID AND SALIDA_INTERNET='1'";
+                    var query = "SELECT R.*,G.DES_GRUP,G.OWNER FROM APARATOS R JOIN GAPARATOS G ON G.OID=R.OWNER WHERE R.OWNER=@OID AND SALIDA_INTERNET='1'";
 
 
                     using (var command = new FbCommand(query, connection))

@@ -36,78 +36,84 @@ namespace TuoTempo.Controllers
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("tuotempo/availabilities/{activity_lid}")]
-        public IHttpActionResult ObtenerHuecos(int activity_lid, int insurance_lid, string start_day, string end_day, string start_time, 
-            string end_time, string min_time, string max_time,string resource_lids, int results_number, string location_lids)
+        public IHttpActionResult ObtenerHuecos(int activity_lid, int insurance_lid, string start_day, string end_day, string start_time,
+    string end_time, string min_time, string max_time, string resource_lids, int results_number, string location_lids)
         {
-            List<Insurance> huecos = new List<Insurance>();
+            List<Availabilities> availabilities = new List<Availabilities>();
 
             var startTime = DateTime.UtcNow; // Tiempo de inicio para calcular la duración
             try
             {
+                // Divide el string de location_lids en un arreglo utilizando las comas como delimitador
+                var locationLidsArray = location_lids.Split(',');
+                string query = @"SELECT p.AVAILABILITY_LID, p.FECHA, p.START_TIME, p.END_TIME, p.LOCATION_LID,p.RESOURCE_LID, p.ACTIVITY_LID, p.INSURANCE_LID, p.CCANTIDAD, p.TEXTODEFECTO, p.HORARIO_APARATO 
+                        FROM HUECOSLIBRES_TUOTEMPO (@OID_MUTUA, @FECHAINI, @FECHAFIN, @HORAMIN,@HORAMAX, @OID_GRUPO, @NUMERO_HUECOS, @OID_CENTRO, @OID_TIPOEXPLO) p; ";
 
-                var availabilities = new List<Availabilities>();
-
-                using (var connection = new FbConnection(connectionString))
+                foreach (var locationLid in locationLidsArray)
                 {
-                    connection.Open();
-                    using (var command = new FbCommand("HUECOSLIBRES_TUOTEMPO", connection))
+                    using (var connection = new FbConnection(connectionString))
                     {
-                        command.CommandType = CommandType.StoredProcedure;
-
-                        // Agrega los parámetros aquí
-                        command.Parameters.Add("@OID_MUTUA", FbDbType.Integer).Value = insurance_lid;
-                        command.Parameters.Add("@FECHAINI", FbDbType.TimeStamp).Value = start_day;
-                        command.Parameters.Add("@FECHAFIN", FbDbType.TimeStamp).Value = end_day;
-                        // Agregar el resto de los parámetros
-                        command.Parameters.Add("@HORAMIN", FbDbType.VarChar).Value = min_time;
-                        command.Parameters.Add("@HORAMAX", FbDbType.VarChar).Value = max_time;
-                        command.Parameters.Add("@OID_GRUPO", FbDbType.Integer).Value = resource_lids;
-                        command.Parameters.Add("@NUMERO_HUECOS", FbDbType.Integer).Value = results_number;
-                        command.Parameters.Add("@OID_CENTRO", FbDbType.Integer).Value = location_lids;
-                        command.Parameters.Add("@OID_TIPOEXPLO", FbDbType.Integer).Value = activity_lid;
-
-
-                        using (var reader = command.ExecuteReader())
+                        connection.Open();
+                        using (var command = new FbCommand(query, connection))
                         {
-                            while (reader.Read())
+                           
+                            // Agrega o actualiza los parámetros aquí
+                            command.Parameters.Clear(); // Asegúrate de limpiar los parámetros antiguos para evitar duplicados
+                            command.Parameters.Add("@OID_MUTUA", FbDbType.Integer).Value = insurance_lid;
+                            command.Parameters.Add("@FECHAINI", FbDbType.TimeStamp).Value = DateTime.Parse(start_day);
+                            command.Parameters.Add("@FECHAFIN", FbDbType.TimeStamp).Value = DateTime.Parse(end_day);
+                            // Agregar el resto de los parámetros
+                            command.Parameters.Add("@HORAMIN", FbDbType.VarChar).Value = min_time;
+                            command.Parameters.Add("@HORAMAX", FbDbType.VarChar).Value = max_time;
+                            command.Parameters.Add("@OID_GRUPO", FbDbType.Integer).Value = int.Parse(resource_lids);
+                            command.Parameters.Add("@NUMERO_HUECOS", FbDbType.Integer).Value = results_number;
+                            command.Parameters.Add("@OID_CENTRO", FbDbType.Integer).Value = int.Parse(locationLid); // Usar cada valor de locationLid aquí
+                            command.Parameters.Add("@OID_TIPOEXPLO", FbDbType.Integer).Value = activity_lid;
+
+                            using (var reader = command.ExecuteReader())
                             {
-                                var availability = new Availabilities
+                                while (reader.Read())
                                 {
-                                    availability_lid = reader["AVAILABILITY_LID"].ToString(),
-                                    date = reader["FECHA"].ToString(),
-                                    start_time = reader["START_TIME"].ToString(),
-                                    end_time = reader.IsDBNull(reader.GetOrdinal("END_TIME")) ? null : reader["END_TIME"].ToString(),
-                                    location_lid = reader.IsDBNull(reader.GetOrdinal("LOCATION_LID")) ? null : reader["LOCATION_LID"].ToString(),
-                                    resource_lid = reader.IsDBNull(reader.GetOrdinal("RESOURCE_LID")) ? null : reader["RESOURCE_LID"].ToString(),
-                                    activity_lid = reader.IsDBNull(reader.GetOrdinal("ACTIVITY_LID")) ? null : reader["ACTIVITY_LID"].ToString(),
-                                    insurance_lid = reader.IsDBNull(reader.GetOrdinal("INSURANCE_LID")) ? null : reader["INSURANCE_LID"].ToString(),
-                                    price = reader.IsDBNull(reader.GetOrdinal("CCANTIDAD")) ? null : reader["CCANTIDAD"].ToString()
-                                };
-                                availabilities.Add(availability);
+                                    var availability = new Availabilities
+                                    {
+                                        availability_lid = reader["AVAILABILITY_LID"].ToString(),
+                                        date = reader["FECHA"].ToString(),
+                                        start_time = reader["START_TIME"].ToString(),
+                                        end_time = reader.IsDBNull(reader.GetOrdinal("END_TIME")) ? null : reader["END_TIME"].ToString(),
+                                        location_lid = reader.IsDBNull(reader.GetOrdinal("LOCATION_LID")) ? null : reader["LOCATION_LID"].ToString(),
+                                        resource_lid = reader.IsDBNull(reader.GetOrdinal("RESOURCE_LID")) ? null : reader["RESOURCE_LID"].ToString(),
+                                        activity_lid = reader.IsDBNull(reader.GetOrdinal("ACTIVITY_LID")) ? null : reader["ACTIVITY_LID"].ToString(),
+                                        insurance_lid = reader.IsDBNull(reader.GetOrdinal("INSURANCE_LID")) ? null : reader["INSURANCE_LID"].ToString(),
+                                        price = reader.IsDBNull(reader.GetOrdinal("CCANTIDAD")) ? null : reader["CCANTIDAD"].ToString()
+                                    };
+                                    availabilities.Add(availability);
+                                  
+                                }
                             }
                         }
                     }
                 }
 
-                // Crear la respuesta JSON
                 var response = new MyResponse
                 {
                     result = "OK",
                     returnObject = availabilities
                 };
 
-                // Devolver la respuesta
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 var duration = DateTime.UtcNow - startTime; // Calcular duración
-                logger.Error(ex, $"Error después de {duration.TotalMilliseconds} ms en /api/insurances - GET. Detalle: {ex.Message}");
+                logger.Error(ex, $"Error después de {duration.TotalMilliseconds} ms. Detalle: {ex.Message}");
                 return InternalServerError();
-               
             }
-         
         }
+
+
+
+
+
 
 
 
@@ -116,72 +122,75 @@ namespace TuoTempo.Controllers
         public IHttpActionResult ObtenerPrimerHuecos(int activity_lid, int insurance_lid, string start_day, string end_day, string start_time,
         string end_time, string min_time, string max_time, string resource_lids, string location_lids)
         {
-            List<Insurance> huecos = new List<Insurance>();
-
+            List<Availabilities> availabilities = new List<Availabilities>();
+         
             var startTime = DateTime.UtcNow; // Tiempo de inicio para calcular la duración
             try
             {
+                // Divide el string de location_lids en un arreglo utilizando las comas como delimitador
+                var locationLidsArray = location_lids.Split(',');
+                string query = @"SELECT p.AVAILABILITY_LID, p.FECHA, p.START_TIME, p.END_TIME, p.LOCATION_LID,p.RESOURCE_LID, p.ACTIVITY_LID, p.INSURANCE_LID, p.CCANTIDAD, p.TEXTODEFECTO, p.HORARIO_APARATO 
+                        FROM HUECOSLIBRES_TUOTEMPO (@OID_MUTUA, @FECHAINI, @FECHAFIN, @HORAMIN,@HORAMAX, @OID_GRUPO, @NUMERO_HUECOS, @OID_CENTRO, @OID_TIPOEXPLO) p; ";
 
-                var availabilities = new List<Availabilities>();
-
-                using (var connection = new FbConnection(connectionString))
+                foreach (var locationLid in locationLidsArray)
                 {
-                    connection.Open();
-                    using (var command = new FbCommand("HUECOSLIBRES_TUOTEMPO", connection))
+                    using (var connection = new FbConnection(connectionString))
                     {
-                        command.CommandType = CommandType.StoredProcedure;
-
-                        // Agrega los parámetros aquí
-                        command.Parameters.Add("@OID_MUTUA", FbDbType.Integer).Value = insurance_lid;
-                        command.Parameters.Add("@FECHAINI", FbDbType.TimeStamp).Value = start_day;
-                        command.Parameters.Add("@FECHAFIN", FbDbType.TimeStamp).Value = end_day;
-                        // Agregar el resto de los parámetros
-                        command.Parameters.Add("@HORAMIN", FbDbType.VarChar).Value = min_time;
-                        command.Parameters.Add("@HORAMAX", FbDbType.VarChar).Value = max_time;
-                        command.Parameters.Add("@OID_GRUPO", FbDbType.Integer).Value = resource_lids;
-                        command.Parameters.Add("@NUMERO_HUECOS", FbDbType.Integer).Value = 1;
-                        command.Parameters.Add("@OID_CENTRO", FbDbType.Integer).Value = location_lids;
-                        command.Parameters.Add("@OID_TIPOEXPLO", FbDbType.Integer).Value = activity_lid;
-
-
-                        using (var reader = command.ExecuteReader())
+                        connection.Open();
+                        using (var command = new FbCommand(query, connection))
                         {
-                            while (reader.Read())
+
+                            // Agrega o actualiza los parámetros aquí
+                            command.Parameters.Clear(); // Asegúrate de limpiar los parámetros antiguos para evitar duplicados
+                            command.Parameters.Add("@OID_MUTUA", FbDbType.Integer).Value = insurance_lid;
+                            command.Parameters.Add("@FECHAINI", FbDbType.TimeStamp).Value = DateTime.Parse(start_day);
+                            command.Parameters.Add("@FECHAFIN", FbDbType.TimeStamp).Value = DateTime.Parse(end_day);
+                            // Agregar el resto de los parámetros
+                            command.Parameters.Add("@HORAMIN", FbDbType.VarChar).Value = min_time;
+                            command.Parameters.Add("@HORAMAX", FbDbType.VarChar).Value = max_time;
+                            command.Parameters.Add("@OID_GRUPO", FbDbType.Integer).Value = int.Parse(resource_lids);
+                            command.Parameters.Add("@NUMERO_HUECOS", FbDbType.Integer).Value = 1;
+                            command.Parameters.Add("@OID_CENTRO", FbDbType.Integer).Value = int.Parse(locationLidsArray[0]); // Usar cada valor de locationLid aquí
+                            command.Parameters.Add("@OID_TIPOEXPLO", FbDbType.Integer).Value = activity_lid;
+
+                            using (var reader = command.ExecuteReader())
                             {
-                                var availability = new Availabilities
+                                while (reader.Read())
                                 {
-                                    availability_lid = reader["AVAILABILITY_LID"].ToString(),
-                                    date = reader["FECHA"].ToString(),
-                                    start_time = reader["START_TIME"].ToString(),
-                                    end_time = reader.IsDBNull(reader.GetOrdinal("END_TIME")) ? null : reader["END_TIME"].ToString(),
-                                    location_lid = reader.IsDBNull(reader.GetOrdinal("LOCATION_LID")) ? null : reader["LOCATION_LID"].ToString(),
-                                    resource_lid = reader.IsDBNull(reader.GetOrdinal("RESOURCE_LID")) ? null : reader["RESOURCE_LID"].ToString(),
-                                    activity_lid = reader.IsDBNull(reader.GetOrdinal("ACTIVITY_LID")) ? null : reader["ACTIVITY_LID"].ToString(),
-                                    insurance_lid = reader.IsDBNull(reader.GetOrdinal("INSURANCE_LID")) ? null : reader["INSURANCE_LID"].ToString(),
-                                    price = reader.IsDBNull(reader.GetOrdinal("CCANTIDAD")) ? null : reader["CCANTIDAD"].ToString()
-                                };
-                                availabilities.Add(availability);
+                                    var availability = new Availabilities
+                                    {
+                                        availability_lid = reader["AVAILABILITY_LID"].ToString(),
+                                        date = reader["FECHA"].ToString(),
+                                        start_time = reader["START_TIME"].ToString(),
+                                        end_time = reader.IsDBNull(reader.GetOrdinal("END_TIME")) ? null : reader["END_TIME"].ToString(),
+                                        location_lid = reader.IsDBNull(reader.GetOrdinal("LOCATION_LID")) ? null : reader["LOCATION_LID"].ToString(),
+                                        resource_lid = reader.IsDBNull(reader.GetOrdinal("RESOURCE_LID")) ? null : reader["RESOURCE_LID"].ToString(),
+                                        activity_lid = reader.IsDBNull(reader.GetOrdinal("ACTIVITY_LID")) ? null : reader["ACTIVITY_LID"].ToString(),
+                                        insurance_lid = reader.IsDBNull(reader.GetOrdinal("INSURANCE_LID")) ? null : reader["INSURANCE_LID"].ToString(),
+                                        price = reader.IsDBNull(reader.GetOrdinal("CCANTIDAD")) ? null : reader["CCANTIDAD"].ToString()
+                                    };
+                                    availabilities.Add(availability);
+
+                                }
                             }
                         }
                     }
                 }
+                var retun= availabilities.OrderByDescending(p=>p.date).FirstOrDefault();
 
-                // Crear la respuesta JSON
                 var response = new MyResponse
                 {
                     result = "OK",
-                    returnObject = availabilities.First()
+                    returnObject = retun
                 };
 
-                // Devolver la respuesta
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 var duration = DateTime.UtcNow - startTime; // Calcular duración
-                logger.Error(ex, $"Error después de {duration.TotalMilliseconds} ms en /api/insurances - GET. Detalle: {ex.Message}");
+                logger.Error(ex, $"Error después de {duration.TotalMilliseconds} ms. Detalle: {ex.Message}");
                 return InternalServerError();
-
             }
 
         }

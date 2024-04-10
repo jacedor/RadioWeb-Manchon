@@ -101,6 +101,8 @@ namespace TuoTempo.Controllers
                     }
                 }
             }
+
+
             return new Resource
             {
                 resource_lid = reader["OID"]?.ToString() ?? string.Empty,
@@ -206,17 +208,22 @@ namespace TuoTempo.Controllers
                 using (var connection = new FbConnection(connectionString))
                 {
                     connection.Open();
-                    var query = "SELECT * FROM GAPARATOS  WHERE TUOTEMPO='T'";
+                    
+                    string query = "select DISTINCT(D.OWNER),g.* " +
+                       "from DAPARATOS D JOIN GAPARATOS G ON G.OID=D.OWNER " +
+                       "WHERE G.IOR_EMPRESA=4 AND G.TUOTEMPO='T' AND D.CID=@id ";
 
 
                     using (var command = new FbCommand(query, connection))
                     {
+                        command.Parameters.AddWithValue("@id", id);
                         using (var reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
                                 // Llamada al método MapToLocation
                                 Resource resource = MapToResource(reader);
+                                resource.related.resource_lids = new List<string> { id.ToString() };
                                 resources.Add(resource);
                             }
                         }
