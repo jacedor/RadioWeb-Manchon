@@ -27,7 +27,7 @@ namespace TuoTempo.Controllers
         {
             return new Insurance
             {
-                insurance_lid = reader["OID"]?.ToString() ?? string.Empty,
+                insurance_id = reader["OID"]?.ToString() ?? string.Empty,
                 name = reader["NOMBRE"]?.ToString() ?? string.Empty,
                 patient_notice = new PatientNotice
                 {

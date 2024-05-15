@@ -8,7 +8,7 @@ namespace TuoTempo.Models
     public class Resource
     {
         public string resource_lid { get; set; }
-        public string first_name { get; set; }
+        public string name { get; set; }
         public id_number id_number { get; set; }
         public Contact contact { get; set; }
         public related related { get; set; }

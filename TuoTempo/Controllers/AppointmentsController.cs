@@ -16,6 +16,8 @@ using System.Globalization;
 using System.Data;
 using System.Data.Odbc;
 using System.Resources;
+using System.Web.Http.Results;
+using TuoTempo.Models.Repos;
 
 namespace TuoTempo.Controllers
 {
@@ -475,7 +477,16 @@ namespace TuoTempo.Controllers
                         // Ejecutar el comando
                         oPaciente.app_lid = (int)cmd.ExecuteScalar();
 
+                        LOGUSUARIOS oLog = new LOGUSUARIOS
+                        {
+                            OWNER = (int)oPaciente.app_lid,
+                            FECHA = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                            TEXTO = "Alta exploración",
+                            USUARIO = "TUOTEMPO",
+                            DATA = DateTime.Now.ToString("dd/MM/yyyy")
 
+                        };
+                        LogUsuariosRepositorio.Insertar(oLog);
                     }
                 }
 
@@ -522,6 +533,16 @@ namespace TuoTempo.Controllers
                 }
 
                 connection.Close();
+                LOGUSUARIOS oLog = new LOGUSUARIOS
+                {
+                    OWNER = int.Parse( id),
+                    FECHA = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                    TEXTO = "Cancela exploración",
+                    USUARIO = "TUOTEMPO",
+                    DATA = DateTime.Now.ToString("dd/MM/yyyy")
+
+                };
+                LogUsuariosRepositorio.Insertar(oLog);
             }
 
             var appointmentReturn = new AppointmentResponse();
@@ -549,8 +570,8 @@ namespace TuoTempo.Controllers
                     {
                         while (reader.Read()) // Si hay al menos un resultado
                         {
-                             appointmentReturn = CreateAppointmentResponseFromReader(reader);
-                            
+                            appointmentReturn = CreateAppointmentResponseFromReader(reader);
+
 
                         }
                     }
@@ -565,6 +586,177 @@ namespace TuoTempo.Controllers
                 return Ok(response);
             }
             // Crea la conexión
+
+
+
+        }
+
+
+        //[System.Web.Http.HttpDelete]
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("tuotempo/reschedule/")]
+        public IHttpActionResult RescheduleAppointment([FromBody] AppointmentRequest oPaciente)
+        {
+
+            var appointmentReturn = new AppointmentResponse();
+
+            using (var connection = new FbConnection(connectionString))
+            {
+                connection.Open();
+
+                // Primero, verificar si la exploración existe
+                var checkExistenceCommand = new FbCommand("SELECT COUNT(*) FROM EXPLORACION WHERE OID = @OID", connection);
+                checkExistenceCommand.Parameters.Add(new FbParameter("@OID", oPaciente.app_lid));
+
+                int exists = (int)checkExistenceCommand.ExecuteScalar();
+
+                if (exists == 0)
+                {
+                    ErrorResponse oError = new ErrorResponse();
+                    oError.Result = "ERROR";
+                    oError.ErrorCode = "APPOINTMENT_DOES_NOT_EXIST";
+                    oError.ErrorMessage = "No existe la cita para replanificar.";
+                    oError.DebugMessage = "Conflict with a non existing appointment.";
+
+                    // Si hay registros, devolver un error
+                    return Content(HttpStatusCode.Conflict, oError);
+                   
+                }
+
+                using (var transaction = connection.BeginTransaction())
+                {
+                    var updateQuery = new StringBuilder("UPDATE EXPLORACION SET ");
+                    var parameters = new List<FbParameter>();
+
+                    // Añadir campos para actualizar, solo si no son nulos
+                    if (oPaciente.availability != null)
+                    {
+                        if (!string.IsNullOrEmpty(oPaciente.availability.date))
+                        {
+                            DateTime fechaCita;
+                            string fechaCitaN = "";
+                            if (DateTime.TryParse(oPaciente.availability.date, out fechaCita))
+                            {
+                                fechaCitaN = fechaCita.ToString("yyyy-MM-dd");
+                            }
+                            updateQuery.Append("FECHA = @FechaCita, ");
+                            parameters.Add(new FbParameter("@FechaCita", fechaCitaN));
+                        }
+
+                        if (!string.IsNullOrEmpty(oPaciente.availability.start_time))
+                        {
+                                        
+                            updateQuery.Append("HORA = @hora, ");
+                            parameters.Add(new FbParameter("@HORA", oPaciente.availability.start_time));
+                        }
+
+                        if (!string.IsNullOrEmpty(oPaciente.availability.location_lid))
+                        {
+
+                            updateQuery.Append("OWNER = @CENTRO, ");
+                            parameters.Add(new FbParameter("@CENTRO", oPaciente.availability.location_lid));
+                        }
+
+                        if (!string.IsNullOrEmpty(oPaciente.availability.resource_lid))
+                        {
+
+                            updateQuery.Append("IOR_GRUPO = @GRUPO, ");
+                            parameters.Add(new FbParameter("@GRUPO", oPaciente.availability.resource_lid));
+                        }
+
+
+                        if (!string.IsNullOrEmpty(oPaciente.availability.activity_lid))
+                        {
+
+                            updateQuery.Append("IOR_TIPOEXPLORACION = @IOR_TIPOEXPLORACION, ");
+                            parameters.Add(new FbParameter("@IOR_TIPOEXPLORACION", oPaciente.availability.activity_lid));
+                        }
+
+                        if (!string.IsNullOrEmpty(oPaciente.availability.insurance_lid))
+                        {
+
+                            updateQuery.Append("IOR_ENTIDADPAGADORA = @IOR_ENTIDADPAGADORA, ");
+                            parameters.Add(new FbParameter("@IOR_ENTIDADPAGADORA", oPaciente.availability.insurance_lid));
+                        }
+
+                    }
+
+
+
+                    // Remover la última coma si hay parámetros
+                    if (parameters.Count > 0)
+                    {
+                        updateQuery.Length -= 2; // Remueve la coma y el espacio extra
+                        updateQuery.Append(" WHERE OID = @OID");
+                        parameters.Add(new FbParameter("@OID", oPaciente.app_lid));
+
+                        using (var command = new FbCommand(updateQuery.ToString(), connection, transaction))
+                        {
+                            foreach (var param in parameters)
+                            {
+                                command.Parameters.Add(param);
+                            }
+
+                            command.ExecuteNonQuery();
+                            transaction.Commit();
+
+                            LOGUSUARIOS oLog = new LOGUSUARIOS
+                            {
+                                OWNER = (int) oPaciente.app_lid,
+                                FECHA = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                                TEXTO = "Exploración replanificada",
+                                USUARIO = "TUOTEMPO",
+                                DATA = DateTime.Now.ToString("dd/MM/yyyy")
+                             
+                            };
+                            LogUsuariosRepositorio.Insertar(oLog);
+
+                        }
+                    }
+                    else
+                    {
+                        // Manejar el caso donde no hay campos para actualizar
+                        transaction.Rollback();
+                    }
+
+                   
+
+                  
+                }
+
+                string query = @"
+                    SELECT P.*
+                    FROM CITAS_TUOTEMPO('0', '0', @oidexplo, null,null) p;";
+
+                // Crea el comando
+                using (var command = new FbCommand(query, connection))
+                {
+                    // Añade el parámetro @Oid al comando
+
+                    command.Parameters.Add("@oidexplo", FbDbType.Integer).Value = oPaciente.app_lid.ToString();
+
+                    // Ejecuta el comando y usa un FbDataReader para leer los resultados
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read()) // Si hay al menos un resultado
+                        {
+                            appointmentReturn = CreateAppointmentResponseFromReader(reader);
+
+
+                        }
+                    }
+                }
+                var response = new MyResponse
+                {
+                    result = "OK",
+                    returnObject = appointmentReturn
+                };
+
+                return Ok(response);
+            }         
+
+
+        
      
 
 

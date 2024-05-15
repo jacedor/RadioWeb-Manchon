@@ -7,7 +7,7 @@ namespace TuoTempo.Models
 {
     public class Insurance
     {
-        public string insurance_lid { get; set; }
+        public string insurance_id { get; set; }
         public string name { get; set; }
         public PatientNotice patient_notice { get; set; }       
         public string preparation { get; set; }

@@ -106,7 +106,7 @@ namespace TuoTempo.Controllers
             return new Resource
             {
                 resource_lid = reader["OID"]?.ToString() ?? string.Empty,
-                first_name = reader["DES_GRUP"]?.ToString() ?? string.Empty,
+                name = reader["DES_GRUP"]?.ToString() ?? string.Empty,
                 id_number= new id_number
                 {
                     number="111111111A",
