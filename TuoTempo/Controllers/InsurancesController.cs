@@ -112,6 +112,53 @@ namespace TuoTempo.Controllers
          
         }
 
+        private Resource MapToResource(FbDataReader reader)
+        {
+            // Definir la consulta SQL con un parámetro
+
+            string query = @"
+             SELECT M.OID, M.NOMBRE
+             FROM MUTUAS M 
+            WHERE  M.TUOTEMPO = 'T'";
+
+            List<string> oListaMutuaCobertura = new List<string>();
+
+            using (var connection = new FbConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = new FbCommand(query, connection))
+                {
+
+
+                    using (var fbReader = command.ExecuteReader())
+                    {
+                        while (fbReader.Read())
+                        {
+                            oListaMutuaCobertura.Add(fbReader["OID"].ToString());
+                        }
+                    }
+                }
+            }
+
+
+            return new Resource
+            {
+                resource_lid = reader["OID"]?.ToString() ?? string.Empty,
+                name = reader["DES_GRUP"]?.ToString() ?? string.Empty,
+                id_number = new id_number
+                {
+                    number = "111111111A",
+                    type = 1
+                },
+                related = new related
+                {
+                    insurance_lids = oListaMutuaCobertura
+                },
+
+                web_enabled = true,
+                active = true
+            };
+        }
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("tuotempo/insurances/{id}/resources")]
@@ -128,17 +175,19 @@ namespace TuoTempo.Controllers
                 var userId = User.Identity.IsAuthenticated ? User.Identity.Name : "Anónimo";
 
                 logger.Info($"Inicio de solicitud: {startTime}. IP del cliente: {clientIp}, Usuario: {userId}, Endpoint: /tuotempo/insurances/id/resources - GET");
-
+                List<Resource> resources = new List<Resource>();
                 // Tu lógica aquí...
                 List<string> resource_ids = new List<string>();
                 using (var connection = new FbConnection(connectionString))
                 {
                     connection.Open();
-                    var query = @"select DISTINCT(D.OWNER)  
+                    var query = @" 
+                    SELECT * FROM GAPARATOS  WHERE TUOTEMPO='T' and OID IN(
+                        select DISTINCT(D.OWNER)  
                         from PRECIOS P 
                         JOIN GAPARATOS G ON G.OID=P.IOR_GAPARATO 
                         JOIN DAPARATOS D ON D.OWNER=G.OID 
-                        WHERE  G.TUOTEMPO='T' AND P.IOR_ENTIDADPAGADORA=@id AND P.CANTIDAD>0";
+                        WHERE  G.TUOTEMPO='T' AND P.IOR_ENTIDADPAGADORA=@id AND P.CANTIDAD>0)";
 
                   
                     using (var command = new FbCommand(query, connection))
@@ -148,8 +197,8 @@ namespace TuoTempo.Controllers
                         {
                             while (reader.Read())
                             {
-                                // Llamada al método MapToLocation                               
-                                resource_ids.Add((reader["OWNER"].ToString()));
+                                Resource resource = MapToResource(reader);
+                                resources.Add(resource);
                             }
                         }
                     }
@@ -164,7 +213,7 @@ namespace TuoTempo.Controllers
                 var response = new MyResponse
                 {
                     result = "OK",
-                    returnObject = resource_ids
+                    returnObject = resources
                 };
 
                 // Devolver la respuesta

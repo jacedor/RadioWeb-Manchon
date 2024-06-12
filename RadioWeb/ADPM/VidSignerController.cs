@@ -122,12 +122,12 @@ namespace RadioWeb.ADPM
 
                 VidSignerClient oClientVid = new VidSignerClient(userVid, passVid);
 
-
+                P_INFORMES oPlantilla = P_InformesRepositorio.Obtener(int.Parse(valoresMassana[0]));
 
                 if (oClientVid.EnviarConFormulario(int.Parse(valoresMassana[0]), int.Parse(valoresMassana[1]), valoresMassana[2]))
                 {
                     HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, oClientVid.DocUID);
-                    P_INFORMES oPlantilla = P_InformesRepositorio.Obtener(int.Parse (valoresMassana[0]));
+                    
 
                     LOGVIDSIGNER oLog = new LOGVIDSIGNER
                     {
@@ -147,6 +147,19 @@ namespace RadioWeb.ADPM
                 else
                 {
                     HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.InternalServerError, oClientVid.ErrorMessage);
+                    LOGVIDSIGNER oLog = new LOGVIDSIGNER
+                    {
+                        IOR_EXPLORACION = oExploracion.OID,
+                        FECHA = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                        TEXTO = "RadIB - Error a Firmar " + oClientVid.ErrorMessage.Substring(0,90),
+                        PLANTILLA = "Report " + oPlantilla.TITULO,
+                        USUARIO = User.Identity.Name,
+                        ACCION = "ENVIAR",
+                        DOCGUID = oClientVid.DocUID.Split(':')[1].Substring(1, 36),
+                        IOR_PACIENTE = oExploracion.IOR_PACIENTE
+
+                    };
+                    LogVidSignerRepositorio.Insertar(oLog);
                     return response;
                 }
             }

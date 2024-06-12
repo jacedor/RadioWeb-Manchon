@@ -325,12 +325,11 @@
                     if (row.INFORMADA === "T") {
                         botones = '<div class="btn-group">';
                         botones = botones + '<a data-toggle="tooltip" title="Ver Informe" data-oid="' + row.OID + '" data-oid-informe = "' + row.IOR_INFORME + '"  class="btn-primary btn btn-xs generarPDFSinClave" href = "#">';
-                        botones = botones + '<i class="fa fa-copy" style="font-size:14px; color: green;"</a > ';
+                        botones = botones + '<i class="fa fa-copy" style="font-size:14px; color: red;"></i></a> ';
 
                         botones = botones + '<a data-toggle="tooltip" title="Ver Visores" data-oid="' + row.OID + '"  class="btn-info btn btn-xs  " onclick="comprobarEstadoQreport(' + row.OID + ')" href="#">';
 
-                        botones = botones + '<i class="fa fa-eye" style="font-size:14px; color: black;"</a > ';
-                        botones = botones + ' </a > ';
+                        botones = botones + '<i class="fa fa-eye" style="font-size:14px; color: black;"></i></a> ';                        
 
                         botones = botones + '</div>'
 
@@ -339,8 +338,8 @@
 
                         botones = botones + '<a data-toggle="tooltip" title="Ver Visores" data-oid="' + row.OID + '"  class="btn-info btn btn-xs  " onclick="comprobarEstadoQreport(' + row.OID + ')" href="#">';
 
-                        botones = botones + '<i class="fa fa-eye" style="font-size:14px; color: black;"</a > ';
-                        botones = botones + ' </a > ';
+                        botones = botones + '<i class="fa fa-eye" style="font-size:14px; color: black;"></i></a> ';
+                        
                         botones = botones + '</div>'
 
                     }

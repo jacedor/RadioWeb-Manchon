@@ -16,6 +16,9 @@ using ADPM.Common;
 using System.Globalization;
 using System.Net;
 using FirebirdSql.Data.FirebirdClient;
+using iTextSharp.text;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+using System.Security.Cryptography;
 
 namespace RadioWeb.Controllers
 {
@@ -177,7 +180,7 @@ namespace RadioWeb.Controllers
             query += "from listadia l left join CENTROS c on l.centro=c.OID ";
             query += "LEFT JOIN GAPARATOS G ON G.OID=L.grupoapa ";
             query += "LEFT JOIN CENTROSEXTERNOS CEN ON CEN.OID=l.IOR_CENTROEXTERNO ";
-            query += "left join personal tec on tec.COD=l.TECNICO ";
+            query += " left join personal tec on tec.OID = (select first 1 tt.oid from personal tt where tt.COD = l.TECNICO )";
             query += "JOIN EXPLORACION E ON E.OID=L.OID";
             
             query += " where l.fecha between " + DateTime.Parse(FECHA_INICIO).ToString("MM/dd/yyyy").QuotedString()

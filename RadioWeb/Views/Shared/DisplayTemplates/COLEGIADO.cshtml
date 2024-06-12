@@ -1,0 +1,14 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+@{
+
+    var modelValue = Model.HasValue ? Model.Value : -1;
+    var colegiado = ColegiadoRepositorio.Obtener(modelValue);
+}
+
+<span> @colegiado.NOMBRE</span>
+
+
+
+
+

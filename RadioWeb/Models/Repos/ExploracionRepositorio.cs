@@ -2162,7 +2162,7 @@ namespace RadioWeb.Models.Repos
                     {
                         oTemp.HISTORIACLINICA = TextosRepositorio.Obtener(DataBase.GetIntFromReader(oReader, "oidhistoria")).TEXTO;
 
-                        if (oTemp.HISTORIACLINICA.StartsWith("{\\rtf1"))
+                        if (!String.IsNullOrEmpty( oTemp.HISTORIACLINICA) &&  oTemp.HISTORIACLINICA.StartsWith("{\\rtf1"))
                         {
                             oTemp.HISTORIACLINICA = DataBase.convertRtfToPlainText(TextosRepositorio.Obtener(DataBase.GetIntFromReader(oReader, "oidhistoria")).TEXTO);
                             oTemp.HISTORIACLINICA = oTemp.HISTORIACLINICA.Replace("<p style=\"margin:0pt 0pt 0pt 0pt;line-height:normal;\"><span class=\"st1\">&nbsp;</span></p>", "");

@@ -1,0 +1,15 @@
+﻿@using RadioWeb.Models.Repos
+@model int?
+@{
+
+    var modelValue = Model.HasValue ? Model.Value : -1;
+    var centroexterno = CentrosExternosRepositorio.Obtener(modelValue);
+}
+
+<span> @centroexterno.NOMBRE</span>
+
+
+
+
+
+

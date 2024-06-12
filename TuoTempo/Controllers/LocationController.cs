@@ -246,9 +246,9 @@ namespace TuoTempo.Controllers
         //        {
         //            connection.Open();
 
-        //           string query= "select DISTINCT(D.OWNER),g.COD_GRUP,g.* " +
-        //                "from DAPARATOS D JOIN GAPARATOS G ON G.OID=D.OWNER " +
-        //                "WHERE G.TUOTEMPO='T' AND D.CID=@id ";
+        //            string query = "select DISTINCT(D.OWNER),g.COD_GRUP,g.* " +
+        //                 "from DAPARATOS D JOIN GAPARATOS G ON G.OID=D.OWNER " +
+        //                 "WHERE G.TUOTEMPO='T' AND D.CID=@id ";
 
         //            using (var command = new FbCommand(query, connection))
         //            {
@@ -299,6 +299,14 @@ namespace TuoTempo.Controllers
 
         //    }
         //}
+
+
+     
+
+
+
+
+
     }
 }
 

@@ -8,6 +8,9 @@
             <th data-sortable="true">Login</th>
             <th data-sortable="true">Perfil</th>
             <th>Privilegiado</th>
+            <th data-sortable="true">Referidor asociado</th>
+            <th data-sortable="true">Mutua asociada</th>
+            <th data-sortable="true">Centro asociado</th>
             <th>...</th>
         </tr>
     </thead>
@@ -25,7 +28,15 @@
 
                 </td>
                 <td>@item.PRIVILEGIADO</td>
-
+                <td>
+                    @Html.DisplayFor(modelItem => item.IOR_COLEGIADO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IOR_ENTIDADPAGADORA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IOR_CENTROEXTERNO)
+                </td>
                 <td>
                     <a href="@Url.Action("Edit","Users",new {oid=item.IDUSER})">Editar</a>
                 </td>

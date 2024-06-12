@@ -25,6 +25,8 @@ namespace TuoTempo.Controllers
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
+
+
         private Activity MapToActivity(FbDataReader reader)
         {
 
@@ -105,7 +107,7 @@ namespace TuoTempo.Controllers
                 related =  new related
                 {
                     insurance_lids= oListaMutuaCobertura,
-                    resource_lids= oListaCentros
+                    //resource_lids= oListaCentros
                 },
                 duration ="15",                
                 web_enabled = true,
@@ -157,7 +159,7 @@ namespace TuoTempo.Controllers
                                 Activity TipoDeExploracion = MapToActivity(reader);
                                 if (TipoDeExploracion.related.insurance_lids.Count>0)
                                 {
-                                    activities.Add(TipoDeExploracion);
+                                         activities.Add(TipoDeExploracion);
                                 }
                                 
                             }
@@ -368,6 +370,79 @@ namespace TuoTempo.Controllers
 
         }
 
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("tuotempo/locations/{location_lid}/resources/{resource_lid}/activities")]
+        public IHttpActionResult GetActivitiesByCentroAndResource(int location_lid,int resource_lid)
+        {
+            List<Activity> resources = new List<Activity>();
+
+            var startTime = DateTime.UtcNow; // Tiempo de inicio para calcular la duración
+            try
+            {
+
+                // Suponiendo que tienes una forma de obtener la IP y el ID del usuario
+                var clientIp = HttpContext.Current?.Request?.UserHostAddress;
+                var userId = User.Identity.IsAuthenticated ? User.Identity.Name : "Anónimo";
+
+                logger.Info($"Inicio de solicitud: {startTime}. IP del cliente: {clientIp}, Usuario: {userId}, Endpoint: /api/GetActivitiesByResource - GET");
+
+                // Tu lógica aquí...
+
+                using (var connection = new FbConnection(connectionString))
+                {
+                    connection.Open();
+
+                    var query = "SELECT  * FROM APARATOS R ";
+                    query += " JOIN GAPARATOS G ON G.OID=R.OWNER ";
+                    query += " join DAPARATOS dapa on dapa.OWNER=g.OID ";
+                   query += " WHERE  SALIDA_INTERNET='1' and dapa.CID=@IDCENTRO and g.oid = @IDRESOURCE";
+
+
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        // Use parameterized queries to prevent SQL injection
+                        command.Parameters.AddWithValue("@IDCENTRO", location_lid);
+                        command.Parameters.AddWithValue("@IDRESOURCE", resource_lid);
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                // Llamada al método MapToLocation
+                                Activity resource = MapToActivity(reader);
+                                resource.related.resource_lids = new List<string>();
+                                resource.related.insurance_lids = new List<string>();
+                                resources.Add(resource);
+                            }
+                        }
+                    }
+                }
+
+                var duration = DateTime.UtcNow - startTime; // Calcular duración
+                logger.Info($"Solicitud completada en {duration.TotalMilliseconds} ms. GetActivitiesByResource por centro obtenidas: {resources.Count}.");
+
+
+
+                // Crear la respuesta JSON
+                var response = new MyResponse
+                {
+                    result = "OK",
+                    returnObject = resources
+                };
+
+                // Devolver la respuesta
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var duration = DateTime.UtcNow - startTime; // Calcular duración
+                logger.Error(ex, $"Error después de {duration.TotalMilliseconds} ms en GetActivitiesByResource - GET. Detalle: {ex.Message}");
+                return InternalServerError();
+
+            }
+
+        }
 
     }
 }

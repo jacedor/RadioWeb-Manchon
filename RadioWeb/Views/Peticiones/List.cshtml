@@ -231,7 +231,8 @@
             } else {
                var botones = '';
                 botones = '<div class="btn-group">';
-                        botones = botones + '<a data-oid="' + row.EXPLORACIONAGENDADA.OID + '"  class="btn-info btn btn-xs  " onclick="imprimirExploracion(' + row.EXPLORACIONAGENDADA.OID + ')" href="#"><i class="fa fa-print" title="Imprimir"></i></a>';
+                botones = botones + '<a data-oid="' + row.EXPLORACIONAGENDADA.OID + '"  class="btn-info btn btn-xs  " onclick="imprimirExploracion(' + row.EXPLORACIONAGENDADA.OID
+                    + ')" href="#"><i class="fa fa-print" title="Imprimir"></i></a>';
 
                 if (row.EXPLORACIONAGENDADA.ESTADO === "3" || row.EXPLORACIONAGENDADA.ESTADO === "2") {
                    

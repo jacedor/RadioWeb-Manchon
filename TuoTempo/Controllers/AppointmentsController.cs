@@ -18,6 +18,7 @@ using System.Data.Odbc;
 using System.Resources;
 using System.Web.Http.Results;
 using TuoTempo.Models.Repos;
+using Newtonsoft.Json.Linq;
 
 namespace TuoTempo.Controllers
 {
@@ -101,6 +102,11 @@ namespace TuoTempo.Controllers
                 {
                     updateQuery += " oid= @OID RETURNING OID ";
                 }
+                else if (cleanedIdNumber.Length>12)
+                {
+                    updateQuery = updateQuery.Replace("DNI", "CIP");
+                    updateQuery += " upper(CIP) = @idNumber and FECHAN=@birthdate  RETURNING OID ";
+                }
                 else
                 {
                     updateQuery += " upper(DNI) = @idNumber and FECHAN=@birthdate  RETURNING OID ";
@@ -119,7 +125,10 @@ namespace TuoTempo.Controllers
                 }
                 using (var command = new FbCommand(updateQuery, connection))
                 {
-
+                    if (appointmentRequest.availability.insurance_lid==null)
+                    {
+                        appointmentRequest.availability.insurance_lid = "3820159";
+                    }
                     command.Parameters.AddWithValue("@insuranceId", appointmentRequest.availability.insurance_lid);
                     command.Parameters.AddWithValue("@patientName", $"{RemoveDiacritics(appointmentRequest.user.second_name.ToUpper())}, {RemoveDiacritics(appointmentRequest.user.first_name.ToUpper())}");
                     command.Parameters.AddWithValue("@email", appointmentRequest.user.contact.email);
@@ -130,8 +139,6 @@ namespace TuoTempo.Controllers
                     if (appointmentRequest.user.user_lid != null && !string.IsNullOrEmpty(appointmentRequest.user.user_lid))
                     {
                         command.Parameters.AddWithValue("@OID", appointmentRequest.user.user_lid);
-
-
                     }
                    
 
@@ -149,12 +156,24 @@ namespace TuoTempo.Controllers
 
                     if (oidPaciente == -1)
                     {
-                        // No se encontró ningún registro que cumpla con las condiciones,
-                        // por lo tanto, realizar una inserción
-                        string insertQuery = @"
+                        string insertQuery = "";
+                        if (cleanedIdNumber.Length > 12)
+                        {
+                            insertQuery = @"
+                            INSERT INTO PACIENTE (COD_PAC, CID, PACIENTE, FECHAN, SEXO, USERNAME, AVISO, CIP, EMAIL,COMENTARIO)
+                            VALUES (gen_id(GENCODPAC, 1), @insuranceId, @patientName, @birthdate, @gender, 'TUOTEMPO', 'F', @idNumber, @email,'INSERTADO DESDE TUOTEMPO')
+                            RETURNING OID;";
+                        }
+                        else
+                        {
+                            insertQuery = @"
                             INSERT INTO PACIENTE (COD_PAC, CID, PACIENTE, FECHAN, SEXO, USERNAME, AVISO, DNI, EMAIL,COMENTARIO)
                             VALUES (gen_id(GENCODPAC, 1), @insuranceId, @patientName, @birthdate, @gender, 'TUOTEMPO', 'F', @idNumber, @email,'INSERTADO DESDE TUOTEMPO')
                             RETURNING OID;";
+                        }
+                        // No se encontró ningún registro que cumpla con las condiciones,
+                        // por lo tanto, realizar una inserción
+                     
 
                         using (var insertCommand = new FbCommand(insertQuery, connection))
                         {
@@ -312,6 +331,9 @@ namespace TuoTempo.Controllers
         [System.Web.Http.Route("tuotempo/appointments")]
         public IHttpActionResult AddApointment([FromBody] AppointmentRequest oPaciente)
         {
+
+            logger.Info("Solicitud de AddApointment recibida: {0}", JsonConvert.SerializeObject(oPaciente));
+
             try
             {
                 DateTime fechaExplo;
@@ -435,9 +457,25 @@ namespace TuoTempo.Controllers
                                 )
                                 RETURNING OID;";
 
+                    string oPrecio="0";
+                    string queryPrecio = "select  p.CANTIDAD FROM PRECIOS p  WHERE p.IOR_ENTIDADPAGADORA =" + oPaciente.availability.insurance_lid + " AND p.IOR_TIPOEXPLORACION=" + oPaciente.availability.activity_lid;
+                    using (FbCommand oCommandParaPrecio = new FbCommand(queryPrecio, conn))
+                    {
+                        
+                        if (oCommandParaPrecio.ExecuteScalar() != null)
+                        {
+                            oPrecio = oCommandParaPrecio.ExecuteScalar().ToString();
+                        }
+                        else
+                        {
+                            oPrecio = "";
+                        }
 
 
-                    using (FbCommand cmd = new FbCommand(insertCommand, conn))
+                    }
+
+
+                using (FbCommand cmd = new FbCommand(insertCommand, conn))
                     {
                         // Agregar los parámetros aquí
                         cmd.Parameters.AddWithValue("@VERS", 1);
@@ -446,7 +484,19 @@ namespace TuoTempo.Controllers
                         cmd.Parameters.AddWithValue("@IOR_EMPRESA", 4);
                         cmd.Parameters.AddWithValue("@HORA", oPaciente.availability.start_time);
                         cmd.Parameters.AddWithValue("@FECHA", cadenaFechaExploracoin);
-                        cmd.Parameters.AddWithValue("@CANTIDAD", oPaciente.availability.price);
+                        // Reemplaza la coma por un punto
+                        string precio = oPrecio.Replace(',', '.');
+
+                        // Intenta convertir el precio a decimal
+                        if (decimal.TryParse(precio, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal cantidad))
+                        {
+                            cmd.Parameters.AddWithValue("@CANTIDAD", cantidad);
+                        }
+                        else
+                        {
+                            return BadRequest("Invalid price format.");
+                        }
+                       
                         cmd.Parameters.AddWithValue("@ESTADO", oExploNueva.ESTADO);
                         cmd.Parameters.AddWithValue("@FACTURADA", oExploNueva.FACTURADA);
                         cmd.Parameters.AddWithValue("@RECOGIDO", oExploNueva.RECOGIDO);

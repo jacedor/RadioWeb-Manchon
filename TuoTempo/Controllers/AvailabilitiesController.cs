@@ -36,11 +36,38 @@ namespace TuoTempo.Controllers
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("tuotempo/availabilities/{activity_lid}")]
-        public IHttpActionResult ObtenerHuecos(int activity_lid, int insurance_lid, string start_day, string end_day, string start_time,
-    string end_time, string min_time, string max_time, string resource_lids, int results_number, string location_lids)
+        public IHttpActionResult ObtenerHuecos(int activity_lid, string start_day, string end_day, string location_lids,
+            int insurance_lid= 3820159,  string start_time="00:00",
+    string end_time = "23:59", string min_time = "00:00", string max_time= "23:59",
+    string resource_lids="-1", int results_number=100)
         {
             List<Availabilities> availabilities = new List<Availabilities>();
+            if (resource_lids == "-1")
+            {
+                using (var connection = new FbConnection(connectionString))
+                {
+                    connection.Open();
+                    string resourceQuery = @"SELECT g.OID
+                                         FROM aparatos a
+                                         JOIN GAPARATOS g ON g.oid = a.OWNER
+                                         WHERE a.oid = @activity_lid";
 
+                    using (var resourceCommand = new FbCommand(resourceQuery, connection))
+                    {
+                        resourceCommand.Parameters.Add("@activity_lid", FbDbType.Integer).Value = activity_lid;
+
+                        var result = resourceCommand.ExecuteScalar();
+                        if (result != null)
+                        {
+                            resource_lids = result.ToString();
+                        }
+                        else
+                        {
+                            return BadRequest("No resource found for the given activity_lid.");
+                        }
+                    }
+                }
+            }
             var startTime = DateTime.UtcNow; // Tiempo de inicio para calcular la duración
             try
             {
@@ -77,7 +104,7 @@ namespace TuoTempo.Controllers
                                     var availability = new Availabilities
                                     {
                                         availability_lid = reader["AVAILABILITY_LID"].ToString(),
-                                        date = reader["FECHA"].ToString(),
+                                        date = DateTime.Parse( reader["FECHA"].ToString()).ToShortDateString(),
                                         start_time = reader["START_TIME"].ToString(),
                                         end_time = reader.IsDBNull(reader.GetOrdinal("END_TIME")) ? null : reader["END_TIME"].ToString(),
                                         location_lid = reader.IsDBNull(reader.GetOrdinal("LOCATION_LID")) ? null : reader["LOCATION_LID"].ToString(),
@@ -160,7 +187,7 @@ namespace TuoTempo.Controllers
                                     var availability = new Availabilities
                                     {
                                         availability_lid = reader["AVAILABILITY_LID"].ToString(),
-                                        date = reader["FECHA"].ToString(),
+                                        date = DateTime.Parse(reader["FECHA"].ToString()).ToShortDateString(),
                                         start_time = reader["START_TIME"].ToString(),
                                         end_time = reader.IsDBNull(reader.GetOrdinal("END_TIME")) ? null : reader["END_TIME"].ToString(),
                                         location_lid = reader.IsDBNull(reader.GetOrdinal("LOCATION_LID")) ? null : reader["LOCATION_LID"].ToString(),

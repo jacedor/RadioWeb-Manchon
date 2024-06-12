@@ -1,0 +1,10 @@
+@using RadioWeb.Models.Repos
+@model int?
+@{
+
+    var modelValue = Model.HasValue ? Model.Value : -1;
+    var mutua = MutuasRepositorio.Obtener(modelValue);
+}
+
+<span> @mutua.NOMBRE</span>
+
