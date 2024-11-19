@@ -14,30 +14,24 @@ namespace RadioWeb.Models
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("TELEFONO")]
-    public partial class TELEFONO
+    
+       
+        public class CEMUTUAS
     {
-        [Key]
+            [Key]
         public int OID { get; set; }
-        public Nullable<int> VERS { get; set; }
-        public Nullable<int> CID { get; set; }
+        public int? VERS { get; set; }
+        public int? CID { get; set; }
         public string CANAL { get; set; }
-        public Nullable<int> OWNER { get; set; }
+        public int? OWNER { get; set; }
         public string USERNAME { get; set; }
-        public Nullable<System.DateTime> MODIF { get; set; }
-        public Nullable<int> CENTRO { get; set; }
-        public Nullable<short> PREFIJO { get; set; }
-        public string NUMERO { get; set; }
-        public Nullable<int> IOR_EMPRESA { get; set; }
-        public string PRE { get; set; }
-        public string LOCALIZACION { get; set; }
-        [Column("TELEFONO")]
-        public string TELEFONO1 { get; set; }
+        public DateTime? MODIF { get; set; }
         public string BORRADO { get; set; }
-        public Nullable<int> IOR_TIPO { get; set; }
-
-        public virtual MUTUAS MUTUA { get; set; }
-        public virtual CENTROSEXTERNOS CENTROEXTERNO { get; set; }
-
+        public int? IOR_CENTROEXTERNO { get; set; } // Relación con el centro externo
+        public int? IOR_MUTUA { get; set; } // Relación con la mutua
     }
+
+
+
+    
 }

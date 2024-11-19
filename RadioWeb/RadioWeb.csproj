@@ -314,6 +314,7 @@
     <Compile Include="Controllers\EstadisticasController.cs" />
     <Compile Include="Controllers\ForeignkeyCheckController.cs" />
     <Compile Include="Controllers\GruposController.cs" />
+    <Compile Include="Controllers\CentrosExternosController.cs" />
     <Compile Include="Controllers\MUTUASController.cs" />
     <Compile Include="Controllers\Pagos2Controller.cs" />
     <Compile Include="Controllers\PreciosController.cs" />
@@ -369,6 +370,8 @@
     <Compile Include="Helpers\HttpRequestExtensions.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\UrlExtender.cs" />
+    <Compile Include="Models\Clases\CEMUTUAS.cs" />
+    <Compile Include="Models\Clases\CEMEDICOS.cs" />
     <Compile Include="Models\Clases\KIOSKO_DAPARATO_TV.cs" />
     <Compile Include="Models\Clases\KIOSKO_TV.cs" />
     <Compile Include="Models\Clases\ARQUEODIARIO.cs" />
@@ -1984,6 +1987,11 @@
     <Content Include="Views\Kiosko\TVForm.cshtml" />
     <Content Include="Views\Kiosko\Agendas.cshtml" />
     <Content Include="Views\Informe\ExploracionesPendientesAdmin.cshtml" />
+    <Content Include="Views\CENTROSEXTERNOS\Delete.cshtml" />
+    <Content Include="Views\CENTROSEXTERNOS\Details.cshtml" />
+    <Content Include="Views\CENTROSEXTERNOS\Index.cshtml" />
+    <Content Include="Views\CENTROSEXTERNOS\CentroExternoForm.cshtml" />
+    <Content Include="Views\CENTROSEXTERNOS\_RelacionesTab.cshtml" />
     <None Include="Views\Pagos\PagoRapido.cshtml" />
     <Content Include="Views\P_Informe\Editor.cshtml" />
     <Content Include="Views\P_Informe\Admin.cshtml" />
@@ -2061,6 +2069,7 @@
     <Content Include="Views\Peticiones\ListExploraciones.cshtml" />
     <Content Include="Views\Peticiones\_ListaHuecos.cshtml" />
     <Content Include="Views\Peticiones\CitaOnline.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\MUTUASLISTCITAONLINE.cshtml" />
     <None Include="Web.config.dentesx">
       <SubType>Designer</SubType>
     </None>

@@ -72,12 +72,21 @@ namespace RadioWeb.Models
         [DataType("BooleanString")]
         public string CITACIONONLINE { get; set; }
 
+        [Display(Name = "PERMITIR ACCESO A PETICIONES")]
+        [DataType("BooleanString")]
+        public string CREARPETICIONES { get; set; }
         public int? LOGIN_ATTEMPTS { get; set; }
 
         [Display(Name = "ACCESO BLOQUEADO")]
         [DataType("BooleanString")]
         public string BLOQUEADO { get; set; }
 
+        [NotMapped]
+        [DataType("PERSONAL")]
+        [Display(Name = "VINCULAR CON PERSONAL DEL CENTRO")]
+        public int IOR_PERSONAL { get; set; }
+
+      
 
         [NotMapped]
         public string DESCPERFILWEB { get; set; }

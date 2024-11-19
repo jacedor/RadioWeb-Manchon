@@ -122,6 +122,12 @@ namespace RadioWeb.Models.Repos
                             UsuarioResult.CARTELERADEFECTO = GetDefaultCartelera(UsuarioResult);
                             UsuarioResult.VECANTIDADES = PuedeVerCantidades(UsuarioResult);
                             UsuarioResult.ESMEDICO = EsMedico(UsuarioResult);
+                            var personal = PersonalRepositorio.Obtener(UsuarioResult.LOGIN);
+                            if (personal.OID > 0)
+                            {
+                                UsuarioResult.IOR_PERSONAL = personal.OID;
+                                UsuarioResult.PERSONAL = personal;
+                            }
                             olistaUsuario.Add(UsuarioResult);
                         }
                     }
@@ -173,7 +179,7 @@ namespace RadioWeb.Models.Repos
                             UsuarioResult.ESMEDICO = EsMedico(UsuarioResult);
                             UsuarioResult.IOR_COLEGIADO = DataBase.GetIntFromReader(oReader, "IOR_COLEGIADO");
                             UsuarioResult.IOR_ENTIDADPAGADORA = DataBase.GetIntFromReader(oReader, "IOR_ENTIDADPAGADORA");
-
+                            UsuarioResult.CREARPETICIONES = DataBase.GetStringFromReader(oReader, "CREARPETICIONES");
                             UsuarioResult.PERSONAL = PersonalRepositorio.Obtener(UsuarioResult.LOGIN);
                             UsuarioResult.CITACIONONLINE = DataBase.GetStringFromReader(oReader, "CITACIONONLINE");
                             UsuarioResult.IOR_CENTROEXTERNO = DataBase.GetIntFromReader(oReader, "IOR_CENTROEXTERNO");

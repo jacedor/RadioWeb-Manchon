@@ -183,9 +183,7 @@ namespace TuoTempo.Controllers
                             insertCommand.Parameters.AddWithValue("@gender", sexo);
                             insertCommand.Parameters.AddWithValue("@idNumber", cleanedIdNumber);
                             insertCommand.Parameters.AddWithValue("@email", appointmentRequest.user.contact.email);
-                            insertCommand.Parameters.AddWithValue("@TRAC", trac);
-
-                         
+                            insertCommand.Parameters.AddWithValue("@TRAC", trac);                         
 
                             try
                             {
@@ -459,6 +457,8 @@ namespace TuoTempo.Controllers
 
                     string oPrecio="0";
                     string queryPrecio = "select  p.CANTIDAD FROM PRECIOS p  WHERE p.IOR_ENTIDADPAGADORA =" + oPaciente.availability.insurance_lid + " AND p.IOR_TIPOEXPLORACION=" + oPaciente.availability.activity_lid;
+                    
+                    
                     using (FbCommand oCommandParaPrecio = new FbCommand(queryPrecio, conn))
                     {
                         
@@ -468,7 +468,7 @@ namespace TuoTempo.Controllers
                         }
                         else
                         {
-                            oPrecio = "";
+                            oPrecio = "0";
                         }
 
 
@@ -494,7 +494,8 @@ namespace TuoTempo.Controllers
                         }
                         else
                         {
-                            return BadRequest("Invalid price format.");
+                            cmd.Parameters.AddWithValue("@CANTIDAD", 0);
+                            
                         }
                        
                         cmd.Parameters.AddWithValue("@ESTADO", oExploNueva.ESTADO);
@@ -1028,6 +1029,73 @@ namespace TuoTempo.Controllers
         }
 
 
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("tuotempo/appointments/noshow")]
+        public IHttpActionResult GetAppointmentsNoPresentados( [FromUri] string start_date = null, [FromUri] string end_date = null)
+        {
+            {
+
+                // Ahora tienes dateTime como DateTime y puedes formatearlo como desees
+                // Por ejemplo, para formatearlo como 'YYYY-MM-DD'
+                string fechaFormateada = DateTime.Parse(start_date).ToString("yyyy-MM-dd");
+                string fechaFormateadaFin = "";
+
+                if (end_date == null)
+                {
+                    fechaFormateadaFin = DateTime.Now.AddYears(50).ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                    fechaFormateadaFin = DateTime.Parse(end_date).ToString("yyyy-MM-dd");
+
+                }
+
+                var appointmentReturnList = new List<AppointmentResponse>();
+
+                // Crea la conexión
+                using (var connection = new FbConnection(connectionString))
+                {
+                    connection.Open();
+
+
+                    string query = @"
+                    SELECT P.*
+                    FROM CITAS_TUOTEMPO('0', '0', '0', @fechainicio, @fechafin) p;
+                       ";
+
+                    // Crea el comando
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        // Añade el parámetro @Oid al comando
+                        command.Parameters.Add("@fechainicio", FbDbType.Date).Value = fechaFormateada;
+                        command.Parameters.Add("@fechafin", FbDbType.Date).Value = fechaFormateadaFin;
+              
+
+                        // Ejecuta el comando y usa un FbDataReader para leer los resultados
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read()) // Si hay al menos un resultado
+                            {
+                                var appointmentReturn = CreateAppointmentResponseFromReader(reader);
+                                appointmentReturnList.Add(appointmentReturn);
+
+                            }
+                        }
+                    }
+
+                    // Crear una respuesta JSON
+                    var response = new MyResponse
+                    {
+                        result = "OK",
+                        returnObject = appointmentReturnList
+                    };
+
+                    return Ok(response);
+                }
+            }
+
+        }
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("tuotempo/appointments/users/{user_lid}")]
         public IHttpActionResult GetAppointmentsByPatient(string user_lid, [FromUri] string start_date = null, [FromUri] string end_date = null)

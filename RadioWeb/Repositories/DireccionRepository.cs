@@ -4,41 +4,71 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 
 namespace RadioWeb.Repositories
 {
     public class DireccionRepository
     {
         private readonly RadioDBContext _context;
-        public DireccionRepository(RadioDBContext context )
+
+        public DireccionRepository(RadioDBContext context)
         {
             _context = context;
         }
 
-        public void Update(IEnumerable<DIRECCION> direcciones,int owner)
+        public void Update(IEnumerable<DIRECCION> direcciones, int owner)
         {
-            foreach (var item in direcciones)
+            foreach (var direccion in direcciones)
             {
-                item.OWNER = owner;
-                if (item.OID <= 0)
-                {
-                    item.IOR_TIPO = 0;
-                    if (!String.IsNullOrEmpty(item.DIRECCION1))
-                    {
-                        _context.Entry(item).State = EntityState.Added;
-                    }
-                    else
-                    {
-                        _context.Entry(item).State = EntityState.Deleted;
-                    }
-                }
-                else
-                {
-                    _context.Entry(item).State = EntityState.Modified;
-                }
+                direccion.OWNER = owner;
 
+                // Si la dirección es nueva (OID <= 0)
+                if (direccion.OID <= 0)
+                {
+                    if (!string.IsNullOrWhiteSpace(direccion.DIRECCION1)) // Validar datos no vacíos
+                    {
+                        direccion.IOR_TIPO = direccion.IOR_TIPO > 0 ? direccion.IOR_TIPO : 0; // Asegurar valor válido
+                        _context.Entry(direccion).State = EntityState.Added; // Marcar para inserción
+                    }
+                }
+                else // Si la dirección ya existe
+                {
+                    if (string.IsNullOrWhiteSpace(direccion.DIRECCION1)) // Eliminar si está vacía
+                    {
+                        _context.Entry(direccion).State = EntityState.Deleted;
+                    }
+                    else // Actualizar si tiene datos
+                    {
+                        _context.Entry(direccion).State = EntityState.Modified;
+                    }
+                }
             }
+
+            // Guardar cambios después de procesar todas las direcciones
+            _context.SaveChanges();
+        }
+
+        public void Insert(DIRECCION direccion)
+        {
+            if (direccion != null && !string.IsNullOrWhiteSpace(direccion.DIRECCION1))
+            {
+                _context.Entry(direccion).State = EntityState.Added;
+                _context.SaveChanges();
+            }
+        }
+
+        public void Delete(DIRECCION direccion)
+        {
+            if (direccion != null)
+            {
+                _context.Entry(direccion).State = EntityState.Deleted;
+                _context.SaveChanges();
+            }
+        }
+
+        public IEnumerable<DIRECCION> GetDireccionesByOwner(int owner)
+        {
+            return _context.Direcciones .Where(d => d.OWNER == owner).ToList();
         }
     }
 }

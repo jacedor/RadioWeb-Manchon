@@ -32,6 +32,10 @@ namespace RadioWeb.Models.Repos
                     oTexto.OWNER = DataBase.GetIntFromReader(oReader, "OWNER");
                     oTexto.TEXTO = DataBase.GetStringFromReader(oReader,"TEXTO");
 
+                    if (oTexto.TEXTO.StartsWith("{\\rtf"))
+                    {
+                        oTexto.TEXTO =DataBase.convertRtfToPlainText(oTexto.TEXTO);
+                    }
                 }
 
                 return oTexto;

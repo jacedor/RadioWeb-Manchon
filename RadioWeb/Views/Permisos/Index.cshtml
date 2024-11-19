@@ -44,7 +44,7 @@ OnFailure = "OnFailure"
                             <div class="col-sm-6">
                                 @Html.DropDownListFor(m => Model.IOR_ROLE,
                                     new SelectList(Model.Roles.OrderBy(p => p.NOME), "IDUSER", "NOME"),
-                                    new { @class = "form-control select2" })
+                                    new { @class = "form-control" })
                             </div>
                             <div class="col-sm-6">
                                 <button id="BuscarPermisos" class="btn btn-primary" type="submit">Buscar</button>
@@ -61,46 +61,72 @@ OnFailure = "OnFailure"
                 </div>
             </div>
             <div id="tab-usuarios" class="tab-pane">
+             
                 <div class="panel-body">
-                    @using (Ajax.BeginForm("List",
-"Users",
+                    @using (Ajax.BeginForm("List", "Users",
 new AjaxOptions
 {
-HttpMethod = "POST",
-UpdateTargetId = "tablaResultadoUsuario",
-InsertionMode = InsertionMode.Replace,
-OnSuccess = "MenuSuccessUsuario(data)",
-OnFailure = "OnFailure",
-OnComplete = "MenuCompleteUsuario"
-
-
-}))
+           HttpMethod = "POST",
+           UpdateTargetId = "tablaResultadoUsuario",
+           InsertionMode = InsertionMode.Replace,
+           OnSuccess = "MenuSuccessUsuario(data)",
+           OnFailure = "OnFailure",
+           OnComplete = "MenuCompleteUsuario"
+}, new { @class = "form-horizontal", action = Url.Action("List", "Users") }))
                     {
-                        <div class="form-group">
-                            <div class="input-group">
-                                <select name="IOR_ROLE3" id="IOR_ROLE3" class="form-control  select2">
-                                    <option value="-1">TODOS</option>
-                                    @foreach (USUARIO item in Model.Roles.OrderBy(p => p.NOME))
-                                    {
-                                        <option value="@(item.IDUSER)">@item.NOME</option>
-                                    }
-                                </select>
+                        <div class="">
+                            <div class="row g-3">
+                                <!-- Filtro de Rol -->
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="IOR_ROLE3" class="control-label">Rol/Perfil</label>
+                                        <select name="IOR_ROLE3" id="IOR_ROLE3" class="form-control select2">
+                                            <option value="-1">TODOS</option>
+                                            @foreach (USUARIO item in Model.Roles.OrderBy(p => p.NOME))
+                                            {
+                                                <option value="@(item.IDUSER)">@item.NOME</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Agregado g-3 para separación horizontal -->
+                                <!-- Filtro de Tipo de Usuario -->
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="TipoUsuario">Tipo de Usuario</label>
+                                        <select name="TipoUsuario" id="TipoUsuario" class="form-control select2">
+                                            <option value="TODOS">Todos</option>
+                                            <option value="1">Centro</option>
+                                            <option value="2">Módulo de Citación Externo</option>
+                                        </select>
+                                    </div>
+                                </div>
 
 
-                                <span class="input-group-btn">
-                                    <button id="BuscarUsuarios" class="btn btn-primary" type="submit">Buscar</button>
-                                </span>
+
+                                <!-- Botón de Búsqueda -->
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label> <!-- Espaciado para alinear el botón con los inputs -->
+                                        <button id="BuscarUsuarios" class="btn btn-primary btn-block" type="submit">Buscar</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <hr />
-                        <div id="tablaResultadoUsuario">
 
+                        <hr />
+
+                        <!-- Contenedor para resultados -->
+                        <div id="tablaResultadoUsuario">
                         </div>
                     }
-
                 </div>
-
             </div>
+
+
+
+
             <div id="tab-menus" class="tab-pane">
                 <div class="panel-body">
                     @using (Ajax.BeginForm("Menus",
@@ -214,22 +240,22 @@ OnComplete = "MenuCompleteUsuario"
             $("#form1").submit();
         });
 
-        $(document).on("shown.bs.tab", "a[data-toggle='tab']", function (e) {
+        //$(document).on("shown.bs.tab", "a[data-toggle='tab']", function (e) {
 
-            $(".select2").select2({
-                theme: "bootstrap",
-                width: "300px"
-            });
-            //$($(this).attr('href')).find('button').trigger('click')
-        });
+        //    $(".select2").select2({
+        //        theme: "bootstrap",
+        //        width: "100%"
+        //    });
+            
+        //});
 
         $(document).ready(function () {
             $("li[data-view]").removeClass('active');
             $("li[data-view]").removeClass('active');
             $("[data-view=ViewPermisos]").addClass("active");
             $("[data-view=ViewPermisos]").parents("ul").removeClass("collapse");
-            $(".select2").select2({
-                theme: "bootstrap",
+            $("#IOR_ROLE").select2({
+               theme: "bootstrap",
                 width: "300px"
             });
             if (window.location.hash != "") {

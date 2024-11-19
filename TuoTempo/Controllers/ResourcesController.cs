@@ -102,14 +102,15 @@ namespace TuoTempo.Controllers
                 }
             }
 
-
+            string oid = reader["OID"]?.ToString() ?? string.Empty;
+            oid = "1111111" + oid +"A";
             return new Resource
             {
                 resource_lid = reader["OID"]?.ToString() ?? string.Empty,
                 name = reader["DES_GRUP"]?.ToString() ?? string.Empty,
                 id_number= new id_number
                 {
-                    number="111111111A",
+                    number= oid,
                     type= 1
                 },                          
                 related =  new related

@@ -75,6 +75,12 @@
             </div>
 
             <div class="form-group">
+                @Html.LabelFor(model => model.PERSONAL, htmlAttributes: new { @class = "control-label " })
+                @Html.EditorFor(m => m.IOR_PERSONAL)
+                @Html.ValidationMessageFor(model => model.IOR_PERSONAL, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         Datos para peticiones de prueba
@@ -109,6 +115,11 @@
                             @Html.ValidationMessageFor(model => model.CITACIONONLINE, "", new { @class = "text-danger" })
                         </div>
 
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CREARPETICIONES, htmlAttributes: new { @class = "control-label " })
+                            @Html.EditorFor(model => model.CREARPETICIONES)
+                            @Html.ValidationMessageFor(model => model.CREARPETICIONES, "", new { @class = "text-danger" })
+                        </div>
                     </div>
                 </div>
             </div>

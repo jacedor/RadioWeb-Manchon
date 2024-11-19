@@ -152,7 +152,7 @@ namespace RadioWeb.Models
         [DataType("PRIORIDAD")]
         public string PRIORIDAD { get; set; }
 
-        [DataType("MUTUASLIST")]
+        [DataType("MUTUASLISTCITAONLINE")]
         [Display(Name = "MUTUA")]
         [Range(-1, 100000000, ErrorMessage = "Seleccione Mutua")]
         public int? IOR_ENTIDADPAGADORA { get; set; }

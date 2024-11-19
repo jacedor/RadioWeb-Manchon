@@ -236,6 +236,7 @@ namespace RadioWeb.Models.Repos
                         DNI = DataBase.GetStringFromReader(oReader, "DNI"),
                         EMAIL = DataBase.GetStringFromReader(oReader, "EMAIL"),
                         EDAD = dateBirth,
+                        
                         FECHAN = dateValue,
                         HORAMOD = DataBase.GetStringFromReader(oReader, "HORAMOD"),
                         IOR_EMPRESA = DataBase.GetIntFromReader(oReader, "IOR_EMPRESA"),

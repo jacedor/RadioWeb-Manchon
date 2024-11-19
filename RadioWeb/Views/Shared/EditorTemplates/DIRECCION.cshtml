@@ -11,7 +11,7 @@
     Model.Add(new DIRECCION()
     {
         OID = -1,
-        OWNER = (int)ViewData["owner"]
+        OWNER = ViewData["owner"] != null ? (int)ViewData["owner"] : -1
     });
 }
 
@@ -85,7 +85,7 @@
                     var direccion = new DIRECCION
                     {
                         INDICE = 10000,
-                        OWNER = (int)ViewData["owner"]
+                        OWNER = ViewData["owner"] != null ? (int)ViewData["owner"] : -1
                     };
                 }
                 @Html.Partial("~/Views/Direccion/DireccionForm.cshtml", direccion)

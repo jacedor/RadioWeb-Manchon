@@ -147,7 +147,7 @@ namespace TuoTempo.Controllers
                 name = reader["DES_GRUP"]?.ToString() ?? string.Empty,
                 id_number = new id_number
                 {
-                    number = "111111111A",
+                    number = reader["OID"]?.ToString() ?? string.Empty,
                     type = 1
                 },
                 related = new related

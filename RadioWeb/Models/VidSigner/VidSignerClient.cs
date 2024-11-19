@@ -174,12 +174,18 @@ namespace RadioWeb.Models.VidSigner
             htmlText = htmlText.Replace("@DIR", CentrosRepositorio.Obtener(oExploracion2.OWNER.Value).DIRECCION);
 
             htmlText = htmlText.Replace("@EMAIL", oExploracion2.PACIENTE.EMAIL);
+            if (oExploracion2.PACIENTE.FECHAN.HasValue)
+            {
+                htmlText = htmlText.Replace("@FNAC", oExploracion2.PACIENTE.FECHAN.Value.ToShortDateString()) ;
+
+            }
             htmlText = htmlText.Replace("@OBSERVACIONES", observaciones);
             foreach (TELEFONO item in oExploracion2.PACIENTE.TELEFONOS)
             {
-                if (item.NUMERO.StartsWith("6"))
+                if (item.NUMERO.StartsWith("6")|| item.NUMERO.StartsWith("7"))
                 {
                     htmlText = htmlText.Replace("@MOVIL", item.NUMERO);
+                    htmlText = htmlText.Replace("@TEL", item.NUMERO);
                 }
             }
 

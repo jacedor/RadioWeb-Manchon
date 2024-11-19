@@ -207,6 +207,53 @@ namespace RadioWeb.Models.Repos
             return oLista;
         }
 
+        public static int UpdateCampo(string campo, string valor, int oid, string tipoCampo = "string")
+        {
+
+
+            FbConnection oConexion = new FbConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString);
+            FbCommand oCommand = null;
+            try
+            {
+                oConexion.Open();
+                string updateStament = "update PERSONAL set " + campo + "=";
+                if (tipoCampo != "string")
+                {
+                    updateStament += valor.ToUpper() + "";
+                }
+                else
+                {
+                    updateStament += "'" + valor + "'";
+                }
+
+                updateStament += " where oid= " + oid;
+                oCommand = new FbCommand(updateStament, oConexion);
+                oCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+
+
+            }
+            finally
+            {
+
+                if (oConexion.State == System.Data.ConnectionState.Open)
+                {
+                    oConexion.Close();
+                    if (oCommand != null)
+                    {
+                        oCommand.Dispose();
+                    }
+
+                }
+
+            }
+
+            return oid;
+
+        }
+
         public static List<PERSONAL> ObtenerEstudiantes()
         {
             FbConnection oConexion = new FbConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString);

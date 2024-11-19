@@ -54,12 +54,28 @@ namespace RadioWeb.Controllers
                     {
                         //Si es usuario privilegiado o es un usuario del perfil del CENTRO DE MANRESA se le da acceso y se apunta en el log                       
                         RadioWeb.Utils.LogLopd.Insertar("Entrada exterior: " + usuarioAutenticated.IDUSER + " - " + Request.UserHostAddress + " nombre: " + usuarioAutenticated.NOME, "0");
-                        FormsAuthentication.SetAuthCookie(usuarioAutenticated.LOGIN, false);
+                     
+                         FormsAuthentication.SetAuthCookie(usuarioAutenticated.LOGIN,false);
+                        // Modificar la cookie para que sea Secure y HttpOnly
+                        HttpCookie authCookie = Response.Cookies[FormsAuthentication.FormsCookieName];
+                        if (authCookie != null)
+                        {
+                            authCookie.Secure = true;
+                            authCookie.HttpOnly = true;
+                        }
                     }//                    SI ACCEDE DESDE LA LAN
                     else
                     {
                         RadioWeb.Utils.LogLopd.Insertar("Entrada en el sistema usuario: " + usuarioAutenticated.IDUSER + " nombre: " + usuarioAutenticated.NOME, "0");
-                        FormsAuthentication.SetAuthCookie(usuarioAutenticated.LOGIN, false);
+                     
+                        FormsAuthentication.SetAuthCookie(usuarioAutenticated.LOGIN,false);
+                        // Modificar la cookie para que sea Secure y HttpOnly
+                        HttpCookie authCookie = Response.Cookies[FormsAuthentication.FormsCookieName];
+                        if (authCookie != null)
+                        {
+                            authCookie.Secure = true;
+                            authCookie.HttpOnly = true;
+                        }
                     }
 
 
@@ -80,7 +96,14 @@ namespace RadioWeb.Controllers
                         (usuarioAutenticated.IOR_ENTIDADPAGADORA.HasValue && usuarioAutenticated.IOR_ENTIDADPAGADORA > 0) ||
                         (usuarioAutenticated.IOR_CENTROEXTERNO.HasValue && usuarioAutenticated.IOR_CENTROEXTERNO > 0))
                     {
-                        return this.RedirectToAction("Create", "Peticiones");
+                        if (usuarioAutenticated.CREARPETICIONES == "F")
+                        {
+                            return this.RedirectToAction("ListExploraciones", "Peticiones");
+                        }
+                        else
+                        {
+                            return this.RedirectToAction("Create", "Peticiones");
+                        }
                     }
                     {
                         return this.RedirectToAction("Index", "Calendario");
@@ -148,6 +171,11 @@ namespace RadioWeb.Controllers
         public ActionResult Edit(int oid)
         {
             var user = _ctx.UCCADUSER.Single(h => h.IDUSER == oid);
+            var personal = PersonalRepositorio.Obtener(user.LOGIN);
+            if (personal.OID > 0)
+            {
+                user.IOR_PERSONAL = personal.OID;
+            }
             return View("UserForm", user);
         }
 
@@ -175,6 +203,13 @@ namespace RadioWeb.Controllers
             usuario.IOR_ENTIDADPAGADORA = user.IOR_ENTIDADPAGADORA;
             usuario.IOR_COLEGIADO = user.IOR_COLEGIADO;
             usuario.CITACIONONLINE = user.CITACIONONLINE;
+            usuario.CREARPETICIONES = user.CREARPETICIONES;
+            usuario.LOGIN_ATTEMPTS = 0;
+            usuario.BLOQUEADO = user.BLOQUEADO;
+            if (user.IOR_PERSONAL > 0)
+            {
+                var personalRelacionado = PersonalRepositorio.UpdateCampo("LOGIN", user.LOGIN, user.IOR_PERSONAL);
+            }
             _ctx.SaveChanges();
 
             return Redirect(String.Format("{0}?perfil={1}&user={2}#{3}", 
@@ -194,7 +229,7 @@ namespace RadioWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult List(int IOR_ROLE3)
+        public ActionResult List(int IOR_ROLE3,string TipoUsuario)
         {
             IEnumerable<USUARIO> oModel = new List<USUARIO>();
             oModel = _ctx.UCCADUSER
@@ -203,6 +238,7 @@ namespace RadioWeb.Controllers
             if (IOR_ROLE3 > 0)
             {
                 oModel = oModel.Where(u => u.PERFIL == IOR_ROLE3);
+
             };
 
             //como la propiedad descripcion del perfil es una relacion con la misma tabla 
@@ -215,7 +251,29 @@ namespace RadioWeb.Controllers
                     item.DESCPERFILWEB = perfil.NOME;
 
                 }
+                var personal = PersonalRepositorio.Obtener(item.LOGIN);
+                if (personal.OID > 0)
+                {
+                    item.IOR_PERSONAL = personal.OID;
+                    item.PERSONAL = personal;
+                }
             }
+
+            if (TipoUsuario=="1")
+            {
+                oModel = oModel.Where(p => !p.IOR_CENTROEXTERNO.HasValue && !p.IOR_COLEGIADO.HasValue && !p.IOR_ENTIDADPAGADORA.HasValue);
+            }
+
+            if (TipoUsuario == "2")
+            {
+                oModel = oModel.Where(p =>
+                    (p.IOR_CENTROEXTERNO.HasValue && p.IOR_CENTROEXTERNO.Value > 0) ||
+                    (p.IOR_COLEGIADO.HasValue && p.IOR_COLEGIADO.Value > 0) ||
+                    (p.IOR_ENTIDADPAGADORA.HasValue && p.IOR_ENTIDADPAGADORA.Value > 0)
+                    );
+
+            }
+
             return PartialView("_List", oModel.OrderBy(u => u.LOGIN).ToList());
         }
 

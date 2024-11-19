@@ -13,28 +13,24 @@ using RadioWeb.Repositories;
 namespace RadioWeb.Controllers
 {
     [Authorize]
-    public class MUTUASController : Controller
+    public class CentrosExternosController : Controller
     {
         private RadioDBContext db = new RadioDBContext();
         private DireccionRepository _direccionRepository;
         private TelefonoRepository _telefonoRepository;
-        public MUTUASController()
+        public CentrosExternosController()
         {
             _direccionRepository = new DireccionRepository(db);
             _telefonoRepository = new TelefonoRepository(db);
         }
 
-        [HttpPost]
-        public JsonResult Buscar(string query, bool conDirecciones = false)
-        {
-            return Json(MutuasRepositorio.Lista(query), JsonRequestBehavior.AllowGet);
-        }
+     
 
 
         // GET: MUTUAS
         public ActionResult Index()
         {
-            return View(db.Mutuas.ToList());
+            return View(db.CentrosExternos.ToList());
         }
 
         // GET: MUTUAS/Details/5
@@ -44,19 +40,19 @@ namespace RadioWeb.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MUTUAS mUTUAS = db.Mutuas.Find(id);
-            if (mUTUAS == null)
+            CENTROSEXTERNOS centroEx = db.CentrosExternos.Find(id);
+            if (centroEx == null)
             {
                 return HttpNotFound();
             }
-            return View(mUTUAS);
+            return View(centroEx);
         }
 
         // GET: MUTUAS/Create
         public ActionResult Create()
         {
-            MUTUAS mutua = new MUTUAS();
-            return View("MutuaForm", mutua);
+            CENTROSEXTERNOS oCentro = new CENTROSEXTERNOS();
+            return View("CentroExternoForm", oCentro);
         }
 
         // POST: MUTUAS/Create
@@ -64,20 +60,20 @@ namespace RadioWeb.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "OID,OWNER,NOMBRE,NIF,CONTACTO,COD_DAP,NUM_CLI,CODMUT,IOR_CENTRAL,TIPOPAGO,DIASCARENCIA,MAILING,TEXTO,DIRECCIONES")] MUTUAS mUTUAS)
+        public ActionResult Create(CENTROSEXTERNOS oCentro)
         {
 
             if (ModelState.IsValid)
             {
-                _direccionRepository.Update(mUTUAS.DIRECCIONES, mUTUAS.OID);
-                _telefonoRepository.Update(mUTUAS.TELEFONOS, mUTUAS.OID);
-                db.Mutuas.Add(mUTUAS);
+                _direccionRepository.Update(oCentro.DIRECCIONES, oCentro.OID);
+                _telefonoRepository.Update(oCentro.TELEFONOS, oCentro.OID);
+                db.CentrosExternos.Add(oCentro);
                 db.SaveChanges();
-                var texto = TextosRepositorio.Obtener(mUTUAS.OID);
+                var texto = TextosRepositorio.Obtener(oCentro.OID);
                 if (texto != null)
                 {
-                    texto.OWNER = mUTUAS.OID;
-                    texto.TEXTO = mUTUAS.TEXTO;
+                    texto.OWNER = oCentro.OID;
+                    texto.TEXTO = oCentro.TEXTO;
                     TextosRepositorio.InsertarOrUpdate(texto);
 
                 }
@@ -86,7 +82,7 @@ namespace RadioWeb.Controllers
             }
 
 
-            return View("MutuaForm",mUTUAS);
+            return View("CentroExternoForm",oCentro);
         }
 
         // GET: MUTUAS/Edit/5
@@ -96,17 +92,18 @@ namespace RadioWeb.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MUTUAS mUTUAS = db.Mutuas.Find(id);
-            if (mUTUAS == null)
+            CENTROSEXTERNOS oCentro = db.CentrosExternos.Find(id);
+            if (oCentro == null)
             {
                 return HttpNotFound();
             }
-            mUTUAS.TEXTO = TextosRepositorio.Obtener(id.Value).TEXTO;
-            if (mUTUAS.IOR_CENTRAL > 0)
-            {
-                mUTUAS.CENTRAL = db.Mutuas.Find(mUTUAS.IOR_CENTRAL.Value).NOMBRE;
-            }
-            return View("MutuaForm", mUTUAS);
+            oCentro.TEXTO = TextosRepositorio.Obtener(id.Value).TEXTO;
+            ViewBag.Mutuas = db.Mutuas.ToList();
+            ViewBag.Colegiados = db.Colegiados.ToList();
+
+
+
+            return View("CentroExternoForm", oCentro);
         }
 
         // POST: MUTUAS/Edit/5
@@ -114,36 +111,74 @@ namespace RadioWeb.Controllers
         // más información vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OID,OWNER,NOMBRE,NIF,CONTACTO,COD_DAP,NUM_CLI,CODMUT,IOR_CENTRAL,TIPOPAGO,DIASCARENCIA,MAILING,TEXTO,DIRECCIONES,TELEFONOS")] MUTUAS mUTUAS)
+        public ActionResult Edit(CENTROSEXTERNOS oCentro)
         {
             if (ModelState.IsValid)
             {
+                // Verificar y procesar direcciones
                 // Verificar si existen direcciones antes de intentar actualizar
-                if (mUTUAS.DIRECCIONES != null && mUTUAS.DIRECCIONES.Any())
+                if (oCentro.DIRECCIONES != null && oCentro.DIRECCIONES.Any() )
                 {
-                    _direccionRepository.Update(mUTUAS.DIRECCIONES, mUTUAS.OID);
+                    _direccionRepository.Update(oCentro.DIRECCIONES, oCentro.OID);
                 }
 
                 // Verificar si existen teléfonos antes de intentar actualizar
-                if (mUTUAS.TELEFONOS != null && mUTUAS.TELEFONOS.Any())
+                if (oCentro.TELEFONOS != null && oCentro.TELEFONOS.Any())
                 {
-                    _telefonoRepository.Update(mUTUAS.TELEFONOS, mUTUAS.OID);
+                    _telefonoRepository.Update(oCentro.TELEFONOS, oCentro.OID);
                 }
 
-                db.Entry(mUTUAS).State = EntityState.Modified;
+                // Actualizar datos del centro
+                db.Entry(oCentro).State = EntityState.Modified;
                 db.SaveChanges();
-                var texto = TextosRepositorio.Obtener(mUTUAS.OID);
+
+                // Procesar texto relacionado
+                var texto = TextosRepositorio.Obtener(oCentro.OID);
                 if (texto != null)
                 {
-                    texto.OWNER = mUTUAS.OID;
-                    texto.TEXTO = mUTUAS.TEXTO;
+                    texto.OWNER = oCentro.OID;
+                    texto.TEXTO = oCentro.TEXTO;
                     TextosRepositorio.InsertarOrUpdate(texto);
                 }
 
                 return RedirectToAction("Index");
             }
-            return View("MutuaForm",mUTUAS);
+
+            return View("CentroExternoForm", oCentro);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult GuardarRelaciones(int OID, List<int> MutuasSeleccionadas, List<int> ColegiadosSeleccionados)
+        {
+            var centro = db.CentrosExternos.Include("MutuasRelacionadas").Include("ColegiadosRelacionados").FirstOrDefault(c => c.OID == OID);
+            if (centro == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Actualizar mutuas relacionadas
+            centro.MutuasRelacionadas.Clear();
+            if (MutuasSeleccionadas != null && MutuasSeleccionadas.Any())
+            {
+                var mutuas = db.Mutuas.Where(m => MutuasSeleccionadas.Contains(m.OID)).ToList();
+                centro.MutuasRelacionadas.AddRange(mutuas);
+            }
+
+            // Actualizar colegiados relacionados
+            centro.ColegiadosRelacionados.Clear();
+            if (ColegiadosSeleccionados != null && ColegiadosSeleccionados.Any())
+            {
+                var colegiados = db.Colegiados.Where(c => ColegiadosSeleccionados.Contains(c.OID)).ToList();
+                centro.ColegiadosRelacionados.AddRange(colegiados);
+            }
+
+            db.SaveChanges();
+
+            return RedirectToAction("Edit", new { id = OID });
+        }
+
+
 
         // GET: MUTUAS/Delete/5
         public ActionResult Delete(int? id)
@@ -152,12 +187,12 @@ namespace RadioWeb.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            MUTUAS mUTUAS = db.Mutuas.Find(id);
-            if (mUTUAS == null)
+            CENTROSEXTERNOS oCentro = db.CentrosExternos.Find(id);
+            if (oCentro == null)
             {
                 return HttpNotFound();
             }
-            return View(mUTUAS);
+            return View(oCentro);
         }
 
         // POST: MUTUAS/Delete/5
@@ -165,7 +200,7 @@ namespace RadioWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            MUTUAS mUTUAS = db.Mutuas.Find(id);
+            CENTROSEXTERNOS mUTUAS = db.CentrosExternos.Find(id);
             mUTUAS.BORRADO = "T";
            
             db.SaveChanges();

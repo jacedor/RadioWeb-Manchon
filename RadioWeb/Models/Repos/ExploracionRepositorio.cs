@@ -96,6 +96,7 @@ namespace RadioWeb.Models.Repos
                         {
                             WorkListRepositorio.CrearFicheroWL(true, oTempExplo.FECHA.ToString(), oTempExplo.OID, rutaWL, true);
                             WorkListRepositorio.CrearFicheroWL(true, oTempExplo.FECHA.ToString(), oTempExplo.OID, rutaWLAffidea, true);
+                            WorkListRepositorio.CrearFicheroER7(true, oTempExplo.FECHA.ToString(), oTempExplo.OID, rutaWLAffidea, true,"Presencia");
                         }
                         //si el parametro general indica que la exploracion se paga antes
                         // de hacerse, ponemos la lina de pago en el momento de poner en verde
@@ -131,6 +132,8 @@ namespace RadioWeb.Models.Repos
                         textoLog = "Anulada Presencia";
                         WorkListRepositorio.BorrarFicheroWL(oTempExplo, rutaWL);
                         WorkListRepositorio.BorrarFicheroWL(oTempExplo, rutaWLAffidea);
+                        WorkListRepositorio.CrearFicheroER7(true, oTempExplo.FECHA.ToString(), oTempExplo.OID, rutaWLAffidea, true, "Cancelado");
+
                         if (oTempExplo.IOR_GPR == 1 && pagoAntesConfirmacion)
                         {
                             PagosRepositorio.delete(oid);
@@ -178,6 +181,7 @@ namespace RadioWeb.Models.Repos
                         //IF HORA_LL<HORA THEN HORA_LL=HORA                                                                 
                         //IF HORA_EX<HORA THEN HORA_EX=HORA
                         //ESPERA (campo calculado)  = HORA_EX-HORA_LL
+                        WorkListRepositorio.CrearFicheroER7(true, oTempExplo.FECHA.ToString(), oTempExplo.OID, rutaWLAffidea, true, "Realizado");
 
                         EXPLORACION oTempExplo1 = ExploracionRepositorio.Obtener(oid);
                         TimeSpan HoraLlegada = TimeSpan.Parse(oTempExplo1.HORA_LL);

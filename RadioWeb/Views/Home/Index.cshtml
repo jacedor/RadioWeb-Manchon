@@ -240,16 +240,11 @@ new AjaxOptions
 
                                 <th class="hidden-xs hidden-md" data-field="FECHAMAXENTREGA" data-formatter="fechaMaxFormat" title="Fecha Máxima Entrega">F.Entrega</th>
                                 <th data-sortable="true" data-field="MEDICO" data-filter-control="select"><span title="Medico Informante">Me</span></th>
-                                @if (ViewBag.CampoMutua == "NOMBRE")
-                                {
+                                
                                     <th class="hidden-xs hidden-md" data-field="COLEGIADO" data-formatter="colegiadoFormat"><span title="Medico Referidor">Col</span></th>
 
-                                }
-                                else
-                                {
-                                    <th class="hidden-xs hidden-md" data-field="COD_MED"><span title="Medico Referidor">Col</span></th>
-
-                                }
+                                
+                               
                                 <th class="hidden-xs hidden-md" data-field="TECNICO" title="Técnico">Te</th>
 
                                 <th class="hidden-xs hidden-md" data-field="@ViewBag.IdExploracion" data-filter-control="input" data-formatter="oidFormat" title="Id Exploración">Id</th>

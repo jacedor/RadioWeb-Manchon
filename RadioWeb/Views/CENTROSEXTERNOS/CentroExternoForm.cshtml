@@ -1,0 +1,149 @@
+﻿@model RadioWeb.Models.CENTROSEXTERNOS
+
+@{
+    ViewBag.Title = "Mantenimiento de Centro Externo";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.OID)
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+
+            <li class="active">
+                <a data-toggle="tab" href="#general">GENERAL</a>
+            </li>
+            <li>
+                <a data-toggle="tab" href="#contacto">CONTACTO</a>
+            </li>
+            <li><a href="#relaciones" data-toggle="tab">PETICIONES EXTERNAS</a></li>
+
+        </ul>
+
+        <div class="tab-content form-horizontal">
+            <div id="general" class="tab-pane  active">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            @Html.BootstrapLabelFor(m => m.CODMUT)
+                            @Html.EditorFor(model => model.CODMUT)
+                            @Html.ValidationMessageFor(model => model.CODMUT, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-6">
+                            @Html.BootstrapLabelFor(m => m.NOMBRE)
+                            @Html.EditorFor(model => model.NOMBRE)
+                            @Html.ValidationMessageFor(model => model.NOMBRE, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            @Html.BootstrapLabelFor(m => m.CONTACTO)
+                            @Html.EditorFor(model => model.CONTACTO)
+                            @Html.ValidationMessageFor(model => model.CONTACTO, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.NIF)
+                            @Html.EditorFor(model => model.NIF)
+                            @Html.ValidationMessageFor(model => model.NIF, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.MAIL)
+                            @Html.EditorFor(model => model.MAIL)
+                            @Html.ValidationMessageFor(model => model.MAIL, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.LabelFor(m => m.TEXTO)
+                            <textarea id="TEXTO" name="TEXTO" class="form-control" rows="7" style="text-transform: none;">@Model.TEXTO</textarea>
+                            @Html.ValidationMessageFor(m => Model.TEXTO)
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+            <div id="contacto" class="tab-pane ">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.EditorFor(p => p.DIRECCIONES)
+                        </div>
+                        <div class="col-md-12">
+                            @Html.EditorFor(p => p.TELEFONOS)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="tab-pane" id="relaciones">
+                @Html.Partial("_RelacionesTab", Model)
+            </div>
+        </div>
+
+        <div class="user-button ibox-content">
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-default btn-sm btn-block"><i class="fa fa-backward">@Html.ActionLink("Volver a Centros Externos", "Index", "CentroExterno")</i></button>
+
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">
+                        <i class="fa fa-save"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}
+
+
+@section scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#IOR_COLEGIADO").select2({
+                theme: "bootstrap",
+                placeholder: "Buscar colegiados...",
+                multiple: true, // Habilitar selección múltiple
+                minimumInputLength: 3, // Búsqueda mínima
+                width: '100%', // Ajustar al 100% del contenedor
+                ajax: {
+                    url: '/Colegiado/GetColegiados', // Endpoint del servidor
+                    dataType: 'json',
+                    delay: 250, // Tiempo de espera antes de enviar la petición
+                    data: function (params) {
+                        return {
+                            q: params.term // Término de búsqueda
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.items // Formato esperado por Select2
+                        };
+                    }
+                }
+            });
+        });
+
+    </script>
+   
+
+
+
+}
+
+
+

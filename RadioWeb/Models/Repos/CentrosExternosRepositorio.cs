@@ -90,7 +90,6 @@ namespace RadioWeb.Models.Repos
 
                 oCentroResult.NOMBRE = DataBase.GetStringFromReader(oReader, "NOMBRE");
                 oCentroResult.OID = DataBase.GetIntFromReader(oReader, "OID");
-                oCentroResult.INFOMUTUA = InfoMutuasRepositorio.Obtener(oCentroResult.OID);
                 
             }
             oCommand.Dispose();

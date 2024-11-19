@@ -25,10 +25,21 @@ namespace RadioWeb.Models.Repos
                 .WithMany(c => c.DIRECCIONES)
                 .HasForeignKey(c => c.OWNER);
 
+            modelBuilder.Entity<DIRECCION>()
+               .HasRequired(c => c.CENTROEXTERNO)
+               .WithMany(c => c.DIRECCIONES)
+               .HasForeignKey(c => c.OWNER);
+
             modelBuilder.Entity<TELEFONO>()
                 .HasRequired(c => c.MUTUA)
                 .WithMany(c => c.TELEFONOS)
                 .HasForeignKey(c => c.OWNER);
+
+            modelBuilder.Entity<TELEFONO>()
+               .HasRequired(c => c.CENTROEXTERNO)
+               .WithMany(c => c.TELEFONOS)
+               .HasForeignKey(c => c.OWNER);
+
 
             modelBuilder.Entity<PRECIOS>()
                .HasRequired(c => c.APARATO)
@@ -65,9 +76,12 @@ namespace RadioWeb.Models.Repos
 
         public DbSet<Models.CARTELERA> Carteleras { get; set; }
         public DbSet<Models.CENTROS> Centros { get; set; }
+        public DbSet<Models.CENTROSEXTERNOS> CentrosExternos { get; set; }
+        public DbSet<Models.COLEGIADOS> Colegiados { get; set; }
         public DbSet<Models.CONSUMIBLES> Consumibles { get; set; }
         public DbSet<Models.CONS_GRUPO> Cons_Grupo { get; set; }
         public DbSet<Models.DAPARATOS> Daparatos { get; set; }
+        public DbSet<Models.DIRECCION> Direcciones{ get; set; }
         public DbSet<Models.DESCUENTOS> DESCUENTOS { get; set; }
         public DbSet<Models.EXP_CONSUM> Exp_Consum { get; set; }
         public DbSet<Models.FACTURAS> Facturas { get; set; }
@@ -83,6 +97,7 @@ namespace RadioWeb.Models.Repos
         public DbSet<Models.KIOSKO_TV> KioskoTV { get; set; }
         public DbSet<Models.LINEAS_FACTURAS> Lineas_Facturas { get; set; }
         public DbSet<Models.MUTUAS> Mutuas { get; set; }
+        
         public DbSet<Models.NUM_FACTURAS> Num_Facturas { get; set; }
         public DbSet<Models.PERSONAL> Personal { get; set; }
         public DbSet<Models.INFORMES> Informes { get; set; }

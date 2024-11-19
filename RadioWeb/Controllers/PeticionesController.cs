@@ -286,6 +286,7 @@ namespace RadioWeb.Controllers
                     whereParaCount = whereParaCount + " e.IOR_ENTIDADPAGADORA=" + oMutua.OID;
 
                 }
+                WhereIniciado = true;
                 WhereInicado2 = true;
             }
             if (oUsuario.IOR_CENTROEXTERNO.HasValue && oUsuario.IOR_CENTROEXTERNO.Value > 0)

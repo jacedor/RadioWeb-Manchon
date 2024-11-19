@@ -55,7 +55,7 @@ namespace TuoTempo.Controllers
                 name = reader["DES_GRUP"]?.ToString() ?? string.Empty,
                 id_number = new id_number
                 {
-                    number = "111111111A",
+                    number = reader["OID"]?.ToString() ?? string.Empty,
                     type = 1
                 },
                 related = new related
@@ -170,7 +170,8 @@ namespace TuoTempo.Controllers
         [System.Web.Http.Route("tuotempo/locations/{id}")]
         public IHttpActionResult GetLocation(int id)
         {
-            Location location = null;
+            List<Location> location = new List<Location>();
+           // Location location = null;
             var startTime = DateTime.UtcNow; // Tiempo de inicio para calcular la duración
                                              // Suponiendo que tienes una forma de obtener la IP y el ID del usuario
             var clientIp = HttpContext.Current?.Request?.UserHostAddress;
@@ -191,7 +192,7 @@ namespace TuoTempo.Controllers
                             if (reader.Read()) // Assumes ID is unique and only one record is returned
                             {
                                 // Llamada al método MapToLocation
-                                location = MapToLocation(reader);
+                                location.Add(MapToLocation(reader));
                             }
                         }
                     }
@@ -200,7 +201,7 @@ namespace TuoTempo.Controllers
                 if (location != null)
                 {
                     var duration = DateTime.UtcNow - startTime; // Calcular duración
-                    logger.Info($"Solicitud completada en {duration.TotalMilliseconds} ms. Ubicacion obtenida: {location.name}.");
+                    logger.Info($"Solicitud completada en {duration.TotalMilliseconds} ms. Ubicacion obtenida: {location.First().name}.");
 
 
                     // Crear la respuesta JSON

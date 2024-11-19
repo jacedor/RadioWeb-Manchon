@@ -150,6 +150,79 @@ namespace RadioWeb.Models.Repos
 
         }
 
+        public static List<MUTUAS> ListaPorCentroExterno(int oid)
+        {
+            FbConnection oConexion = new FbConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString);
+
+            try
+            {
+
+                oConexion.Open();
+                List<MUTUAS> lMutua = new List<MUTUAS>();
+                using (var conn = new FbConnection())
+                {
+                    string query = "select * FROM MUTUAS where (ior_empresa=4 or ior_empresa is null)";
+
+                    if (oid>0)
+                    {
+                        query += " and oid in (select ior_mutua from CE_MUTUAS where ior_centroexterno= " + oid + "  ) ";
+
+                    }
+
+                    if (ConfigurationManager.AppSettings["ComboMutuas"].ToUpper() == "NOMBRE")
+                    {
+                        query += " order by NOMBRE";
+                    }
+                    else
+                    {
+                        query += " order by CODMUT";
+                    }
+
+                    using (var cmd = new FbCommand(query, oConexion))
+                    {
+
+                        FbDataReader oReader = cmd.ExecuteReader();
+
+
+                        while (oReader.Read())
+                        {
+                            MUTUAS oMutuas = new MUTUAS();
+                            oMutuas.OID = DataBase.GetIntFromReader(oReader, "OID");
+                            oMutuas.CODMUT = DataBase.GetStringFromReader(oReader, "CODMUT");
+                            oMutuas.NOMBRE = DataBase.GetStringFromReader(oReader, "NOMBRE");
+                            oMutuas.OWNER = DataBase.GetIntFromReader(oReader, "OWNER");
+                            oMutuas.IOR_CENTRAL = DataBase.GetIntFromReader(oReader, "IOR_CENTRAL");
+                            oMutuas.IOR_EMPRESA = DataBase.GetIntFromReader(oReader, "IOR_EMPRESA");
+                            lMutua.Add(oMutuas);
+
+                        }
+                    }
+                }
+
+
+
+
+                return lMutua;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            finally
+            {
+                if (oConexion.State == System.Data.ConnectionState.Open)
+                {
+                    oConexion.Close();
+                }
+
+            }
+
+
+
+        }
+
+
         public static List<MUTUAS> Lista(bool VerObsoletas=true)
         {
             FbConnection oConexion = new FbConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString);

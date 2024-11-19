@@ -11,39 +11,69 @@ namespace RadioWeb.Models
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class CENTROSEXTERNOS
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    public class CENTROSEXTERNOS
     {
+        public CENTROSEXTERNOS()
+        {
+            this.DIRECCIONES = new HashSet<DIRECCION>();
+            this.TELEFONOS = new HashSet<TELEFONO>();
+
+        }
+        [Key]
         public int OID { get; set; }
-        public Nullable<int> VERS { get; set; }
-        public Nullable<int> CID { get; set; }
+        public int? VERS { get; set; }
+        public int? CID { get; set; }
         public string CANAL { get; set; }
-        public Nullable<int> OWNER { get; set; }
+        public int? OWNER { get; set; }
         public string USERNAME { get; set; }
-        public Nullable<System.DateTime> MODIF { get; set; }
-        public Nullable<int> IOR_EMPRESA { get; set; }
+        public DateTime? MODIF { get; set; }
+        public int? IOR_EMPRESA { get; set; }
         public string BORRADO { get; set; }
-        public Nullable<double> CODIGO { get; set; }
+        public double? CODIGO { get; set; }
         public string NOMBRE { get; set; }
+
+        [Display(Name = "Código Centro")]
         public string COD_MUT { get; set; }
         public string COD_CAP { get; set; }
         public string COD_DAP { get; set; }
-        public Nullable<short> PREFIJO { get; set; }
+        public short? PREFIJO { get; set; }
         public string NIF { get; set; }
         public string CONTACTO { get; set; }
         public string TRATA { get; set; }
         public string NUM_CLI { get; set; }
         public string CODMUT { get; set; }
-        public Nullable<int> IOR_DAP { get; set; }
+        public int? IOR_DAP { get; set; }
         public string CONTRATOICS { get; set; }
         public string CODIICS { get; set; }
-        public Nullable<int> IOR_CENTRAL { get; set; }
+        public int? IOR_CENTRAL { get; set; }
         public string TIPOPAGO { get; set; }
         public string DIASCARENCIA { get; set; }
         public string MAILING { get; set; }
-        public INFOMUTUAS INFOMUTUA { get; set; }
 
-        public Nullable<int> IOR_MUTUA { get; set; }
+        [Display(Name = "Email")]
+        public string MAIL { get; set; }
+        public int? IOR_MUTUA { get; set; }
 
+        [UIHint("DIRECCION")]
+        public virtual ICollection<DIRECCION> DIRECCIONES { get; set; }
+
+        [UIHint("TELEFONO")]
+        public virtual ICollection<TELEFONO> TELEFONOS { get; set; }
+
+      
+        [NotMapped]
+        public string TEXTO { get; set; }
+
+      
+        // Relación con Mutuas
+        public virtual List<MUTUAS> MutuasRelacionadas { get; set; }
+
+       
+        // Relación con Colegiados
+        public virtual List<COLEGIADOS> ColegiadosRelacionados { get; set; }
     }
+
 }

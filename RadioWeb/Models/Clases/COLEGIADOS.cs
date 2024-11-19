@@ -11,7 +11,9 @@ namespace RadioWeb.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class COLEGIADOS
     {
 
@@ -20,6 +22,7 @@ namespace RadioWeb.Models
             this.DIRECCIONES = new HashSet<DIRECCION>();
             this.TELEFONOS = new HashSet<TELEFONO>();
         }
+        [Key]
         public int OID { get; set; }
         public Nullable<int> VERS { get; set; }
         public Nullable<int> CID { get; set; }
@@ -43,14 +46,26 @@ namespace RadioWeb.Models
         public string MAILING2 { get; set; }
         public Nullable<int> IOR_ESPECIALIDAD { get; set; }
         public Nullable<int> IOR_CENTRO { get; set; }
+
+        [NotMapped]
         public Nullable<int> IOR_EXPLORACION{ get; set; }
-        public string RIP { get; set; }
-        public string TRATAMIENTODESC { get; set; }
+       
+       
+
+        [NotMapped]
         public virtual CENTROSEXTERNOS CENTRO { get; set; }
+
+        [NotMapped]
         public virtual ESPECIALIDADES ESPECIALIDAD { get; set; }
+
+        [NotMapped]
         public string TEXTO { get; set; }
         public string EMAIL { get; set; }
+
+        [NotMapped]
         public virtual ICollection<DIRECCION> DIRECCIONES { get; set; }
+
+        [NotMapped]
         public virtual ICollection<TELEFONO> TELEFONOS { get; set; }
 
       

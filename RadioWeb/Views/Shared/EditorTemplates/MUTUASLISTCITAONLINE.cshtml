@@ -1,0 +1,38 @@
+@using RadioWeb.Models.Repos
+@model int?
+@{
+
+
+    var htmlField = ViewData.TemplateInfo.HtmlFieldPrefix;
+
+    var ior_mutua = Model.HasValue ? Model : -1;
+
+    var usuario = UsuariosRepositorio.Obtener(User.Identity.Name);
+
+    int centroExterno = usuario.IOR_CENTROEXTERNO.HasValue ? usuario.IOR_CENTROEXTERNO.Value : -1;
+
+
+    var entidades = MutuasRepositorio.ListaPorCentroExterno(centroExterno);
+
+
+    var entidadesDef = entidades.Select(u => new SelectListItem
+    {
+        Text =u.CODMUT + "-" +  u.NOMBRE,
+        Value = u.OID.ToString(),
+        Selected = u.OID == ior_mutua
+    }).ToArray();
+
+    var defaultHtmlAttributesObject = new { type = "text", @class = "form-control select2" };
+
+    var htmlAttributesObject = ViewData["htmlAttributes"] ?? new { };
+    var htmlAttributes = Html.MergeHtmlAttributes(htmlAttributesObject, defaultHtmlAttributesObject);
+
+}
+
+
+    @Html.DropDownList("", entidadesDef, htmlAttributes)
+
+
+
+
+

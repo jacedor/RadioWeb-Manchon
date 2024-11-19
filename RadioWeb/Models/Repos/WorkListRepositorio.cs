@@ -8,7 +8,7 @@ using RadioWeb.Utils;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-
+using FastReport.Export.Odf;
 
 namespace RadioWeb.Models.Repos
 {
@@ -194,25 +194,243 @@ namespace RadioWeb.Models.Repos
             return lineaResultado.ToString();
         }
 
+        public static int CrearFicheroER7(bool General, string dia, int oid, string RutaWL, bool Forzado = false,string accion= "Presencia")
+        {
+
+            if (Directory.Exists(RutaWL))
+            {
+
+                string query = @"SELECT e.OID, p.FECHAN, p.TRAC, a.FIL AS CODPRUEBACDPI, a.DES_FIL AS PRUEBACDPI, d.USERNAME AS MODALITY, 
+                                c.NOMBRE, x.NOMBRE AS CENTRO, t.NOMBRE AS CENTROAPARATO, d.CID, e.IOR_COLEGIADO, 
+                                r.NOMBRE AS MEDICOINFORMANTE, c.COD_MED, d.IDENTIFICADOR, s.ACTO AS CODPRUEBASERAM, 
+                                s.DESCRIPCION AS DESCRIPCIONSERAM, inf.FECHA AS FECHAINFORME, d.COD_FIL AS CODAPARATO, 
+                                e.IOR_PACIENTE, m.CODMUT, e.MOTIVO, e.FECHA, e.HORA, e.HORA_EX, e.NHCAP, e.FECHAMAXENTREGA
+                         FROM EXPLORACION e
+                         JOIN PACIENTE p ON p.OID = e.IOR_PACIENTE
+                         JOIN APARATOS a ON a.OID = e.IOR_TIPOEXPLORACION
+                         LEFT JOIN SERAM_AFFIDEA s ON s.OID = a.IOR_AFFIDEA
+                         JOIN DAPARATOS d ON d.OID = e.IOR_APARATO
+                         LEFT JOIN COLEGIADOS c ON c.OID = e.IOR_COLEGIADO
+                         LEFT JOIN CENTROSEXTERNOS x ON x.OID = e.IOR_CENTROEXTERNO
+                         LEFT JOIN CENTROS t ON t.OID = d.CID
+                         LEFT JOIN MUTUAS m ON m.OID = e.IOR_ENTIDADPAGADORA
+                         LEFT JOIN PERSONAL r ON r.OID = e.IOR_MEDICO
+                         LEFT JOIN INFORMES inf ON inf.OWNER = e.OID
+                         WHERE e.OID = @pOID";
+
+                EXPLORACION oExplo = ExploracionRepositorio.Obtener(oid);
+                string SEXO = oExplo.PACIENTE.SEXO == "H" ? "M" : oExplo.PACIENTE.SEXO == "M" ? "F" : "";
+                string nombreDelPaciente = QuitAccents(oExplo.PACIENTE.PACIENTE1.ToString());
+                if (nombreDelPaciente.Substring(nombreDelPaciente.IndexOf(",") + 1, 1) != " ")
+                {
+                    nombreDelPaciente = nombreDelPaciente.Replace(",", ", ");
+                }
+                string nombreCompleto = oExplo.PACIENTE.PACIENTE1;
+                string Paciente = nombreDelPaciente.Replace(",", ", ").Replace(", ", "^").Replace(".", " ").Replace(",", " ").Replace("^ ", "^");
+                string nombre = nombreCompleto.Substring(nombreCompleto.IndexOf(',') + 1).Trim();
+                string apellidos = nombreCompleto.Substring(0, nombreCompleto.IndexOf(',')).Trim();
+                int lastSpaceIndex = apellidos.LastIndexOf(' ');
+                string apellido1 = apellidos.Substring(0, lastSpaceIndex).Trim() + "^" + nombre;
+                string apellido2 = apellidos.Substring(lastSpaceIndex + 1).Trim();
+                var primeraDireccion = oExplo.PACIENTE.DIRECCIONES?.FirstOrDefault();
+
+                string direccion = primeraDireccion?.DIRECCION1 ?? string.Empty;
+                string provincia = primeraDireccion?.PROVINCIA ?? string.Empty;
+                string poblacion = primeraDireccion?.POBLACION ?? string.Empty;
+                string cp = primeraDireccion?.CP ?? string.Empty;
+                var primeraTelefono = oExplo.PACIENTE.TELEFONOS?.FirstOrDefault();
+                string telefono = primeraTelefono?.NUMERO ?? string.Empty;
+                using (FbConnection connection = new FbConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString)
+)
+                {
+                    FbCommand command = new FbCommand(query, connection);
+                    command.Parameters.AddWithValue("@pOID", oid);
+
+                    connection.Open();
+                    FbDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        string estado = "";
+                        string estado2 = "";
+
+                        if (accion == "Nuevo") // AL CREARLA
+                        {
+                            estado = "NW";
+                            estado2 = "SC";
+                        }
+                        else if (accion == "Presencia") // PRESENCIA
+                        {
+                            estado = "NW";
+                            estado2 = "IP";
+                        }
+                        else if (accion == "Modificado") // MODIFICACIÓN
+                        {
+                            estado = "XO";
+                            estado2 = "SC";
+                        }
+                        else if (accion == "Cancelado") // CANCELADA
+                        {
+                            estado = "CA";
+                            estado2 = "CA";
+                        }
+                        else if (accion == "Realizado") // FINALIZADO
+                        {
+                            estado = "SC";
+                            estado2 = "CM";
+                        }
+
+                   
+
+
+                        // Obtener valores de la consulta
+                        string fechaHoraActual = DateTime.Now.ToString("yyyyMMddHHmmss");
+                        string vOIDPACIENTE = reader["IOR_PACIENTE"].ToString();
+                        string vDNI = oExplo.PACIENTE.DNI;
+                        string vAPELLIDO1 = apellido1;
+                        string vAPELLIDO2 = apellido2; // Asignar valor según tu lógica de apellidos
+                        string vFECHANACIMIENTO = reader["FECHAN"] == DBNull.Value
+                         ? "18991230"
+                         : Convert.ToDateTime(reader["FECHAN"]).ToString("yyyyMMdd");
+
+                        string vSEXO = SEXO;
+                        string vDIRECCION = direccion; // Completa según los datos disponibles
+                        string vPOBLACION = poblacion; // Completa según los datos disponibles
+                        string vCPOSTAL = cp  ; // Completa según los datos disponibles
+                        string vTELEFONO = telefono; // Completa según los datos disponibles
+                        string vAGENDA = reader["CODAPARATO"].ToString();
+                        string vCENTRO = reader["CENTROAPARATO"].ToString();
+                        string vESTADO = estado;
+                        string vESTADO2 = estado2;
+                        string vEmail = oExplo.PACIENTE.EMAIL;
+                        string vIDAUTORIZACION = oExplo.NHCAP;
+                        string vACCESSIONNUMBER = reader["OID"].ToString();
+                        string vFECHAINFORME = fechaHoraActual;
+                        string vCODMEDICOPETICION = "^^";
+                        string vAETITLE = reader["IDENTIFICADOR"].ToString();
+                        string vCODMUTUA = reader["CODMUT"].ToString();
+                        string vCODPRUEBA = reader["CODPRUEBASERAM"].ToString();
+                        string vDESCRIPCIONPRUEBA = reader["DESCRIPCIONSERAM"].ToString();
+                        string vMOTIVO =oExplo.MOTIVO;
+                        string vAPELLIDOSMEDICOPETICION = "";
+                        string vNombreMEDICOPETICION = "";
+                        if (!String.IsNullOrEmpty(oExplo.COLEGIADO.NOMBRE))
+                        {
+                            string[] nombreCompletoColegiado = oExplo.COLEGIADO.NOMBRE.Split(',');
+
+                            string apellidosColegiado = nombreCompletoColegiado.Length > 0 ? nombreCompletoColegiado[0].Trim() : "";
+                            string nombreColegiado = nombreCompletoColegiado.Length > 1 ? nombreCompletoColegiado[1].Trim() : "";
+
+                            vAPELLIDOSMEDICOPETICION = apellidosColegiado;
+                            vNombreMEDICOPETICION= nombreColegiado;
+                        }
+                        string vIDTARJETA = oExplo.PACIENTE.TARJETA;
+
+                        if (!string.IsNullOrWhiteSpace(vIDTARJETA))
+                        {
+                            vIDTARJETA = "~" + vIDTARJETA.Trim() + "^^^HIS^PI^^^^" + vCODMUTUA;
+                        }
+                        else if (!string.IsNullOrWhiteSpace(oExplo.PACIENTE.POLIZA))
+                        {
+                            vIDTARJETA = "~" + oExplo.PACIENTE.POLIZA.Trim() + "^^^HIS^PI^^^^" + vCODMUTUA;
+                        }
+                        else
+                        {
+                            vIDTARJETA = string.Empty;
+                        }
+
+                        string SERARM;
+                      
+
+                        if (!string.IsNullOrWhiteSpace(vCODPRUEBA))
+                        {
+                            SERARM = "99SERARM";                        
+                         
+                        }
+                        else
+                        {
+                            SERARM = reader["CODPRUEBACDPI"].ToString();
+                         
+                        }
+
+
+                        
+                        string vMODALIDAD = reader["MODALITY"].ToString();
+                      
+                        string vMEDICOINFORME = reader["MEDICOINFORMANTE"].ToString();
+                        string vFECHAINICIO = Convert.ToDateTime(reader["FECHA"]).ToString("yyyyMMdd") + reader["HORA"].ToString().Replace(":", "") + "00";
+                        string vFECHAFIN = Convert.ToDateTime(reader["FECHA"]).ToString("yyyyMMdd") + reader["HORA_EX"].ToString().Replace(":", "") + "00";
+
+                        // Ruta del archivo de plantilla
+                        string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HL7_MACROS_WL.er7");
+                        if (!File.Exists(templatePath))
+                        {
+                            throw new FileNotFoundException("El archivo de plantilla HL7_MACROS_WL.er7 no se encontró en la raíz del sitio.");
+                        }
+
+                        // Leer la plantilla
+                        string hl7Template = File.ReadAllText(templatePath);
+
+                        // Reemplazos en la plantilla
+                        string hl7Message = hl7Template
+                            .Replace("vFECHAHOY", fechaHoraActual.Trim())
+                            .Replace("vCODIGO", String.Concat(oid.ToString(), fechaHoraActual.Trim()))
+                            .Replace("vOIDPACIENTE", vOIDPACIENTE.Trim())
+                            .Replace("vIDTARJETA", vIDTARJETA.Trim())
+                            .Replace("vDNI", vDNI.Trim())
+                            .Replace("vAPELLIDO1", vAPELLIDO1.Trim())
+                            .Replace("vAPELLIDO2", vAPELLIDO2.Trim())
+                            .Replace("vFECHANACIMIENTO", vFECHANACIMIENTO.Trim())
+                            .Replace("vFECHAMAXENTREGA", oExplo.FECHAMAXENTREGA.HasValue ? oExplo.FECHAMAXENTREGA.Value.ToString("yyyyMMdd") : "")
+                            .Replace("vPRIMERINFORME", "C")                            
+                            .Replace("vSEXO", vSEXO.Trim())
+                           .Replace("vDIRECCION", direccion)
+                           .Replace("vEMAIL", vEmail)
+                             .Replace("vPOBLACION", poblacion)
+                             .Replace("vPROVINCIA", provincia)
+                             .Replace("vCPOSTAL", cp)
+                            .Replace("vTELEFONO", telefono)
+                            .Replace("vTELEFONO", vTELEFONO.Trim())
+                            .Replace("vAGENDA", vAGENDA.Trim())
+                            .Replace("vNOMBREMEDICOPETICION", vNombreMEDICOPETICION.Trim())
+                            .Replace("vAPELLIDOSMEDICOPETICION", vAPELLIDOSMEDICOPETICION.Trim())                            
+                            .Replace("vIDAUTORIZACION", vIDAUTORIZACION.Trim())
+                            .Replace("vCENTRO", vCENTRO.Trim())
+                            .Replace("vESTADO",estado)
+                            .Replace("v2ESTADO", estado2)
+                            .Replace("vMOTIVO", vMOTIVO)
+                            .Replace("vACCESSIONNUMBER", vACCESSIONNUMBER.Trim())
+                            .Replace("vFECHAINFORME", vFECHAINFORME.Trim())
+                            .Replace("vCODMEDICOPETICION", vCODMEDICOPETICION.Trim())
+                            .Replace("vSERARM", SERARM)
+                            .Replace("vAETITLE", vAETITLE.Trim())
+                            .Replace("vCODMUTUA", vCODMUTUA.Trim())
+                            .Replace("vCODPRUEBA", vCODPRUEBA.Trim())
+                            .Replace("vDESCRIPCIONPRUEBA", vDESCRIPCIONPRUEBA.Trim())
+                            .Replace("vMODALIDAD", vMODALIDAD.Trim())
+                            .Replace("vMEDICOINFORME", vMEDICOINFORME.Trim())
+                            .Replace("vFECHAINICIO", vFECHAINICIO.Trim())
+                            .Replace("vFECHAFIN", vFECHAFIN.Trim());
+
+                        // Ruta del archivo y nombre
+                        string rutaArchivo = Path.Combine(RutaWL, $"{oid}_{fechaHoraActual}.er7");
+
+                        // Generar el archivo
+                        File.WriteAllText(rutaArchivo, hl7Message);
+                    }
+                }
+            }
+            return 1;
+
+        }
+
         public static int CrearFicheroWL(bool General, string dia, int oid, string RutaWL, bool Forzado = false)
         {           
 
             if (Directory.Exists(RutaWL)) {
                 char C = (char)9;
                 EXPLORACION oExplo = ExploracionRepositorio.Obtener(oid);
-                if (oExplo.EMPRESA.NOMBRE.Contains("DELFOS"))
-                {
-                    CENTROS oCentro = CentrosRepositorio.Obtener(oExplo.OWNER.Value);
-                  
-                    if (oCentro.NOMBRE.ToUpper().Contains("DELFOS"))
-                    {
-                        RutaWL = RutaWL + @"\delfos\";
-                    }
-                    else
-                    {
-                        RutaWL = RutaWL + @"\corachan\";
-                    }
-                }
+            
                 RutaWL = RutaWL + @"\" + DateTime.Parse(dia).ToString("yyyyMMdd") + "_E_" + oid.ToString() + ".WL";
                     
 
@@ -258,18 +476,7 @@ namespace RadioWeb.Models.Repos
             {
                 string fic = RutaWL;
                 EXPLORACION oExplo = ExploracionRepositorio.Obtener(oExploracion.OID);
-                if (oExplo.EMPRESA.NOMBRE.Contains("DELFOS"))
-                {
-                    CENTROS oCentro = CentrosRepositorio.Obtener(oExplo.OWNER.Value);
-                    if (oCentro.NOMBRE.ToUpper().Contains("DELFOS"))
-                    {
-                        fic = fic + @"\delfos\";
-                    }
-                    else
-                    {
-                        fic = fic + @"\corachan\";
-                    }
-                }
+             
                  fic = fic + @"\" + oExploracion.FECHA.ToString("yyyyMMdd") + "_E_" + oExploracion.OID.ToString() + ".WL";
                 if (File.Exists(fic))
                 {
@@ -288,20 +495,8 @@ namespace RadioWeb.Models.Repos
         {
             try
             {
-                string fic = RutaWL;
-               
-                if (oExploracion.EMPRESA.NOMBRE.Contains("DELFOS"))
-                {
-                    CENTROS oCentro = CentrosRepositorio.Obtener(oExploracion.OWNER.Value);
-                    if (oCentro.NOMBRE.ToUpper().Contains("DELFOS"))
-                    {
-                        fic = fic + @"\delfos\";
-                    }
-                    else
-                    {
-                        fic = fic + @"\corachan\";
-                    }
-                }
+                string fic = RutaWL;               
+           
                  fic = RutaWL + @"\" + oExploracion.FECHA.Value.ToString("yyyyMMdd") + "_E_" + oExploracion.OID.ToString() + ".WL";
                 if (File.Exists(fic))
                 {

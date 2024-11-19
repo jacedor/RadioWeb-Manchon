@@ -9,14 +9,64 @@
     <link href="~/css/styleCitaOnline.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" rel="stylesheet" />
 
+    <link href="~/css/plugins/ladda/ladda-themeless.min.css" rel="stylesheet" />
     <style type="text/css">
 
-         ::-webkit-file-upload-button {
-            
-   
-    }
-    </style> 
-   
+        .no-huecos-message {
+            text-align: center;
+            font-size: 18px;
+            text-transform: uppercase;
+            margin: 20px 0;
+        }
+
+            .no-huecos-message p {
+                margin: 10px 0;
+            }
+
+            .no-huecos-message i {
+                font-size: 50px;
+                color: #ff0000; /* Puedes cambiar el color según tu preferencia */
+                margin-bottom: 10px;
+            }
+        /* Estilo para mensajes de error */
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* Estilo para resaltar campos con errores */
+        .error {
+            color: red !important;
+            font-weight: bold;
+        }
+
+        /* Estilo para el hueco seleccionado */
+        #selectedSlotInfo {
+            display: none;
+            font-size: 1.5em;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 10px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+            #selectedSlotInfo .calendar-icon {
+                margin-right: 10px;
+            }
+
+            #selectedSlotInfo .close-icon {
+                left: 10px;
+            }
+
+                #selectedSlotInfo .close-icon:hover {
+                    cursor: pointer;
+                }
+    </style>
+
 
 }
 @section barraTop{
@@ -219,6 +269,7 @@
                             </span>
                         </div>
                     </div>
+                    <div id="selectedSlotInfo"></div>
                 </div>
             </div>
 
@@ -229,16 +280,7 @@
                 List<CENTROS>
                oCentros = RadioWeb.Models.Repos.CentrosRepositorio.List().Where(p => p.CID == 1).ToList();
                 int i = 0;
-            }
-
-            @*var contadores = $(".counter");
-                if (contadores.length !== 0) {
-
-                contadores.each(function (i, row) {
-                        var ContainerHuecos= $(row).data('centro');
-                        alert(ContainerHuecos);
-
-                });*@
+            }         
 
 
             <ul id="tabsCentro" class="nav nav-tabs">
@@ -273,108 +315,113 @@
 
             <!-- Checkout Form -->
             <!-- Personal Information -->
+            <form id="formularioCita">
+                <div class="info-widget">
+                    <h4 class="card-title" style="font-size:1.125rem">Datos del Paciente <span id="fechaSeleccionada"></span></h4>
+                    <div id="formularioCita">
 
-            <div class="info-widget">
-                <h4 class="card-title" style="font-size:1.125rem">Datos del Paciente <span id="fechaSeleccionada"></span></h4>
-                <div class="row">
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group card-label">
-                            <label>Nombre Paciente</label>
-                            <input type="text" placeholder="Nombre" id="NombrePaciente" name="NombrePaciente" class="form-control">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group card-label">
+                                    <label>Nombre Paciente</label>
+                                    <input type="text" placeholder="Nombre" id="NombrePaciente" name="NombrePaciente" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group card-label">
+                                    <label for="Apellidos" class="control-label">Apellidos</label>
+                                    <input type="text" placeholder="Apellidos" id="ApellidosPaciente" name="ApellidosPaciente" class="form-control">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group card-label">
+                                    <label for="fechaNacimiento" class="control-label">Fecha Nacimiento</label>
+
+
+                                    <input type="datetime" id="fechaNacimiento" name="fechaNacimiento" class="form-control fecha-mask" placeholder="Fecha Nacimiento">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group card-label">
+                                    <label for="dni" class="control-label">DNI/NIE</label>
+                                    <input type="text" placeholder="DNI/NIE" id="dni" name="dni" class="form-control">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group card-label">
+                                    <label for="sexo" class="control-label">Sexo</label>
+                                    <!--<input type="text" placeholder="Sexo" id="sexo" name="sexo" class="form-control">-->
+                                    <select name="sexo" id="sexo" class="form-control">
+                                        <option value="H">Hombre</option>
+                                        <option value="M">Mujer</option>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group card-label">
+                                    <label for="email" class="control-label">Email  </label>
+                                    <input type="email" placeholder="Email" id="email" name="email" class="form-control">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group card-label">
+                                    <label for="Number1" class="control-label">Teléfono movil</label>
+                                    <input type="text" placeholder="Telefono movil" autocomplete="off" id="TelefonoMovil" name="TelefonoMovil" class="form-control">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group card-label">
+                                    <label class="control-label" for="DOCUMENTO">Asociar Fichero:</label>
+                                    <input type="file" style="padding:10px;" placeholder="Asociar Fichero:" autocomplete="off" name="DOCUMENTO" id="DOCUMENTO" class="form-control" />
+
+                                    @if (Model.IOR_DOCUMENTO > 0)
+                                    {
+                                        <a href="#" onclick="javascript: window.open('/Imagenes/Imprimir/@Model.IOR_DOCUMENTO', 'Documento', 'width=900,height=500');">Ver archivo adjunto</a>
+                                    }
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DOCUMENTO, "", new { @class = "text-danger" })
+
+                            </div>
+                            <div class="col-lg-offset-6 col-md-6 col-sm-12">
+                                <div id="TipoDeDocumento" class="form-group card-label hide">
+                                    @Html.LabelFor(model => model.IOR_TIPODOC, htmlAttributes: new { @class = "col-lg-offset-6 col-sm-2 col-form-label" })
+
+                                    @{var tiposDeDocumento = RadioWeb.Models.Repos.RefractometrosRepositorio.Lista().Where(u => u.CID == 6)
+                                                                       .Select(u => new SelectListItem
+                                                                       {
+                                                                           Text = u.NOMBRE,
+                                                                           Value = u.OID.ToString(),
+                                                                           Selected = u.OID == Model.IOR_TIPODOC
+                                                                       }).ToArray();
+                                    }
+
+                                    @Html.DropDownList("IOR_TIPODOC", tiposDeDocumento, new { @class = "form-control select2", autocomplete = "off" })
+
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group card-label">
-                            <label for="Apellidos" class="control-label">Apellidos</label>
-                            <input type="text" placeholder="Apellidos" id="ApellidosPaciente" name="ApellidosPaciente" class="form-control">
-
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group card-label">
-                            <label for="fechaNacimiento" class="control-label">Fecha Nacimiento</label>
 
 
-                            <input type="datetime" id="fechaNacimiento" name="fechaNacimiento" class="form-control fecha-mask" placeholder="Fecha Nacimiento">
-
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group card-label">
-                            <label for="dni" class="control-label">DNI/NIE</label>
-                            <input type="text" placeholder="DNI/NIE" id="dni" name="dni" class="form-control">
-
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group card-label">
-                            <label for="sexo" class="control-label">Sexo</label>
-                            <!--<input type="text" placeholder="Sexo" id="sexo" name="sexo" class="form-control">-->
-                            <select name="sexo" id="sexo" class="form-control">
-                                <option value="H">Hombre</option>
-                                <option value="M">Mujer</option>
-                            </select>
-
-                        </div>
                     </div>
 
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group card-label">
-                            <label for="email" class="control-label">Email  </label>
-                            <input type="email" placeholder="Email" id="email" name="email" class="form-control">
-
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group card-label">
-                            <label for="Number1" class="control-label">Teléfono movil</label>
-                            <input type="text" placeholder="Telefono movil" autocomplete="off" id="TelefonoMovil" name="TelefonoMovil" class="form-control">
-
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12">
-                        <div class="form-group card-label">
-                            <label class="control-label" for="DOCUMENTO">Asociar Fichero:</label>
-                            <input type="file" style="padding:10px;" placeholder="Asociar Fichero:" autocomplete="off" name="DOCUMENTO" id="DOCUMENTO" class="form-control" />
-
-                            @if (Model.IOR_DOCUMENTO > 0)
-                            {
-                                <a href="#" onclick="javascript: window.open('/Imagenes/Imprimir/@Model.IOR_DOCUMENTO', 'Documento', 'width=900,height=500');">Ver archivo adjunto</a>
-                            }
-                        </div>
-                        @Html.ValidationMessageFor(model => model.DOCUMENTO, "", new { @class = "text-danger" })
-
-                    </div>
-                    <div class="col-lg-offset-6 col-md-6 col-sm-12">
-                        <div id="TipoDeDocumento" class="form-group card-label hide">
-                            @Html.LabelFor(model => model.IOR_TIPODOC, htmlAttributes: new { @class = "col-lg-offset-6 col-sm-2 col-form-label" })
-
-                            @{var tiposDeDocumento = RadioWeb.Models.Repos.RefractometrosRepositorio.Lista().Where(u => u.CID == 6)
-                                                 .Select(u => new SelectListItem
-                                                 {
-                                                     Text = u.NOMBRE,
-                                                     Value = u.OID.ToString(),
-                                                     Selected = u.OID == Model.IOR_TIPODOC
-                                                 }).ToArray();
-                            }
-
-                            @Html.DropDownList("IOR_TIPODOC", tiposDeDocumento, new { @class = "form-control select2", autocomplete = "off" })
-
-                        </div>
-                    </div>
 
                 </div>
-                
-               
-            </div>
-            <!-- /Personal Information -->
-            <div class="submit-section mt-4">
-                <button id="crearCita" class="btn btn-primary submit-btn">Reservar Cita</button>
-
-
-            </div>
-
-
+                <div class="submit-section mt-6">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="recordarDatos" name="recordarDatos">
+                        <label class="form-check-label" for="recordarDatos">Recordar Datos Paciente</label>
+                    </div>
+                    <button id="crearCita" class="btn btn-primary submit-btn ladda-button" data-style="expand-right" disabled>Reservar Cita</button>
+                </div>
+            </form>
         </div>
 
 
@@ -388,11 +435,15 @@
     <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/plugins/bootstrap-table/extensions/cookie/bootstrap-table-cookie.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js"></script>
+    <!-- Ladda -->
+    <script src="~/js/plugins/ladda/spin.min.js"></script>
+    <script src="~/js/plugins/ladda/ladda.min.js"></script>
+    <script src="~/js/plugins/ladda/ladda.jquery.min.js"></script>
 
 
     <script type="text/javascript">
         function MostrarTextoPreparacion(texto) {
-            if (texto.length > 0) {
+            if (texto && texto.length > 0) {
                 $(".instrucciones").removeClass('hide');
 
             } else {
@@ -424,6 +475,43 @@
             }
         }
 
+
+        $(document).on('click', '.timing', function () {
+            var valor = $(this).data("valor");
+            var fecha = $(this).data("fecha");
+            var hora = $(this).data("hora");
+            var aparato = $(this).data("aparato");
+
+            $(".timing").removeClass('selected');
+            $(this).addClass('selected');
+
+            var tipoExploracionTexto = $("#IOR_TIPOEXPLORACION option:selected").text();
+
+            $(".day-slot").hide();
+            // Ocultar todos los huecos
+            $(".time-slot").hide();
+            // Mostrar el hueco seleccionado en el header
+            $("#selectedSlotInfo").html(' <span><i style="color:green" class="fa fa-calendar calendar-icon"></i> ' + fecha + '  ' + hora + '  ' + tipoExploracionTexto + '<i class="fa fa-times close-icon" style="color:red" id="closeSelectedSlot"></i></span>');
+            $("#selectedSlotInfo").show();
+
+            // Mostrar el formulario de reserva
+            $("#ReservaPaciente").removeClass('hide');
+
+            $("#crearCita").prop("disabled", false);
+            // Mostrar la fecha seleccionada en el formulario
+            $("#fechaSeleccionada").text(valor);
+
+            // Configurar el datepicker para deshabilitar fechas pasadas
+            var fechaCita = moment(fecha, "DD/MM/YYYY").toDate();
+            $('#FECHARESULTADO').datepicker('setStartDate', fechaCita);
+        });
+
+        $(document).on('click', '#closeSelectedSlot', function () {
+            $("#selectedSlotInfo").hide();
+            $(".time-slot").show();
+            $(".day-slot").show();
+            $("#ReservaPaciente").addClass('hide');
+        });
         $(document).on('click', '#btnDiaSiguiente', function () {
             //setCurrentDayActions(addDays($("#fechaSelect").val(), 1));
             var fecha = moment($("#FECHAPRUEBA").val(), "DD/MM/YYYY").add('days', 1).format('DD/MM/YYYY');
@@ -452,7 +540,7 @@
         });
 
         $(document).on('change', '#IOR_ENTIDADPAGADORA', function () {
-                           $("#IOR_GAPARATO").trigger('change');
+            $("#IOR_GAPARATO").trigger('change');
 
 
         });
@@ -529,91 +617,231 @@
         }
 
         $(document).on('click', '#crearCita', function () {
-            var exploracionesParaReserva = [];
+            if ($("#formularioCita").valid()) {
 
-            var numero_Autorizacion = "";
+                var exploracionesParaReserva = [];
 
-
-            var exploracion = {
-                //ESTADODESCRIPCION: $(".timing.selected").data('fecha').replace('/', '-').replace('/', '-'),
-                ESTADODESCRIPCION: $(".timing.selected").data('fecha'),
-                HORA: $(".timing.selected").data('hora'),
-                OWNER: 98,
-                IOR_APARATO: $(".timing.selected").data('aparato'),
-                IOR_TIPOEXPLORACION: $("#IOR_TIPOEXPLORACION").val(),
-                IOR_GRUPO: $("#IOR_GAPARATO").val(),
-                IOR_ENTIDADPAGADORA: $("#IOR_ENTIDADPAGADORA").val(),
-                IOR_CENTROEXTERNO: $("#IOR_CENTROEXTERNO").val(),
-                NHCAP: numero_Autorizacion,
-                USERNAME: $("#UserLogged").data('login')
-            };
-
-            exploracionesParaReserva.push(exploracion);
-
-            var SexoCheck = "H";
-            if ($("#optionMujer").is(":checked")) {
-                SexoCheck = "M";
-            }
-
-            var fileInput = document.getElementById('DOCUMENTO');
-            var paciente =
-            {
-                Nombre: $("#NombrePaciente").val(),
-                Apellidos: $("#ApellidosPaciente").val(),
-                Dni: $("#dni").val(),
-                Sexo: $("#sexo").val(),
-                FechaNacimiento: $("#fechaNacimiento").val(),
-                Telefono: $("#TelefonoMovil").val(),
-                Email: $("#email").val(),
-                Origen: "PETICIONESONLINE",
-                IOR_MUTUA: $("#IOR_ENTIDADPAGADORA").val(),
-                Exploraciones: exploracionesParaReserva,
-                IOR_CENTROEXTERNO: -1,
-                DOCUMENTO: readerAux
-            };
-
-            if (paciente.IOR_CENTROEXTERNO === -1) {
-                paciente.IOR_CENTROEXTERNO = 1;
-            }
+                var numero_Autorizacion = "";
 
 
+                var exploracion = {
+                    //ESTADODESCRIPCION: $(".timing.selected").data('fecha').replace('/', '-').replace('/', '-'),
+                    ESTADODESCRIPCION: $(".timing.selected").data('fecha'),
+                    HORA: $(".timing.selected").data('hora'),
+                    OWNER: 98,
+                    IOR_APARATO: $(".timing.selected").data('aparato'),
+                    IOR_TIPOEXPLORACION: $("#IOR_TIPOEXPLORACION").val(),
+                    IOR_GRUPO: $("#IOR_GAPARATO").val(),
+                    IOR_ENTIDADPAGADORA: $("#IOR_ENTIDADPAGADORA").val(),
+                    IOR_CENTROEXTERNO: $("#IOR_CENTROEXTERNO").val(),
+                    NHCAP: numero_Autorizacion,
+                    USERNAME: $("#UserLogged").data('login')
+                };
 
-            $.ajax({
-                url: '/API/Service',
-                type: "POST",
-                async: false,
-                data: JSON.stringify(paciente),
-                contentType: 'application/json; charset=utf-8',
+                exploracionesParaReserva.push(exploracion);
 
-                success: function (data) {
-                    //document.location.href = '/ResumenCita.html?oid=' + data.Exploraciones[0].IOR_PACIENTE;
-
-                    $("#fechaCitaCreada").html(moment(data.Exploraciones[0].FECHA).format("DD/MM/YYYY"));
-                    $("#horaCitaCreada").html(data.Exploraciones[0].HORA);
-                    $("#aparatoCitaCreada").html(data.Exploraciones[0].APARATO.DES_FIL);
-                    $("#exploracionCitaCreada").html(data.Exploraciones[0].DAPARATO.DES_FIL);
-                    $("#exploracionCitaCreada").html(data.Exploraciones[0].DAPARATO.DES_FIL);
-
-                    $("#citaCreadaOid").val(data.Exploraciones[0].OID);
-                    
-                    $("#resumenCita").modal('show');
-
-
-                    return false;
-                },
-                error: function (x, y, z) {
-
+                var SexoCheck = "H";
+                if ($("#optionMujer").is(":checked")) {
+                    SexoCheck = "M";
                 }
-            });
+
+                var fileInput = document.getElementById('DOCUMENTO');
+                var paciente =
+                {
+                    Nombre: $("#NombrePaciente").val(),
+                    Apellidos: $("#ApellidosPaciente").val(),
+                    Dni: $("#dni").val(),
+                    Sexo: $("#sexo").val(),
+                    FechaNacimiento: $("#fechaNacimiento").val(),
+                    Telefono: $("#TelefonoMovil").val(),
+                    Email: $("#email").val(),
+                    Origen: "PETICIONESONLINE",
+                    IOR_MUTUA: $("#IOR_ENTIDADPAGADORA").val(),
+                    Exploraciones: exploracionesParaReserva,
+                    IOR_CENTROEXTERNO: -1,
+                    DOCUMENTO: readerAux
+                };
+
+                if (paciente.IOR_CENTROEXTERNO === -1) {
+                    paciente.IOR_CENTROEXTERNO = 1;
+                }
 
 
+
+                $.ajax({
+                    url: '/API/Service',
+                    type: "POST",
+                    async: false,
+                    data: JSON.stringify(paciente),
+                    contentType: 'application/json; charset=utf-8',
+
+                    success: function (data) {
+                        //document.location.href = '/ResumenCita.html?oid=' + data.Exploraciones[0].IOR_PACIENTE;
+
+                        $("#fechaCitaCreada").html(moment(data.Exploraciones[0].FECHA).format("DD/MM/YYYY"));
+                        $("#horaCitaCreada").html(data.Exploraciones[0].HORA);
+                        $("#aparatoCitaCreada").html(data.Exploraciones[0].APARATO.DES_FIL);
+                        $("#exploracionCitaCreada").html(data.Exploraciones[0].DAPARATO.DES_FIL);
+                        $("#exploracionCitaCreada").html(data.Exploraciones[0].DAPARATO.DES_FIL);
+
+                        $("#citaCreadaOid").val(data.Exploraciones[0].OID);
+
+                        $("#resumenCita").modal('show');
+
+
+                        return false;
+                    },
+                    error: function (x, y, z) {
+
+                    }
+                });
+
+
+
+            }
+        });
+
+
+
+        $("#formularioCita").validate({
+            rules: {
+                NombrePaciente: {
+                    required: true,
+                    minlength: 3 // Mínimo 3 caracteres
+                },
+                ApellidosPaciente: {
+                    required: true,
+                    minlength: 3
+                },
+                fechaNacimiento: {
+                    required: true,
+                    date: true, // Asegurar que es una fecha válida
+                    customDateRange: true
+                },
+                sexo: {
+                    required: true,
+                    notEqualToA: true
+                },
+                dni: {
+                    required: true,
+                    minlength: 7,
+                    maxlength: 12,
+                    customDniValidation: true // Nueva regla personalizada
+                },
+                email: {
+                    // required: true,
+                    email: true // Asegurar que es un email válido
+                },
+                TelefonoMovil: {
+                    minlength: 9,
+                    maxlength: 15
+                }
+            },
+            messages: {
+                NombrePaciente: {
+                    required: "Por favor, ingrese el Nombre.",
+                    minlength: "El nombre debe tener al menos 3 caracteres."
+                },
+                ApellidosPaciente: {
+                    required: "Por favor, ingrese los Apellidos.",
+                    minlength: "Los apellidos deben tener al menos 3 caracteres.",
+                    customDateRange: "La fecha debe estar entre el 01/01/1900 y la fecha actual."
+                },
+                fechaNacimiento: {
+                    required: "Por favor, ingrese la Fecha de Nacimiento.",
+                    date: "Por favor, ingrese una fecha válida."
+                },
+                sexo: {
+                    required: "Por favor, rellene el Sexo del Paciente."  // Agrega esta línea para hacer el campo "sexo" obligatorio
+                },
+                dni: {
+                    required: "Por favor, ingrese el DNI/NIE.",
+                    minlength: "El DNI/NIE debe tener al menos 7 caracteres.",
+                    maxlength: "El DNI/NIE no debe tener más de 12 caracteres."
+                },
+                email: {
+                    required: "Por favor, ingrese el Email.",
+                    email: "Por favor, ingrese un Email válido."
+                },
+                TelefonoMovil: {
+
+                    minlength: "El teléfono móvil debe tener al menos 9 caracteres.",
+                    maxlength: "El teléfono móvil no debe tener más de 15 caracteres."
+                },
+            },
+            errorPlacement: function (error, element) {
+                // Personalizar la ubicación del mensaje de error
+                error.insertAfter(element); // Insertar el mensaje después del elemento
+            },
+            highlight: function (element, errorClass, validClass) {
+                // Agregar clase de estilo para resaltar campos con errores
+                $(element).addClass(errorClass).removeClass(validClass);
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                // Revertir los cambios después de corregir el error
+                $(element).removeClass(errorClass).addClass(validClass);
+            },
+            submitHandler: function (form) {
+                // Acciones a realizar cuando el formulario es válido
+                // alert("Cita reservada exitosamente.");
+                // Aquí puedes enviar el formulario al servidor si es necesario
+            },
+            // Definir la regla personalizada
 
 
         });
+
+
+
+        $.validator.addMethod("customDateRange", function (value, element) {
+            var minDate = new Date("01/01/1900");
+            var dateParts = value.split("/"); // Divide la fecha en partes
+            if (dateParts.length !== 3) {
+                return false; // No es una fecha válida
+            }
+
+            // Reorganiza las partes de la fecha en el formato "mm/dd/yyyy"
+            var formattedDate = dateParts[1] + "/" + dateParts[0] + "/" + dateParts[2];
+
+            var inputDate = new Date(formattedDate);
+
+            if (!value) {
+                return true; // Si el campo está vacío, considera válido. Puedes cambiar esto según tus necesidades.
+            }
+
+            if (isNaN(inputDate.getTime())) {
+                return false; // No es una fecha válida
+            }
+
+            return inputDate >= minDate && inputDate <= new Date(); // Comprueba el rango
+        }, "La fecha debe estar entre el 01/01/1900 y la fecha actual.");
+
+
+        $.validator.addMethod("notEqualToA", function (value, element) {
+            return this.optional(element) || value !== "A";
+        }, "Por favor, rellene el Sexo del Paciente..");
+
+        $.validator.addMethod("customDniValidation", function (value, element) {
+            return this.optional(element) || /^[0-9a-zA-Z]+$/.test(value);
+        }, "El DNI/NIE no debe contener guiones.");
+
 
         $("#resumenCita").on("hidden.bs.modal", function () {
-            location.reload()
+            if ($("#recordarDatos").is(":checked")) {
+                // Volver a lanzar la búsqueda de huecos
+                $("#selectedSlotInfo").hide();
+                $(".time-slot").show();
+                $(".day-slot").show();
+                $(".timing").remove();
+            } else {
+                // Recargar la página
+                location.reload();
+            }
+            $("#crearCita").prop("disabled", true);
+            $("#IOR_GAPARATO").change();
         });
+
+
         $(document).ready(function () {
             //$('.fecha-mask').mask('00/00/0000', { placeholder: "__/__/____" });
             $('input[data-val-required]').each(function () {

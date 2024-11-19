@@ -52,6 +52,7 @@ namespace RadioWeb.Models
 
 
         public virtual MUTUAS MUTUA { get; set; }
+        public virtual CENTROSEXTERNOS CENTROEXTERNO { get; set; }
 
     }
 }
