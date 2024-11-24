@@ -229,7 +229,7 @@ namespace RadioWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult List(int IOR_ROLE3,string TipoUsuario)
+        public ActionResult List(int IOR_ROLE3,string TipoUsuario, string SearchTerm)
         {
             IEnumerable<USUARIO> oModel = new List<USUARIO>();
             oModel = _ctx.UCCADUSER
@@ -241,6 +241,15 @@ namespace RadioWeb.Controllers
 
             };
 
+            // Filtro por texto de búsqueda (Login o Nombre en Personal)
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                string lowerSearchTerm = SearchTerm.ToLower(); // Convertir el término de búsqueda a minúsculas
+                oModel = oModel.Where(u =>
+                    u.LOGIN.ToLower().Contains(lowerSearchTerm) || // Comparar login sin sensibilidad a mayúsculas
+                    (u.PERSONAL != null && u.PERSONAL.NOMBRE.ToLower().Contains(lowerSearchTerm)) // Comparar nombre en Personal sin sensibilidad a mayúsculas
+                );
+            }
             //como la propiedad descripcion del perfil es una relacion con la misma tabla 
             //en este bucle lo rellenamos con un nombre amigable
             foreach (var item in oModel)

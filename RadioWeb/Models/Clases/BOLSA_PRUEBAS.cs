@@ -182,6 +182,10 @@ namespace RadioWeb.Models
 
         }
 
+        [NotMapped]
+        // Relación con Colegiados
+        public  List<COLEGIADOS> ColegiadosRelacionados { get; set; }
+
         [Display(Name = "A PARTIR DE")]
         [NotMapped]
         public string HORAINICIOBUSQUEDA { get; set; }

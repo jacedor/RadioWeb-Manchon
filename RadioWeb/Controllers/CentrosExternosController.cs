@@ -52,6 +52,13 @@ namespace RadioWeb.Controllers
         public ActionResult Create()
         {
             CENTROSEXTERNOS oCentro = new CENTROSEXTERNOS();
+           
+            var listaMutuas= MutuasRepositorio.Lista(false);
+            var mutuaPrivados = MutuasRepositorio.Obtener(3820080);
+            mutuaPrivados.NOMBRE = "PRIVADO";
+            listaMutuas.Add(mutuaPrivados);
+            ViewBag.Mutuas = listaMutuas;// db.Mutuas.ToList();
+
             return View("CentroExternoForm", oCentro);
         }
 
@@ -98,13 +105,51 @@ namespace RadioWeb.Controllers
                 return HttpNotFound();
             }
             oCentro.TEXTO = TextosRepositorio.Obtener(id.Value).TEXTO;
-            ViewBag.Mutuas = db.Mutuas.ToList();
-            ViewBag.Colegiados = db.Colegiados.ToList();
+            var mutuaPrivados = MutuasRepositorio.Obtener(3820080);
+            mutuaPrivados.NOMBRE = "PRIVADO";
+            var listaMutuas= MutuasRepositorio.Lista(false);
+            listaMutuas.Add(mutuaPrivados);
+            ViewBag.Mutuas = listaMutuas;// db.Mutuas.ToList();
+            ViewBag.CentrosExternos = db.CentrosExternos.Where(p => p.BORRADO != "T" || p.BORRADO == null);
 
 
 
             return View("CentroExternoForm", oCentro);
         }
+
+        [HttpPost]
+        public JsonResult CopiarConfiguracion(int centroActual, int centroSeleccionado)
+        {
+            // Obtener mutuas y colegiados del centro seleccionado
+            var mutuasSeleccionadas = db.CE_MUTUAS.Where(m => m.IOR_CENTROEXTERNO == centroSeleccionado).ToList();
+            var colegiadosSeleccionados = db.CE_MEDICOS.Where(c => c.IOR_CENTROEXTERNO == centroSeleccionado).ToList();
+
+            // Crear nuevas mutuas asociadas al centro actual
+            var nuevasMutuas = mutuasSeleccionadas.Select(mutua => new CE_MUTUAS
+            {
+                IOR_CENTROEXTERNO = centroActual // Asignar el centro actual
+                
+            }).ToList();
+
+            // Crear nuevos colegiados asociados al centro actual
+            var nuevosColegiados = colegiadosSeleccionados.Select(colegiado => new CE_MEDICOS
+            {
+                IOR_CENTROEXTERNO = centroActual
+            }).ToList();
+
+            // Guardar los nuevos registros en la base de datos
+            db.CE_MUTUAS.AddRange(nuevasMutuas);
+            db.CE_MEDICOS.AddRange(nuevosColegiados);
+            db.SaveChanges();
+
+           
+
+            // Devolver éxito
+            return Json(new { success = true });
+        }
+
+
+
 
         // POST: MUTUAS/Edit/5
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 

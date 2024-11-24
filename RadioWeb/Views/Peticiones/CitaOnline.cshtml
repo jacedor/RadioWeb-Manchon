@@ -80,14 +80,18 @@
                             <h3></h3>
                         </a>
                     </li>
-                    <li>
-                        <a href="/Peticiones/Create"> Nueva Petición</a>
+                    @if (usuario.CREARPETICIONES == "T")
+                    {
 
-                    </li>
-                    <li>
-                        <a href="/Peticiones/List"> Lista Peticiones</a>
+                        <li >
+                            <a href="/Peticiones/Create"> Nueva Petici&oacute;n</a>
 
-                    </li>
+                        </li>
+                        <li>
+                            <a href="/Peticiones/List"> Lista Peticiones</a>
+
+                        </li>
+                    }
                     <li class="">
                         <a href="/Peticiones/ListExploraciones"> Lista Exploraciones</a>
 
@@ -275,7 +279,7 @@
 
 
         </div>
-        <div class="tabs-container" style="padding:0px 20px 0px 20px">
+        <div id="tabs-centros" class="tabs-container" style="padding:0px 20px 0px 20px">
             @{
                 List<CENTROS>
                oCentros = RadioWeb.Models.Repos.CentrosRepositorio.List().Where(p => p.CID == 1).ToList();
@@ -303,7 +307,7 @@
 
 </div>
 
-<div class="ibox-content booking-schedule schedule-widget tab-content" id="ListaHuecos" style="padding:0px 20px 0px 20px">
+<div class="ibox-content booking-schedule schedule-widget tab-content" id="ListaHuecos" style="padding:0px 20px 0px 20px;max-height:600px;overflow-y:scroll;">
 
 
 
@@ -394,18 +398,44 @@
                                     @Html.LabelFor(model => model.IOR_TIPODOC, htmlAttributes: new { @class = "col-lg-offset-6 col-sm-2 col-form-label" })
 
                                     @{var tiposDeDocumento = RadioWeb.Models.Repos.RefractometrosRepositorio.Lista().Where(u => u.CID == 6)
-                                                                       .Select(u => new SelectListItem
-                                                                       {
-                                                                           Text = u.NOMBRE,
-                                                                           Value = u.OID.ToString(),
-                                                                           Selected = u.OID == Model.IOR_TIPODOC
-                                                                       }).ToArray();
+                                                                             .Select(u => new SelectListItem
+                                                                             {
+                                                                                 Text = u.NOMBRE,
+                                                                                 Value = u.OID.ToString(),
+                                                                                 Selected = u.OID == Model.IOR_TIPODOC
+                                                                             }).ToArray();
                                     }
 
                                     @Html.DropDownList("IOR_TIPODOC", tiposDeDocumento, new { @class = "form-control select2", autocomplete = "off" })
 
                                 </div>
                             </div>
+
+                            @if (Model.ColegiadosRelacionados != null)
+                            {
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group card-label">
+                                        <label for="IOR_COLEGIADO" class="control-label">Médico Referidor</label>
+
+                                        <select id="IOR_COLEGIADO" name="IOR_COLEGIADO" class="form-control select2">
+                                            <option value="-1">No asignado</option>
+                                            @if (Model.ColegiadosRelacionados != null)
+                                            {
+
+                                                foreach (var colegiado in Model.ColegiadosRelacionados)
+                                                {
+                                                    <option value="@colegiado.OID">@colegiado.NOMBRE</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                   
+
+                                </div>
+                            }
+
+
+
 
                         </div>
 
@@ -486,10 +516,9 @@
             $(this).addClass('selected');
 
             var tipoExploracionTexto = $("#IOR_TIPOEXPLORACION option:selected").text();
-
-            $(".day-slot").hide();
-            // Ocultar todos los huecos
-            $(".time-slot").hide();
+            $("#ListaHuecos").hide();
+            $("#tabs-centros").hide();
+            
             // Mostrar el hueco seleccionado en el header
             $("#selectedSlotInfo").html(' <span><i style="color:green" class="fa fa-calendar calendar-icon"></i> ' + fecha + '  ' + hora + '  ' + tipoExploracionTexto + '<i class="fa fa-times close-icon" style="color:red" id="closeSelectedSlot"></i></span>');
             $("#selectedSlotInfo").show();
@@ -508,8 +537,8 @@
 
         $(document).on('click', '#closeSelectedSlot', function () {
             $("#selectedSlotInfo").hide();
-            $(".time-slot").show();
-            $(".day-slot").show();
+            $("#ListaHuecos").show();
+            $("#tabs-centros").show();
             $("#ReservaPaciente").addClass('hide');
         });
         $(document).on('click', '#btnDiaSiguiente', function () {
@@ -633,6 +662,7 @@
                     IOR_TIPOEXPLORACION: $("#IOR_TIPOEXPLORACION").val(),
                     IOR_GRUPO: $("#IOR_GAPARATO").val(),
                     IOR_ENTIDADPAGADORA: $("#IOR_ENTIDADPAGADORA").val(),
+                    IOR_COLEGIADO: $("#IOR_COLEGIADO").val(),
                     IOR_CENTROEXTERNO: $("#IOR_CENTROEXTERNO").val(),
                     NHCAP: numero_Autorizacion,
                     USERNAME: $("#UserLogged").data('login')
@@ -843,7 +873,8 @@
 
 
         $(document).ready(function () {
-            //$('.fecha-mask').mask('00/00/0000', { placeholder: "__/__/____" });
+        
+     
             $('input[data-val-required]').each(function () {
                 var req = $(this).attr('data-val-required');
                 if (undefined != req) {

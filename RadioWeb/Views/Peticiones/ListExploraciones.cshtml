@@ -18,14 +18,18 @@
                             <h3></h3>
                         </a>
                     </li>
-                    <li>
-                        <a href="/Peticiones/Create"> Nueva Petición</a>
+                    @if (usuario.CREARPETICIONES == "T")
+                    {
 
-                    </li>
-                    <li class="">
-                        <a href="/Peticiones/List"> Lista Peticiones</a>
+                        <li>
+                            <a href="/Peticiones/Create"> Nueva Petici&oacute;n</a>
 
-                    </li>
+                        </li>
+                        <li>
+                            <a href="/Peticiones/List"> Lista Peticiones</a>
+
+                        </li>
+                    }
                     <li class="active">
                         <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Lista Exploraciones</a>
 

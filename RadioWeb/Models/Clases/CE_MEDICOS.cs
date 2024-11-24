@@ -15,9 +15,10 @@ namespace RadioWeb.Models
     using System.ComponentModel.DataAnnotations.Schema;
 
 
-
-    public class CEMEDICOS
+    
+    public class CE_MEDICOS
     {
+        [Key]
         public int OID { get; set; }
         public int? VERS { get; set; }
         public int? CID { get; set; }

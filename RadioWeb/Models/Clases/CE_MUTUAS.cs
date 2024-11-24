@@ -14,9 +14,9 @@ namespace RadioWeb.Models
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
+
     
-       
-        public class CEMUTUAS
+    public class CE_MUTUAS
     {
             [Key]
         public int OID { get; set; }

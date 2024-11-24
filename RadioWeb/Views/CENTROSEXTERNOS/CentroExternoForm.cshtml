@@ -40,7 +40,7 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             @Html.BootstrapLabelFor(m => m.CONTACTO)
                             @Html.EditorFor(model => model.CONTACTO)
                             @Html.ValidationMessageFor(model => model.CONTACTO, "", new { @class = "text-danger" })
@@ -54,6 +54,11 @@
                             @Html.BootstrapLabelFor(m => m.MAIL)
                             @Html.EditorFor(model => model.MAIL)
                             @Html.ValidationMessageFor(model => model.MAIL, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            @Html.BootstrapLabelFor(m => m.CANAL)
+                            @Html.EditorFor(model => model.CANAL)
+                            @Html.ValidationMessageFor(model => model.CANAL, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
@@ -114,6 +119,10 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            $("li[data-view]").removeClass('active');
+            $("[data-view=ViewCentrosExternos]").addClass("active");
+
+            $("[data-view=ViewCentrosExternos]").parents("ul").removeClass("collapse");
             $("#IOR_COLEGIADO").select2({
                 theme: "bootstrap",
                 placeholder: "Buscar colegiados...",

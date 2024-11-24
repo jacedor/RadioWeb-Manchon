@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 using ADPM.Common;
@@ -437,6 +438,17 @@ namespace RadioWeb.Controllers
             var modelo = inicializarBolsa();
             modelo.FECHAPRUEBA = DateTime.Now;
             modelo.HORAINICIOBUSQUEDA = "07:00";
+
+            var usuario = UsuariosRepositorio.Obtener(User.Identity.Name);
+            if (usuario.IOR_CENTROEXTERNO>0)
+            {
+                var centroExterno = db.CentrosExternos.Include("MutuasRelacionadas").Include("ColegiadosRelacionados").FirstOrDefault(c => c.OID == usuario.IOR_CENTROEXTERNO);
+                // Actualizar colegiados relacionados
+              
+                
+                modelo.ColegiadosRelacionados = centroExterno.ColegiadosRelacionados;
+            }
+       
             return View(modelo);
         }
 

@@ -20,7 +20,8 @@ namespace RadioWeb.Models
         {
             this.DIRECCIONES = new HashSet<DIRECCION>();
             this.TELEFONOS = new HashSet<TELEFONO>();
-
+            this.MutuasRelacionadas = new List<MUTUAS>();
+            this.ColegiadosRelacionados = new List<COLEGIADOS>();
         }
         [Key]
         public int OID { get; set; }
@@ -67,11 +68,13 @@ namespace RadioWeb.Models
         [NotMapped]
         public string TEXTO { get; set; }
 
-      
+
+        
         // Relación con Mutuas
         public virtual List<MUTUAS> MutuasRelacionadas { get; set; }
 
-       
+
+      
         // Relación con Colegiados
         public virtual List<COLEGIADOS> ColegiadosRelacionados { get; set; }
     }

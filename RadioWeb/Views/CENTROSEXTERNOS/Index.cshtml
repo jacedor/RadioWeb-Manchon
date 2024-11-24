@@ -7,7 +7,7 @@
 <div class="ibox-title">
     <h5>
         <strong>
-            Mantenimiento de Mutuas
+            Mantenimiento de Centros Externos
         </strong>
     </h5>
     <div class="ibox-tools">
@@ -26,10 +26,11 @@
                 <th data-sortable="true">
                     @Html.DisplayNameFor(model => model.CODMUT)
                 </th>
+              
                 <th data-sortable="true">
                     @Html.DisplayNameFor(model => model.NOMBRE)
                 </th>
-               
+
                 <th data-sortable="true">
                     @Html.DisplayNameFor(model => model.VERS)
                 </th>
@@ -50,10 +51,11 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.CODMUT)
                 </td>
+              
                 <td>
                     @Html.DisplayFor(modelItem => item.NOMBRE)
                 </td>
-               
+
                 <td>
                     @Html.DisplayFor(modelItem => item.VERS)
                 </td>
@@ -78,9 +80,9 @@
         $(document).ready(function () {
             makeBootstrapTable("tblMutuas");
             $("li[data-view]").removeClass('active');
-            $("[data-view=ViewMutuas]").addClass("active");
+            $("[data-view=ViewCentrosExternos]").addClass("active");
 
-            $("[data-view=ViewMutuas]").parents("ul").removeClass("collapse");
+            $("[data-view=ViewCentrosExternos]").parents("ul").removeClass("collapse");
         });
 
 

@@ -193,6 +193,12 @@ namespace RadioWeb.Models.Repos
                             oMutuas.OWNER = DataBase.GetIntFromReader(oReader, "OWNER");
                             oMutuas.IOR_CENTRAL = DataBase.GetIntFromReader(oReader, "IOR_CENTRAL");
                             oMutuas.IOR_EMPRESA = DataBase.GetIntFromReader(oReader, "IOR_EMPRESA");
+                            if (oMutuas.OID== 3820080)
+                            {
+                                oMutuas.NOMBRE = "PRIVADO";
+                            }
+                           
+
                             lMutua.Add(oMutuas);
 
                         }

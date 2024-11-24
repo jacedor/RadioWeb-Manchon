@@ -61,70 +61,75 @@ OnFailure = "OnFailure"
                 </div>
             </div>
             <div id="tab-usuarios" class="tab-pane">
-             
+
                 <div class="panel-body">
                     @using (Ajax.BeginForm("List", "Users",
 new AjaxOptions
 {
-           HttpMethod = "POST",
-           UpdateTargetId = "tablaResultadoUsuario",
-           InsertionMode = InsertionMode.Replace,
-           OnSuccess = "MenuSuccessUsuario(data)",
-           OnFailure = "OnFailure",
-           OnComplete = "MenuCompleteUsuario"
+HttpMethod = "POST",
+UpdateTargetId = "tablaResultadoUsuario",
+InsertionMode = InsertionMode.Replace,
+OnSuccess = "MenuSuccessUsuario(data)",
+OnFailure = "OnFailure",
+OnComplete = "MenuCompleteUsuario"
 }, new { @class = "form-horizontal", action = Url.Action("List", "Users") }))
-                    {
-                        <div class="">
-                            <div class="row g-3">
-                                <!-- Filtro de Rol -->
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="IOR_ROLE3" class="control-label">Rol/Perfil</label>
-                                        <select name="IOR_ROLE3" id="IOR_ROLE3" class="form-control select2">
-                                            <option value="-1">TODOS</option>
-                                            @foreach (USUARIO item in Model.Roles.OrderBy(p => p.NOME))
-                                            {
-                                                <option value="@(item.IDUSER)">@item.NOME</option>
-                                            }
+                    
+                        {
+                            <div class="row">
+                                <div class="col-lg-12">
 
-                                        </select>
+                                    <div class="form-horizontal" id="DetailInforme">
+                                        <div class="form-group ">
+                                            <div class="col-sm-4">
+
+                                                <label for="IOR_ROLE3" class="control-label">Rol/Perfil</label>
+                                                <select name="IOR_ROLE3" id="IOR_ROLE3" class="form-control select2">
+                                                    <option value="-1">TODOS</option>
+                                                    @foreach (USUARIO item in Model.Roles.OrderBy(p => p.NOME))
+                                                    {
+                                                        <option value="@(item.IDUSER)">@item.NOME</option>
+                                                    }
+
+                                                </select>
+                                            </div>
+
+                                            <div class="col-sm-3">
+                                                <label for="TipoUsuario">Tipo de Usuario</label>
+                                                <select name="TipoUsuario" id="TipoUsuario" class="form-control select2">
+                                                    <option value="TODOS">Todos</option>
+                                                    <option value="1">Centro</option>
+                                                    <option value="2">Módulo de Citación Externo</option>
+                                                </select>
+
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label for="SearchTerm" class="control-label">Buscar Usuario</label>
+                                                <input type="text" name="SearchTerm" id="SearchTerm" class="form-control" placeholder="Buscar por Login o Nombre" />
+
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label> <!-- Espaciado para alinear el botón con los inputs -->
+                                                    <button id="BuscarUsuarios" class="btn btn-primary btn-block" type="submit">Buscar</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- Agregado g-3 para separación horizontal -->
-                                <!-- Filtro de Tipo de Usuario -->
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="TipoUsuario">Tipo de Usuario</label>
-                                        <select name="TipoUsuario" id="TipoUsuario" class="form-control select2">
-                                            <option value="TODOS">Todos</option>
-                                            <option value="1">Centro</option>
-                                            <option value="2">Módulo de Citación Externo</option>
-                                        </select>
-                                    </div>
+
                                 </div>
 
-
-
-                                <!-- Botón de Búsqueda -->
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label>&nbsp;</label> <!-- Espaciado para alinear el botón con los inputs -->
-                                        <button id="BuscarUsuarios" class="btn btn-primary btn-block" type="submit">Buscar</button>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
 
-                        <hr />
 
-                        <!-- Contenedor para resultados -->
-                        <div id="tablaResultadoUsuario">
-                        </div>
-                    }
+                            <hr />
+
+                            <!-- Contenedor para resultados -->
+                            <div id="tablaResultadoUsuario">
+                            </div>
+                        }
+
+                    </div>
                 </div>
-            </div>
-
-
 
 
             <div id="tab-menus" class="tab-pane">

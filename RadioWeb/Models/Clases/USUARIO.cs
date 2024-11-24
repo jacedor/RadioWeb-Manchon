@@ -31,6 +31,7 @@ namespace RadioWeb.Models
         public string LOGIN { get; set; }
 
         public string SENHA { get; set; }
+        public string OWNER { get; set; }
 
         public string EMAIL { get; set; }
 

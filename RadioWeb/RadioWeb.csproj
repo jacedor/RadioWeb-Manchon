@@ -370,8 +370,8 @@
     <Compile Include="Helpers\HttpRequestExtensions.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\UrlExtender.cs" />
-    <Compile Include="Models\Clases\CEMUTUAS.cs" />
-    <Compile Include="Models\Clases\CEMEDICOS.cs" />
+    <Compile Include="Models\Clases\CE_MUTUAS.cs" />
+    <Compile Include="Models\Clases\CE_MEDICOS.cs" />
     <Compile Include="Models\Clases\KIOSKO_DAPARATO_TV.cs" />
     <Compile Include="Models\Clases\KIOSKO_TV.cs" />
     <Compile Include="Models\Clases\ARQUEODIARIO.cs" />

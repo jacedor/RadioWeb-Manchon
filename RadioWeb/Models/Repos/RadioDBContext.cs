@@ -45,6 +45,28 @@ namespace RadioWeb.Models.Repos
                .HasRequired(c => c.APARATO)
                .WithMany(c => c.PRECIOS)
                .HasForeignKey(c => c.IOR_TIPOEXPLORACION);
+
+            // Relación entre CENTROSEXTERNOS y MUTUAS a través de CEMUTUAS
+            modelBuilder.Entity<CENTROSEXTERNOS>()
+                .HasMany(c => c.MutuasRelacionadas)
+                .WithMany()
+                .Map(m =>
+                {
+                    m.ToTable("CE_MUTUAS"); // Tabla intermedia
+                    m.MapLeftKey("IOR_CENTROEXTERNO"); // Llave en CENTROSEXTERNOS
+                    m.MapRightKey("IOR_MUTUA"); // Llave en MUTUAS
+                });
+
+            // Relación entre CENTROSEXTERNOS y COLEGIADOS a través de CEMEDICOS
+            modelBuilder.Entity<CENTROSEXTERNOS>()
+                .HasMany(c => c.ColegiadosRelacionados)
+                .WithMany()
+                .Map(m =>
+                {
+                    m.ToTable("CE_MEDICOS"); // Tabla intermedia
+                    m.MapLeftKey("IOR_CENTROEXTERNO"); // Llave en CENTROSEXTERNOS
+                    m.MapRightKey("IOR_MEDICO"); // Llave en COLEGIADOS
+                });
             //   modelBuilder.Entity<TEXTOS>()
             //.HasRequired(c => c.MUTUA)
             //.WithRequiredDependent(c => c.TEXTO)
@@ -76,6 +98,8 @@ namespace RadioWeb.Models.Repos
 
         public DbSet<Models.CARTELERA> Carteleras { get; set; }
         public DbSet<Models.CENTROS> Centros { get; set; }
+        public DbSet<Models.CE_MEDICOS> CE_MEDICOS { get; set; }
+        public DbSet<Models.CE_MUTUAS> CE_MUTUAS { get; set; }
         public DbSet<Models.CENTROSEXTERNOS> CentrosExternos { get; set; }
         public DbSet<Models.COLEGIADOS> Colegiados { get; set; }
         public DbSet<Models.CONSUMIBLES> Consumibles { get; set; }
