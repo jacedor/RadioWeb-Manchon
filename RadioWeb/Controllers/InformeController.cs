@@ -1401,14 +1401,50 @@ namespace RadioWeb.Controllers
             string RutaDOCS = oConfig.ObtenerValor("RUTADOCS");
             string nombreDocumento = "Documento.pdf";
             string RutaMacrosCabecera = oConfig.ObtenerValor("RutaMacroCabeceraInformes");
+            INFORMES oInforme = InformesRepositorio.Obtener(oid);
+            //Si por el oid que nos han pasado no obtenemos ningun objeto
+            //tal vez sea porque nos han enviado el oid de la exploración
+            //en cuyo caso debemos buscar un informe con el owner igual al OID que nos han enviado como parametro
+            if (oInforme.OID <= 0)
+            {
+                oInforme = InformesRepositorio.ObtenerDeExploracion(oid).Single(i => i.VALIDACION == "T");
+            }
+           
 
-            string file = InformesRepositorio.GenerarPDF(RutaDOCS,
-                true, oid,
-               RutaMacrosCabecera,
-                password);
+            INFORMESPDF oInformePdf = db.InformesPDF
+               .Where(inf => inf.IOR_EXPLORACION == oInforme.OWNER && inf.VALIDACION=="T")
+               .OrderByDescending(inf => inf.OID)
+               .FirstOrDefault();
+
+            string file;
+
+            if (oInforme != null)
+            {
+                // Si el registro existe, leer el archivo
+                file = oInformePdf.PATH + oInformePdf.NOMBRE;
+            }
+            else
+            {
+                // Si no existe, generar el PDF
+                file = InformesRepositorio.GenerarPDF(RutaDOCS,
+                    true, oid,
+                    RutaMacrosCabecera,
+                    password);
+
+            }
+
+             
 
             if (System.IO.File.Exists(file))
             {
+                nombreDocumento = new System.IO.FileInfo(file).Name;
+            }
+            else
+            {
+                file = InformesRepositorio.GenerarPDF(RutaDOCS,
+                true, oid,
+                RutaMacrosCabecera,
+                password);
                 nombreDocumento = new System.IO.FileInfo(file).Name;
             }
             var fileBytes = System.IO.File.ReadAllBytes(file);

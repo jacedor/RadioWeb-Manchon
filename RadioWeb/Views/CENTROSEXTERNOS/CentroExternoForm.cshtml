@@ -9,6 +9,7 @@
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.OID)
+    @Html.HiddenFor(model => model.CID)
     <div class="tabs-container">
         <ul class="nav nav-tabs">
 
@@ -56,7 +57,7 @@
                             @Html.ValidationMessageFor(model => model.MAIL, "", new { @class = "text-danger" })
                         </div>
                         <div class="col-md-3">
-                            @Html.BootstrapLabelFor(m => m.CANAL)
+                            @Html.BootstrapLabelFor(m => m.CANAL)<br/>
                             @Html.EditorFor(model => model.CANAL)
                             @Html.ValidationMessageFor(model => model.CANAL, "", new { @class = "text-danger" })
                         </div>
@@ -99,7 +100,7 @@
         <div class="user-button ibox-content">
             <div class="row">
                 <div class="col-md-6">
-                    <button class="btn btn-default btn-sm btn-block"><i class="fa fa-backward">@Html.ActionLink("Volver a Centros Externos", "Index", "CentroExterno")</i></button>
+                    <button class="btn btn-default btn-sm btn-block"><i class="fa fa-backward">@Html.ActionLink("Volver a Centros Externos", "Index", "CentrosExternos")</i></button>
 
                 </div>
                 <div class="col-md-6">
@@ -148,7 +149,7 @@
         });
 
     </script>
-   
+
 
 
 

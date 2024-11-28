@@ -349,7 +349,18 @@
                     }
                     return botones;
 
-                }
+            }
+
+            if (row.ESTADO === "0" && row.IOR_MOTDESPROG === null) {
+                var botones = '';
+                botones = '<div class="btn-group"><a data-oid="' + row.OID + '" data-iordesprogramacion = "' + row.IOR_MOTDESPROG + '"  class="btn-danger btn btn-xs borrarCita" href="#">Borrar</a>';
+
+                botones = botones + '</div>'
+
+
+
+                return botones;
+            }
         }
 
          function fechaStringFormat(value) {
@@ -371,7 +382,48 @@
 
             }
         }
+        $(document).on('click', '.borrarCita', function () {
+            var CitaId = $(this).data('oid');
 
+
+            swal({
+                title: 'Desea borrar la cita actual?',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+
+
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "/Home/CambiarEstado",
+                        data: {
+                            estadoActual: 0,
+                            estadoNuevo: 1,
+                            oidExploracion: CitaId,
+                            hhora: '10:00'
+                        },
+                        success: function (data) {
+
+                            toastr.success('', 'Cita Anulada!', { timeOut: 5000 });
+                            $("#tblExploraciones").bootstrapTable("refresh");
+
+                        }
+                    });
+
+
+
+                }
+
+            });
+
+
+        });
         //Evento que recupera el motivo de anulación de la exploracion
         $(document).on('click', 'span.exploAnulada', function () {
             var oidExploracionSeleccionada = $(this).data("oid")

@@ -67,6 +67,8 @@ namespace RadioWeb.Models.Repos
                     m.MapLeftKey("IOR_CENTROEXTERNO"); // Llave en CENTROSEXTERNOS
                     m.MapRightKey("IOR_MEDICO"); // Llave en COLEGIADOS
                 });
+
+     
             //   modelBuilder.Entity<TEXTOS>()
             //.HasRequired(c => c.MUTUA)
             //.WithRequiredDependent(c => c.TEXTO)

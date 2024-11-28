@@ -87,7 +87,7 @@
         @using (Html.BeginForm(Model.ACTION, "Peticiones", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             @Html.HiddenFor(model => model.OID)
-            @*@Html.HiddenFor(model => model.IOR_ENTIDADPAGADORA)*@
+            @Html.HiddenFor(model => model.IOR_ENTIDADPAGADORA)
             @Html.HiddenFor(model => model.USERNAME)
             @Html.HiddenFor(model => model.IOR_COLEGIADO)
             @*@Html.HiddenFor(model => model.IOR_CENTROEXTERNO)*@
@@ -352,9 +352,9 @@
                 $("#IOR_GAPARATO").trigger('change');
             }
 
-            if ($('select#IOR_ENTIDADPAGADORA').val() > 0) {
-                $('select#IOR_ENTIDADPAGADORA').prop('disabled', true);
-            }
+            //if ($('select#IOR_ENTIDADPAGADORA').val() > 0) {
+            //    $('select#IOR_ENTIDADPAGADORA').prop('disabled', true);
+            //}
 
             if ($('select#IOR_CENTROEXTERNO').val() > 0) {
                 $('select#IOR_CENTROEXTERNO').prop('disabled', true);

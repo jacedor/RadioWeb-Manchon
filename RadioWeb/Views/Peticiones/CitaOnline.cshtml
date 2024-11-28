@@ -375,7 +375,7 @@
                             </div>
                             <div class="col-md-6 col-sm-12">
                                 <div class="form-group card-label">
-                                    <label for="Number1" class="control-label">Teléfono movil</label>
+                                    <label for="TelefonoMovil" class="control-label">Teléfono movil</label>
                                     <input type="text" placeholder="Telefono movil" autocomplete="off" id="TelefonoMovil" name="TelefonoMovil" class="form-control">
 
                                 </div>
@@ -418,6 +418,7 @@
                                         <label for="IOR_COLEGIADO" class="control-label">Médico Referidor</label>
 
                                         <select id="IOR_COLEGIADO" name="IOR_COLEGIADO" class="form-control select2">
+                                            <option value="">Seleccione una opción</option>
                                             <option value="-1">No asignado</option>
                                             @if (Model.ColegiadosRelacionados != null)
                                             {
@@ -735,6 +736,9 @@
 
         $("#formularioCita").validate({
             rules: {
+                IOR_COLEGIADO: {
+                    required: true
+                },
                 NombrePaciente: {
                     required: true,
                     minlength: 3 // Mínimo 3 caracteres
@@ -763,11 +767,15 @@
                     email: true // Asegurar que es un email válido
                 },
                 TelefonoMovil: {
+                    required: true,
                     minlength: 9,
                     maxlength: 15
                 }
             },
             messages: {
+                IOR_COLEGIADO: {
+                    required: "Por favor, seleccione un Médico Referidor."
+                },
                 NombrePaciente: {
                     required: "Por favor, ingrese el Nombre.",
                     minlength: "El nombre debe tener al menos 3 caracteres."
@@ -794,7 +802,7 @@
                     email: "Por favor, ingrese un Email válido."
                 },
                 TelefonoMovil: {
-
+                    required: "Por favor, ingrese el Telefono.",
                     minlength: "El teléfono móvil debe tener al menos 9 caracteres.",
                     maxlength: "El teléfono móvil no debe tener más de 15 caracteres."
                 },

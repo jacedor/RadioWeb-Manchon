@@ -27,6 +27,9 @@ namespace RadioWeb.Models
         public int OID { get; set; }
         public int? VERS { get; set; }
         public int? CID { get; set; }
+
+        [DataType("BooleanString")]
+        [Display(Name = "CITAONLINE")]
         public string CANAL { get; set; }
         public int? OWNER { get; set; }
         public string USERNAME { get; set; }

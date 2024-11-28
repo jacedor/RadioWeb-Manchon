@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using RadioWeb.Models.HTMLToPDF;
 using System.Text;
 using System.Collections.Specialized;
+using iTextSharp.tool.xml.html;
 
 namespace RadioWeb.Models.Repos
 {
@@ -173,7 +174,7 @@ namespace RadioWeb.Models.Repos
                 List<INFORMES> lListaInformes = new List<INFORMES>();
                 while (oReader.Read())
                 {
-
+                    oInforme = new INFORMES();
                     oInforme.OID = DataBase.GetIntFromReader(oReader, "OID");
                     oInforme.VERS = DataBase.GetIntFromReader(oReader, "VERS");
                     oInforme.CID = DataBase.GetIntFromReader(oReader, "CID");
@@ -951,6 +952,16 @@ namespace RadioWeb.Models.Repos
                         .Where(p => p.OID == oInforme.IOR_MEDREVISION).SingleOrDefault();
                     if (oMedicoInformante != null)
                     {
+                        var request = HttpContext.Current.Request; // Asegúrate de tener 'using System.Web;' para acceder a HttpContext
+                        string baseUrl = request.Url.GetLeftPart(UriPartial.Authority);
+
+                        // Ahora construyes la cadena de la imagen usando la URL base dinámica
+                        string cadenaImagen = $"{baseUrl}/img/firmas/{oMedicoInformante.LOGIN}.jpg";
+
+                        htmlPie = htmlPie.Replace("Firma M&eacute;dico", "<img border='0' src='" + cadenaImagen + "' width='100'/>");
+                        htmlPie = htmlPie.Replace("Firma Médico", "<img border='0' src='" + cadenaImagen + "' width='100'/>");
+                        htmlPie = htmlPie.Replace("Firma Medico", "<img border='0' src='" + cadenaImagen + "' width='100'/>");
+                        htmlPie = htmlPie.Replace("FirmaMedico", "<img border='0' src='" + cadenaImagen + "' width='100'/><p>" + oMedicoInformante.DESCRIPCION + "</p><p>" + oMedicoInformante.NUMERO + "</p>");
                         htmlPie = htmlPie.Replace("@MEDICO1", oMedicoInformante.DESCRIPCION);
                         if (oMedicoInformante.NUMERO != null)
                         {
@@ -1007,6 +1018,17 @@ namespace RadioWeb.Models.Repos
                 }
 
             }
+            // Expresión regular para detectar múltiples <div> con contenido "&nbsp;" o un espacio no rompible
+            // Expresión regular para detectar múltiples <div> con contenido "&nbsp;" o un espacio no rompible
+            string pattern = @"(<div>(?:&nbsp;|\u00A0)</div>\s*){2,}";
+
+            // Reemplaza los bloques consecutivos por una sola etiqueta <br/>
+            string result = Regex.Replace(oInforme.TEXTOHTML, pattern, "<br/>", RegexOptions.IgnoreCase);
+
+            // Asigna el resultado procesado de nuevo al campo TEXTOHTML
+            oInforme.TEXTOHTML = result;
+
+            // Opcionalmente, puedes usar el texto procesado en otra variable para debug o uso adicional
             string htmlText = oInforme.TEXTOHTML;
 
             if (!htmlText.TrimStart().StartsWith("<html>") || oExploracion2.EMPRESA.NOMBRE.Contains("FORASTÉ"))
@@ -1124,14 +1146,20 @@ namespace RadioWeb.Models.Repos
                 // Ahora construyes la cadena de la imagen usando la URL base dinámica
                 string cadenaImagen = $"{baseUrl}/img/firmas/{oPersonal.LOGIN}.jpg";
 
-                htmlText = htmlText.Replace("Firma M&eacute;dico", "<img bordeR='0' src='" + cadenaImagen + "'/>");
-                htmlText = htmlText.Replace("Firma Médico", "<img bordeR='0' src='" + cadenaImagen + "'/>");
-                htmlText = htmlText.Replace("Firma Medico", "<img bordeR='0' src='" + cadenaImagen + "'/>");
-                htmlText = htmlText.Replace("FirmaMedico", "<img bordeR='0' src='" + cadenaImagen + "'/><p>" + oPersonal.DESCRIPCION + "</p><p>" + oPersonal.NUMERO + "</p>");
+                htmlText = htmlText.Replace("Firma M&eacute;dico", "<img border='0' src='" + cadenaImagen + "' width='100'/>");
+                htmlText = htmlText.Replace("Firma Médico", "<img border='0' src='" + cadenaImagen + "' width='100'/>");
+                htmlText = htmlText.Replace("Firma Medico", "<img border='0' src='" + cadenaImagen + "' width='100'/>");
+                htmlText = htmlText.Replace("FirmaMedico", "<img border='0' src='" + cadenaImagen + "' width='100'/><p>" + oPersonal.DESCRIPCION + "</p><p>" + oPersonal.NUMERO + "</p>");
                 htmlText = htmlText.Replace("@MI", oPersonal.DESCRIPCION);
                 htmlText = htmlText.Replace("@NU", oPersonal.NUMERO);
+      
                 htmlText = htmlText.Replace("<table style=\"", "<table border=\"0\" style=\"border-color:white;");
                 htmlText = htmlText.Replace("<td style=\"", "<td style=\"border-color:white;");
+            }
+            else
+            {
+                htmlText = htmlText.Replace("</body>",  htmlPie +  "</body>");
+
             }
             string htmlString = htmlText.Replace("<body>", "<body>" + htmlCabecera);
 
@@ -1141,7 +1169,7 @@ namespace RadioWeb.Models.Repos
             htmlString = htmlString.Replace("<br>", "<br/>");
 
 
-            htmlString = htmlString.Replace("</body>", htmlPie + "</body>");
+          
 
             if (System.IO.File.Exists(rutaInformeDefi))
             {

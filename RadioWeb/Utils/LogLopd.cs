@@ -15,9 +15,15 @@ namespace RadioWeb.Utils
             FbCommand oCommand=null;
             try
             {
+                // Obtener el ID del usuario desde la sesión o usar -1 si no está definido
+                int userId = -1; // Valor predeterminado
+                if (HttpContext.Current.Session["Usuario"] != null && HttpContext.Current.Session["Usuario"] is RadioWeb.Models.USUARIO usuario)
+                {
+                    userId = usuario.IDUSER;
+                }
                 string InsertComand = "insert into UCLOG ( IdUser, MSG, Data, Nivel)  VALUES (";
-                InsertComand += ((RadioWeb.Models.USUARIO)HttpContext.Current.Session["Usuario"]).IDUSER + ",'" + "RW-" + Msg + "','" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "','" + Nivel + "')";
-                
+                InsertComand += userId + ",'" + "RW-" + Msg + "','" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "','" + Nivel + "')";
+
                 oConexion.Open();
                  oCommand = new FbCommand(InsertComand, oConexion);
                 int result = (int)oCommand.ExecuteNonQuery();

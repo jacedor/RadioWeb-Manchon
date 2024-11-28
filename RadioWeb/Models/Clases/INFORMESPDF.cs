@@ -61,7 +61,7 @@ namespace RadioWeb.Models
         
         public string DISCO { get; set; }
        
-        public int VOLUMEN { get; set; }
+        public int? VOLUMEN { get; set; }
 
         public int IOR_PACIENTE{ get; set; }
 

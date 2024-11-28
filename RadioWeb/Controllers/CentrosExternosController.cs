@@ -202,12 +202,15 @@ namespace RadioWeb.Controllers
                 return HttpNotFound();
             }
 
+            db.Entry(centro).Collection(c => c.MutuasRelacionadas).Load();
+            db.Entry(centro).Collection(c => c.ColegiadosRelacionados).Load();
             // Actualizar mutuas relacionadas
             centro.MutuasRelacionadas.Clear();
             if (MutuasSeleccionadas != null && MutuasSeleccionadas.Any())
             {
                 var mutuas = db.Mutuas.Where(m => MutuasSeleccionadas.Contains(m.OID)).ToList();
                 centro.MutuasRelacionadas.AddRange(mutuas);
+                db.SaveChanges();
             }
 
             // Actualizar colegiados relacionados
@@ -216,9 +219,10 @@ namespace RadioWeb.Controllers
             {
                 var colegiados = db.Colegiados.Where(c => ColegiadosSeleccionados.Contains(c.OID)).ToList();
                 centro.ColegiadosRelacionados.AddRange(colegiados);
+                db.SaveChanges();
             }
 
-            db.SaveChanges();
+            
 
             return RedirectToAction("Edit", new { id = OID });
         }

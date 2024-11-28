@@ -138,9 +138,25 @@ namespace RadioWeb.Controllers
                             oUsuario.BLOQUEADO = "T";
                             ViewBag.UsuarioBloqueado = "Usuario bloqueado. Contacte con el administrador.";
                         }
+                        else
+                        {
+                            ViewBag.UsuarioBloqueado = "Intento de inicio de sesion no válido.";
+                        }
 
                         oUsuario.LOGIN_ATTEMPTS = intentos;
-                        _ctx.SaveChanges();
+                        // Desactivar validaciones del modelo
+                        var validateOnSaveEnabled = _ctx.Configuration.ValidateOnSaveEnabled;
+                        _ctx.Configuration.ValidateOnSaveEnabled = false;
+
+                        try
+                        {
+                            _ctx.SaveChanges();
+                        }
+                        finally
+                        {
+                            // Reactivar validaciones del modelo
+                            _ctx.Configuration.ValidateOnSaveEnabled = validateOnSaveEnabled;
+                        }
 
                     }
 
